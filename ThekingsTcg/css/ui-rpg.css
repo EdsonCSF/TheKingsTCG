@@ -1,0 +1,545 @@
+.rpg-screen {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- HEADER PADRÃO --- */
+.rpg-header {
+    height: 60px;
+    background: rgba(10, 10, 12, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(212, 17, 50, 0.35); /* Red border subtle */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.rpg-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #d41132; /* Primary Red */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px rgba(212, 17, 50, 0.4);
+}
+
+/* --- CONTENT AREA --- */
+.rpg-content {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding: 1rem;
+    /* Scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: #444 #111;
+}
+
+.rpg-content::-webkit-scrollbar {
+    width: 6px;
+}
+.rpg-content::-webkit-scrollbar-track {
+    background: #111;
+}
+.rpg-content::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 3px;
+}
+
+/* --- COMPONENTES BOTÃO RPG (Banner Button) --- */
+.btn-rpg {
+    background: linear-gradient(90deg, #1a1a1a 0%, #2a1a1a 100%);
+    border-left: 4px solid #d41132; /* Default Primary color */
+    position: relative;
+    clip-path: polygon(0% 0%, 95% 0%, 100% 50%, 95% 100%, 0% 100%);
+    color: white;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content for standard buttons */
+}
+
+/* Variante para botões com ícone e texto alinhado à esquerda */
+.btn-rpg-left {
+    justify-content: flex-start;
+    padding-left: 1.5rem;
+}
+
+.btn-rpg:active {
+    transform: scale(0.95);
+    filter: brightness(0.8);
+}
+
+/* Border Colors Variants */
+.btn-rpg.gold-accent { border-left-color: #ffd700; }
+.btn-rpg.red-accent { border-left-color: #d41132; }
+
+/* Text Gradients */
+.text-gold-gradient {
+    background: linear-gradient(to bottom, #fff7ad 0%, #ffd700 50%, #b8860b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.text-red-gradient {
+    background: linear-gradient(to bottom, #ff3b3b 0%, #8b0000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+/* --- GRID & LISTS --- */
+.rpg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+.rpg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+/* --- RPG SCREEN LAYOUT --- */
+/* bg-menu: aparece em perfil, loja, coleção, decks, campanha, inimigos */
+.rpg-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../img/backgrounds/bg-menu.png");
+    background-size: cover;
+    background-position: center;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    overflow: hidden;
+}
+
+/* Menu inicial: transparente para mostrar o bg-principal do .game-bg */
+#menu-screen-new {
+    background-image: none;
+    background: transparent;
+}
+
+/* Tela de seleção de campanhas */
+#campaign-screen {
+    background-image: url("../img/backgrounds/bg-campanhas.png");
+}
+
+/* Tela de seleção de inimigos */
+#enemy-screen {
+    background-image: url("../img/backgrounds/bg-inimigos.png");
+}
+
+/* --- BACKGROUND GLOBAL --- */
+/* bg-principal: aparece no loading e menu inicial */
+.game-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: url("../img/backgrounds/bg-principal.png");
+    background-size: cover;
+    background-position: center;
+    pointer-events: none;
+}
+
+/* --- LOADING OVERLAY --- */
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: transparent;
+    backdrop-filter: none;
+    display: flex;
+    align-items: flex-start; /* Sobeu o conteúdo */
+    justify-content: center;
+    padding-top: 18vh; /* Ajuste da altura */
+    pointer-events: all;
+    transition: opacity 0.6s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- CARD SHUFFLE ANIMATION & ICONS --- */
+/* =========================
+   CARD SHUFFLE CINEMÁTICO
+========================= */
+
+.card-shuffle {
+    position: relative;
+    width: 140px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.load-card {
+    position: absolute;
+    width: 90px;
+    height: 130px;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: shufflePro 1.3s infinite ease-in-out;
+    transform-origin: center;
+}
+/* Delay progressivo */
+.load-card:nth-child(1) { animation-delay: 0s; }
+.load-card:nth-child(2) { animation-delay: .25s; }
+.load-card:nth-child(3) { animation-delay: .5s; }
+.load-card:nth-child(4) { animation-delay: .75s; }
+.load-card:nth-child(5) { animation-delay: 1s; }
+
+/* Nova animação com profundidade real */
+@keyframes shufflePro {
+
+    0% {
+        transform: translateX(0px) rotate(0deg) scale(1);
+        z-index: 1;
+    }
+
+    20% {
+        transform: translateX(-35px) rotate(-10deg) scale(0.95);
+        z-index: 2;
+    }
+
+    40% {
+        transform: translateX(35px) rotate(10deg) scale(1.05);
+        z-index: 5;
+    }
+
+    60% {
+        transform: translateX(-20px) rotate(-6deg) scale(0.98);
+        z-index: 3;
+    }
+
+    80% {
+        transform: translateX(15px) rotate(4deg) scale(1.02);
+        z-index: 4;
+    }
+
+    100% {
+        transform: translateX(0px) rotate(0deg) scale(1);
+        z-index: 1;
+    }
+}
+.load-card.fire {
+    background-image: url("../img/backcards/fire.webp");
+}
+
+.load-card.water {
+    background-image: url("../img/backcards/water.webp");
+}
+
+.load-card.forest {
+    background-image: url("../img/backcards/forest.webp");
+}
+
+.load-card.earth {
+    background-image: url("../img/backcards/earth.webp");
+}
+
+.load-card.neutral {
+    background-image: url("../img/backcards/neutral.webp");
+}
+
+//Orbs dos ícones dos botões loja e deck 
+/* BASE ORB */
+.element-orb {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.15);
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+/* HOVER */
+.element-orb:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 12px rgba(255,255,255,0.25);
+}
+
+/* ACTIVE STATE */
+.element-orb.active {
+    transform: scale(1.15);
+    border: 2px solid white;
+    box-shadow: 0 0 18px white;
+}
+
+/* FIRE */
+.element-orb.fire {
+    background: radial-gradient(circle at 30% 30%, #ff7a3d, #8b1e00);
+}
+
+/* WATER */
+.element-orb.water {
+    background: radial-gradient(circle at 30% 30%, #4fd0ff, #003f5c);
+}
+
+/* FOREST */
+.element-orb.forest {
+    background: radial-gradient(circle at 30% 30%, #58d68d, #145a32);
+}
+
+/* EARTH */
+.element-orb.earth {
+    background: radial-gradient(circle at 30% 30%, #d4b46a, #5c4033);
+}
+
+/* NEUTRAL */
+.element-orb.neutral {
+    background: radial-gradient(circle at 30% 30%, #dddddd, #666666);
+    color: white;
+    text-shadow: 0 0 6px rgba(255,255,255,0.8);
+} 
+
+//Orbs ícones filtro dos decks 
+/* ===== BASE ===== */
+.element-filter {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 26px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* HOVER */
+.element-filter:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 14px rgba(255,255,255,0.25);
+}
+
+/* ACTIVE */
+.element-filter.active {
+    transform: scale(1.15);
+    border: 2px solid white;
+    box-shadow: 0 0 20px white;
+}
+
+/* CONTADOR */
+.element-filter .count {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    background: black;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== ELEMENTOS ===== */
+
+.element-filter.fire {
+    background: radial-gradient(circle at 30% 30%, #ff7a3d, #8b1e00);
+}
+
+.element-filter.water {
+    background: radial-gradient(circle at 30% 30%, #4fd0ff, #003f5c);
+}
+
+.element-filter.forest {
+    background: radial-gradient(circle at 30% 30%, #58d68d, #145a32);
+}
+
+.element-filter.earth {
+    background: radial-gradient(circle at 30% 30%, #d4b46a, #5c4033);
+}
+
+.element-filter.neutral {
+    background: radial-gradient(circle at 30% 30%, #dddddd, #666666);
+    color: white;
+    text-shadow: 0 0 6px rgba(255,255,255,0.8);
+}
+
+/* NEUTRAL - Agora configurado para Branco */
+.neutral-icon {
+    color: white;
+    font-size: 14px;
+    text-shadow: 0 0 6px rgba(255,255,255,0.8);
+}
+
+
+
+.loading-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #ffd700;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+/* ... (Código anterior mantido) ... */
+
+/* --- BOTÕES RPG --- */
+.btn-rpg.active {
+    border-left-color: #ffd700; /* Borda Dourada */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    filter: brightness(1.15);
+}
+
+/* ... (Código posterior mantido) ... */
+/* --- OVERLAY DE STATS (Visual Premium) --- */
+.card-stats-overlay {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    background: rgba(0, 0, 0, 0.75); /* Fundo escuro */
+    padding: 3px 5px;
+    border-top: 1px solid rgba(255, 215, 0, 0.2); /* Brilho sutil */
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+    text-shadow: 0 1px 2px black;
+}
+/* =========================
+   CONFIGURAÇÕES - MODAL engrenagem 
+========================= */
+
+.settings-panel {
+  background: linear-gradient(180deg, #1a1a20, #0f0f13);
+  border: 2px solid #c9a24d;
+  border-radius: 14px;
+  padding: 20px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 0 25px rgba(201,162,77,0.4);
+  animation: popIn 0.25s ease-out;
+}
+
+.settings-title {
+  text-align: center;
+  color: #ffd700;
+  margin-bottom: 16px;
+  font-family: 'Cinzel', serif;
+}
+
+.settings-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  color: #e0e0e0;
+}
+
+.settings-toggle {
+  min-width: 70px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.settings-toggle.on {
+  background: #32cd32;
+  color: #0f0f13;
+  box-shadow: 0 0 8px rgba(50,205,50,0.6);
+}
+
+.settings-toggle.off {
+  background: #aa3333;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(170,51,51,0.6);
+}
+
+.settings-close {
+  margin-top: 16px;
+  width: 100%;
+  padding: 10px;
+  background: #1a1a20;
+  border: 1px solid #c9a24d;
+  color: #ffd700;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+/* =========================
+   AURA PULSANTE DO CAMPO
+========================= */
+
+@keyframes auraPulseGreen {
+    0%   { box-shadow: 0 0 8px 2px rgba(0,255,120,0.6); }
+    50%  { box-shadow: 0 0 18px 6px rgba(0,255,120,1); }
+    100% { box-shadow: 0 0 8px 2px rgba(0,255,120,0.6); }
+}
+
+@keyframes auraPulseRed {
+    0%   { box-shadow: 0 0 8px 2px rgba(255,0,0,0.6); }
+    50%  { box-shadow: 0 0 18px 6px rgba(255,0,0,1); }
+    100% { box-shadow: 0 0 8px 2px rgba(255,0,0,0.6); }
+}
+
+@keyframes auraPulseBlue {
+    0%   { box-shadow: 0 0 8px 2px rgba(77,166,255,0.6); }
+    50%  { box-shadow: 0 0 18px 6px rgba(77,166,255,1); }
+    100% { box-shadow: 0 0 8px 2px rgba(77,166,255,0.6); }
+}
+
+/* VANTAGEM */
+.card-row.aura-adv {
+    border: 2px solid rgba(0,255,120,0.9);
+    animation: auraPulseGreen 1.6s ease-in-out infinite;
+}
+
+/* DESVANTAGEM */
+.card-row.aura-dis {
+    border: 2px solid rgba(255,0,0,0.9);
+    animation: auraPulseRed 1.6s ease-in-out infinite;
+}
+
+/* NEUTRO */
+.card-row.aura-neutral {
+    border: 2px solid rgba(77,166,255,0.9);
+    animation: auraPulseBlue 1.6s ease-in-out infinite;
+}
+/* 🔑 MODAL GLOBAL DE CONFIGURAÇÕES */
+#settings-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999; /* acima de tudo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

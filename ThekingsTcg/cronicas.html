@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TheKings TCG — Crônicas da Unificação</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment: #f0deb0;
+  --parchment-mid: #e8d090;
+  --parchment-dark: #c8a84a;
+  --ink: #1c0e00;
+  --ink-mid: #3a2008;
+  --ink-faded: #5a3a12;
+  --gold: #c9922a;
+  --gold-bright: #f0c040;
+  --gold-text: #d4a020;
+  --red-tcg: #c01818;
+  --border-gold: rgba(201,146,42,0.5);
+  --fire: #c83008;
+  --water: #1050a0;
+  --forest: #1a6020;
+  --earth: #7a4a18;
+  --neutral: #5a4a7a;
+  --bg-dark: #0a0600;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg-dark);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(100,60,0,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(60,20,0,0.5) 0%, transparent 60%);
+  font-family: 'EB Garamond', Georgia, serif;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── EMBER PARTICLES ── */
+.embers { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.ember {
+  position:absolute; bottom:-6px;
+  border-radius:50%; opacity:0;
+  animation: rise linear infinite;
+}
+@keyframes rise {
+  0%   { transform:translateY(0) translateX(0); opacity:0; }
+  8%   { opacity:.9; }
+  92%  { opacity:.2; }
+  100% { transform:translateY(-105vh) translateX(var(--d)); opacity:0; }
+}
+
+/* ── MAIN WRAPPER ── */
+.wrapper { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:0 16px 80px; }
+
+/* ── LOGO HEADER ── */
+.logo-header {
+  text-align:center;
+  padding: 48px 0 0;
+  position: relative;
+}
+.crown-icon {
+  font-size: 40px;
+  display: block;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 0 16px var(--gold-bright));
+  animation: crownPulse 3s ease-in-out infinite;
+}
+@keyframes crownPulse {
+  0%,100% { filter: drop-shadow(0 0 12px var(--gold-bright)); }
+  50%      { filter: drop-shadow(0 0 28px var(--gold-bright)) drop-shadow(0 0 50px rgba(240,192,64,0.4)); }
+}
+
+/* THE KINGS TCG logo text */
+.logo-text {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(30px, 7vw, 64px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 4px;
+  display: block;
+  margin-bottom: 10px;
+  text-shadow:
+    0 0 30px rgba(240,192,64,0.6),
+    2px 2px 0 rgba(80,40,0,0.8),
+    4px 4px 8px rgba(0,0,0,0.9);
+}
+.logo-thekings { color: var(--gold-bright); }
+.logo-tcg      { color: var(--red-tcg); text-shadow: 0 0 20px rgba(200,0,0,0.6), 2px 2px 0 rgba(80,0,0,0.8); }
+
+.logo-tagline {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 2.5vw, 16px);
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  font-style: italic;
+  display: block;
+  margin-bottom: 40px;
+  text-shadow: 0 0 10px rgba(201,146,42,0.4);
+}
+
+/* ── PARCHMENT PAGE ── */
+.page {
+  background: var(--parchment);
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(255,245,200,0.6) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 90%, rgba(160,100,20,0.2) 0%, transparent 45%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  border-radius: 3px;
+  box-shadow:
+    0 0 0 2px rgba(139,90,20,0.6),
+    0 0 0 8px rgba(80,40,0,0.3),
+    0 0 0 10px rgba(201,146,42,0.2),
+    0 30px 100px rgba(0,0,0,0.9),
+    inset 0 0 80px rgba(120,70,10,0.12);
+  padding: 70px clamp(24px,6vw,80px) 80px;
+  position: relative;
+  animation: pageIn 1.2s ease-out both;
+}
+@keyframes pageIn {
+  from { opacity:0; transform:translateY(24px) scale(0.99); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* inner border frames */
+.page::before {
+  content:''; position:absolute; inset:16px;
+  border:1px solid rgba(139,90,20,0.35);
+  pointer-events:none;
+}
+.page::after {
+  content:''; position:absolute; inset:22px;
+  border:1px solid rgba(201,146,42,0.18);
+  pointer-events:none;
+}
+
+/* ── CORNER ORNAMENTS ── */
+.corner { position:absolute; width:55px; height:55px; }
+.c-tl { top:8px;  left:8px; }
+.c-tr { top:8px;  right:8px;  transform:scaleX(-1); }
+.c-bl { bottom:8px; left:8px;  transform:scaleY(-1); }
+.c-br { bottom:8px; right:8px; transform:scale(-1); }
+.corner svg { width:100%; height:100%; }
+
+/* ── SECTION DIVIDER ── */
+.divider {
+  display:flex; align-items:center; gap:12px;
+  margin: 36px 0;
+}
+.div-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--gold-dark,#a07020),transparent); }
+.div-gem  {
+  width:9px; height:9px; background:var(--gold); transform:rotate(45deg);
+  box-shadow:0 0 8px var(--gold); flex-shrink:0;
+}
+.div-gem-sm { width:5px; height:5px; }
+.divider.thin .div-line { background:linear-gradient(to right,transparent,rgba(139,90,20,0.4),transparent); }
+
+/* ── HEADINGS ── */
+.section-title {
+  font-family:'Cinzel', serif;
+  font-size: clamp(13px,2.5vw,19px);
+  font-weight:700;
+  color:var(--ink);
+  text-align:center;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin: 36px 0 18px;
+}
+.section-title .title-icon { margin:0 8px; }
+
+.chapter-title {
+  font-family:'Cinzel', serif;
+  font-size:clamp(14px,2.2vw,17px);
+  font-weight:700;
+  color:var(--gold-text);
+  letter-spacing:2px;
+  margin: 28px 0 10px;
+  display:flex; align-items:center; gap:10px;
+}
+.chapter-title::before, .chapter-title::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(to right,transparent,var(--gold-text),transparent);
+}
+
+/* ── BODY TEXT ── */
+.lore {
+  font-size:clamp(14px,2vw,16.5px);
+  line-height:1.95;
+  color:var(--ink-mid);
+  margin-bottom:18px;
+  text-align:justify;
+  text-indent:2em;
+}
+.lore.no-i { text-indent:0; }
+.lore strong { color:var(--ink); font-weight:600; }
+.lore em { font-style:italic; }
+
+.drop-cap::first-letter {
+  font-family:'Cinzel Decorative', serif;
+  font-size:4.8em; font-weight:900;
+  float:left; line-height:0.72;
+  margin:8px 10px 0 0;
+  color:var(--gold);
+  text-shadow:2px 2px 0 rgba(120,70,0,0.4);
+}
+
+/* ── QUOTE ── */
+.quote-block {
+  border-left:3px solid var(--gold);
+  border-right:3px solid var(--gold);
+  padding:20px 28px;
+  margin:28px 16px;
+  background:rgba(201,146,42,0.07);
+  text-align:center;
+  position:relative;
+}
+.quote-block::before {
+  content:'❝'; font-size:48px; color:var(--gold); opacity:0.25;
+  position:absolute; top:-8px; left:10px; line-height:1;
+}
+.quote-text { font-size:clamp(14px,2vw,17px); font-style:italic; color:var(--ink); line-height:1.75; }
+.quote-attr { font-family:'Cinzel',serif; font-size:12px; color:var(--gold); margin-top:10px; letter-spacing:2px; }
+
+/* ── FACTION CARDS ── */
+.factions-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+  gap:20px;
+  margin:22px 0;
+}
+.faction-card {
+  border:1px solid var(--fc,rgba(139,90,20,0.4));
+  padding:22px 18px;
+  background:rgba(255,255,255,0.35);
+  position:relative;
+  transition:transform .25s,box-shadow .25s;
+}
+.faction-card:hover { transform:translateY(-3px); box-shadow:0 10px 30px var(--fglow,rgba(0,0,0,0.2)); }
+.faction-card.fire   { --fc:rgba(200,48,8,0.45);  --fglow:rgba(200,48,8,0.2); }
+.faction-card.water  { --fc:rgba(16,80,160,0.45); --fglow:rgba(16,80,160,0.2); }
+.faction-card.forest { --fc:rgba(26,96,32,0.45);  --fglow:rgba(26,96,32,0.2); }
+.faction-card.earth  { --fc:rgba(122,74,24,0.5);  --fglow:rgba(122,74,24,0.2); }
+.faction-card.neutral{ --fc:rgba(90,74,122,0.45); --fglow:rgba(90,74,122,0.2); }
+
+.faction-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.25) 0%,transparent 60%);
+  pointer-events:none;
+}
+.fc-icon  { font-size:32px; margin-bottom:8px; display:block; }
+.fc-name  {
+  font-family:'Cinzel',serif; font-size:14px; font-weight:700;
+  color:var(--fc-col,var(--gold)); letter-spacing:2px; margin-bottom:3px;
+}
+.faction-card.fire   .fc-name { color:var(--fire); }
+.faction-card.water  .fc-name { color:var(--water); }
+.faction-card.forest .fc-name { color:var(--forest); }
+.faction-card.earth  .fc-name { color:var(--earth); }
+.faction-card.neutral .fc-name{ color:var(--neutral); }
+.fc-realm { font-family:'Cinzel',serif; font-size:10px; color:var(--ink-faded); letter-spacing:1px; font-style:italic; margin-bottom:10px; }
+.fc-desc  { font-size:13px; line-height:1.75; color:var(--ink-mid); }
+
+/* ── IDENTITY TAGS ── */
+.identity-tags {
+  display:flex; flex-wrap:wrap; gap:6px;
+  margin: 4px 0 12px;
+}
+.id-tag {
+  font-family:'Cinzel',serif; font-size:10px; letter-spacing:1px;
+  padding:3px 9px; border:1px solid; border-radius:1px;
+}
+.fire   .id-tag { color:var(--fire);   border-color:rgba(200,48,8,0.4); }
+.water  .id-tag { color:var(--water);  border-color:rgba(16,80,160,0.4); }
+.forest .id-tag { color:var(--forest); border-color:rgba(26,96,32,0.4); }
+.earth  .id-tag { color:var(--earth);  border-color:rgba(122,74,24,0.4); }
+.neutral .id-tag{ color:var(--neutral);border-color:rgba(90,74,122,0.4); }
+
+/* ── BATTLEFIELDS ── */
+.bf-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(170px,1fr));
+  gap:14px; margin:18px 0;
+}
+.bf-card {
+  text-align:center; padding:18px 10px;
+  border:1px solid rgba(139,90,20,0.3);
+  background:rgba(255,255,255,0.3);
+  transition:background .2s;
+}
+.bf-card:hover { background:rgba(255,255,255,0.5); }
+.bf-icon { font-size:28px; margin-bottom:6px; display:block; }
+.bf-name { font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:var(--ink); letter-spacing:1px; margin-bottom:5px; }
+.bf-desc { font-size:11.5px; color:var(--ink-faded); line-height:1.6; }
+
+/* ── CHARACTERS ── */
+.char-group { margin:28px 0; }
+.cg-label {
+  font-family:'Cinzel',serif; font-size:12px; font-weight:700;
+  letter-spacing:3px; text-transform:uppercase;
+  padding:6px 14px; display:inline-block;
+  border-bottom:2px solid; margin-bottom:14px;
+}
+.cg-label.fire   { color:var(--fire);   border-color:var(--fire); }
+.cg-label.water  { color:var(--water);  border-color:var(--water); }
+.cg-label.forest { color:var(--forest); border-color:var(--forest); }
+.cg-label.earth  { color:var(--earth);  border-color:var(--earth); }
+.cg-label.neutral{ color:var(--neutral);border-color:var(--neutral); }
+
+.char-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:12px; }
+.char-card {
+  border:1px solid rgba(139,90,20,0.28);
+  padding:14px 12px;
+  background:rgba(255,255,255,0.32);
+  transition:background .2s;
+}
+.char-card:hover { background:rgba(255,255,255,0.52); }
+.badge {
+  font-family:'Cinzel',serif; font-size:9px; letter-spacing:1.5px;
+  text-transform:uppercase; padding:2px 7px; border:1px solid;
+  display:inline-block; margin-bottom:7px;
+}
+.badge.king    { color:#a07010; border-color:#a07010; background:rgba(160,112,16,0.1); }
+.badge.hand    { color:#704010; border-color:#704010; }
+.badge.general { color:#505050; border-color:#808080; }
+.badge.leader  { color:var(--neutral); border-color:var(--neutral); background:rgba(90,74,122,0.1); }
+.char-name  { font-family:'Cinzel',serif; font-size:12.5px; font-weight:700; color:var(--ink); margin-bottom:3px; line-height:1.3; }
+.char-title { font-size:11px; font-style:italic; color:var(--ink-faded); margin-bottom:4px; }
+.char-bio   { font-size:11.5px; color:var(--ink-mid); line-height:1.6; margin-top:5px; border-top:1px solid rgba(139,90,20,0.2); padding-top:5px; }
+
+/* ── POWER STRUCTURE ── */
+.power-row {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px; margin:18px 0;
+}
+.power-block {
+  border:1px solid rgba(139,90,20,0.3);
+  padding:18px 16px;
+  background:rgba(255,255,255,0.28);
+  text-align:center;
+}
+.pb-num {
+  font-family:'Cinzel Decorative',serif;
+  font-size:28px; color:var(--gold); display:block; margin-bottom:6px;
+  text-shadow:0 0 12px rgba(201,146,42,0.4);
+}
+.pb-title { font-family:'Cinzel',serif; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.pb-desc  { font-size:13px; color:var(--ink-faded); line-height:1.65; }
+
+/* ── CHRONICLES ── */
+.chronicle-list { margin:20px 0; }
+.chronicle-item {
+  padding:20px 20px 20px 24px;
+  border-left:3px solid var(--gold);
+  background:rgba(255,255,255,0.22);
+  margin-bottom:14px;
+  position:relative;
+  transition:background .2s;
+}
+.chronicle-item:hover { background:rgba(255,255,255,0.38); }
+.chronicle-item::before {
+  content:''; position:absolute; left:-7px; top:50%;
+  transform:translateY(-50%) rotate(45deg);
+  width:11px; height:11px; background:var(--gold);
+  box-shadow:0 0 8px var(--gold);
+}
+.chron-num  { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--gold); margin-bottom:4px; }
+.chron-name { font-family:'Cinzel',serif; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+.chron-text { font-size:14px; color:var(--ink-mid); line-height:1.8; text-indent:0; }
+
+/* ── PROPHECY INTERPRETED ── */
+.prophecy-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px; margin:16px 0;
+}
+.prophecy-item {
+  padding:14px 16px;
+  border:1px solid rgba(139,90,20,0.25);
+  background:rgba(255,255,255,0.25);
+  display:flex; gap:12px; align-items:flex-start;
+}
+.pi-icon { font-size:24px; flex-shrink:0; margin-top:2px; }
+.pi-text { font-size:13px; color:var(--ink-mid); line-height:1.7; }
+.pi-text strong { font-family:'Cinzel',serif; font-size:12px; color:var(--ink); display:block; margin-bottom:3px; }
+
+/* ── FOOTER ── */
+.page-footer {
+  text-align:center; margin-top:48px; padding-top:28px;
+  border-top:1px solid rgba(139,90,20,0.25);
+}
+.footer-logo {
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(18px,4vw,28px);
+  font-weight:900; letter-spacing:3px;
+  margin-bottom:6px;
+}
+.footer-thekings { color:var(--gold-bright); text-shadow:0 0 15px rgba(240,192,64,0.4); }
+.footer-tcg      { color:var(--red-tcg); }
+.footer-sub      {
+  font-family:'Cinzel',serif; font-size:11px; letter-spacing:4px;
+  color:var(--gold); opacity:.6; margin-bottom:10px;
+}
+.footer-phrase   { font-style:italic; font-size:14px; color:var(--ink-faded); }
+
+/* ── BOTÃO VOLTAR ── */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--border-gold);
+  padding: 10px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .25s, color .25s, border-color .25s;
+  margin: 24px auto 0;
+  display: flex;
+  width: fit-content;
+}
+.back-btn:hover {
+  background: rgba(201,146,42,0.12);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+.back-btn::before {
+  content: '←';
+  font-size: 15px;
+}
+
+/* ── BOTÃO VOLTAR AO TOPO ── */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 24px;
+  z-index: 999;
+  width: 46px;
+  height: 46px;
+  background: var(--bg-dark);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, background .25s, color .25s;
+  box-shadow: 0 0 14px rgba(201,146,42,0.25);
+}
+.scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.scroll-top-btn:hover {
+  background: rgba(201,146,42,0.15);
+  color: var(--gold-bright);
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px){
+  .page { padding:44px 20px 56px; }
+  .factions-grid { grid-template-columns:1fr; }
+  .char-grid { grid-template-columns:1fr 1fr; }
+  .bf-grid { grid-template-columns:1fr 1fr; }
+  .power-row { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="embers" id="embers"></div>
+
+<div class="wrapper">
+
+  <!-- LOGO HEADER -->
+  <div class="logo-header">
+    <span class="crown-icon">♔</span>
+    <span class="logo-text">
+      <span class="logo-thekings">TheKings</span><span class="logo-tcg">TCG</span>
+    </span>
+    <span class="logo-tagline">✦ Ascensão de um Único Rei ✦</span>
+  </div>
+
+  <!-- BOTÃO VOLTAR -->
+  <div style="text-align:center; margin-bottom: 16px;">
+    <a href="index.html" class="back-btn">Voltar ao Menu</a>
+  </div>
+
+  <!-- PARCHMENT PAGE -->
+  <div class="page">
+
+    <!-- Corner ornaments -->
+    <div class="corner c-tl"><svg viewBox="0 0 55 55" fill="none"><path d="M4 4 L52 4" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L4 52" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L22 4 L4 22 Z" stroke="#c9922a" stroke-width="0.8" fill="none"/><circle cx="4" cy="4" r="3" fill="#c9922a"/><path d="M18 4 L4 18" stroke="#c9922a" stroke-width="0.5" opacity="0.5"/></svg></div>
+    <div class="corner c-tr"><svg viewBox="0 0 55 55" fill="none"><path d="M4 4 L52 4" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L4 52" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L22 4 L4 22 Z" stroke="#c9922a" stroke-width="0.8" fill="none"/><circle cx="4" cy="4" r="3" fill="#c9922a"/></svg></div>
+    <div class="corner c-bl"><svg viewBox="0 0 55 55" fill="none"><path d="M4 4 L52 4" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L4 52" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L22 4 L4 22 Z" stroke="#c9922a" stroke-width="0.8" fill="none"/><circle cx="4" cy="4" r="3" fill="#c9922a"/></svg></div>
+    <div class="corner c-br"><svg viewBox="0 0 55 55" fill="none"><path d="M4 4 L52 4" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L4 52" stroke="#c9922a" stroke-width="1.8"/><path d="M4 4 L22 4 L4 22 Z" stroke="#c9922a" stroke-width="0.8" fill="none"/><circle cx="4" cy="4" r="3" fill="#c9922a"/></svg></div>
+
+    <!-- ════════════════ PRÓLOGO ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> O Mundo de TheKings TCG <span class="title-icon">⁕</span></div>
+
+    <p class="lore drop-cap">
+      <strong>Em um mundo antigo</strong> dividido por forças primordiais, quatro grandes coroas governam povos moldados pelos elementos: Fogo, Água, Floresta e Terra. Durante eras, cada reino prosperou isolado, protegido por seus próprios reis, suas próprias leis e sua própria visão de poder.
+    </p>
+    <p class="lore no-i">Mas a paz nunca foi verdadeira.</p>
+    <p class="lore no-i">
+      Sob a superfície desse mundo, sempre existiu uma antiga profecia gravada nos ossos da terra — o <em>Pacto Primordial</em>. Relíquias esquecidas, ruínas reativadas e inscrições ancestrais apontavam a mesma verdade: o mundo não suportaria para sempre quatro tronos rivais.
+    </p>
+
+    <div class="quote-block">
+      <p class="quote-text">
+        "Quando as coroas colidirem, apenas um soberano se erguerá acima de todos,<br>
+        e sob seu nome as raças serão unificadas… pela glória ou pela ruína."
+      </p>
+      <p class="quote-attr">— A Profecia Primordial</p>
+    </div>
+
+    <p class="lore no-i">
+      Essa profecia não trouxe esperança. Trouxe <strong>ambição</strong>. Agora, os reis não disputam apenas território — eles lutam pelo direito de se tornar o único Rei soberano de todas as raças. Não é apenas uma guerra por domínio. É uma guerra para decidir o futuro do mundo.
+    </p>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- ════════════════ VASTIDÕES ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> As Vastidões — Territórios da Guerra <span class="title-icon">⁕</span></div>
+    <p class="lore no-i" style="margin-bottom:20px;">
+      O mundo é formado por <strong>Vastidões Elementais</strong> — regiões marcadas pela essência de cada coroa. São os campos onde a guerra é travada e os destinos são decididos. Há apenas um lugar que permanece intocado pelo conflito.
+    </p>
+
+    <div class="bf-grid">
+      <div class="bf-card">
+        <span class="bf-icon">🔥</span>
+        <div class="bf-name">Vastidão Flamejante</div>
+        <div class="bf-desc">Um reino de cinzas vivas, vulcões adormecidos e montanhas partidas pelo calor eterno. O poder é respeitado acima de tudo.</div>
+      </div>
+      <div class="bf-card">
+        <span class="bf-icon">💧</span>
+        <div class="bf-name">Vastidão Alagada</div>
+        <div class="bf-desc">Mares internos, ruínas submersas e cidades de coral. A força vem da paciência, da adaptação e da pressão inevitável.</div>
+      </div>
+      <div class="bf-card">
+        <span class="bf-icon">🌵</span>
+        <div class="bf-name">Vastidão Selvagem</div>
+        <div class="bf-desc">Florestas ancestrais, raízes colossais, névoas verdes. A natureza escolhe quem vive… e quem desaparece.</div>
+      </div>
+      <div class="bf-card">
+        <span class="bf-icon">🪨</span>
+        <div class="bf-name">Vastidão Árida</div>
+        <div class="bf-desc">Planícies secas, cânions antigos, fortalezas na pedra. O poder é firme, pesado e impossível de mover.</div>
+      </div>
+      <div class="bf-card">
+        <span class="bf-icon">⭐</span>
+        <div class="bf-name">Terras Esquecidas</div>
+        <div class="bf-desc">Solo sagrado dos que abandonaram as coroas. Nenhuma batalha oficial foi travada aqui. Apenas os Errantes habitam este silêncio.</div>
+      </div>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- ════════════════ AS COROAS ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> As Quatro Coroas e os Errantes <span class="title-icon">⁕</span></div>
+
+    <div class="factions-grid">
+
+      <div class="faction-card fire">
+        <span class="fc-icon">🔥</span>
+        <div class="fc-name">Reino do Fogo</div>
+        <div class="fc-realm">Vastidão Flamejante</div>
+        <div class="identity-tags fire">
+          <span class="id-tag">Conquista</span><span class="id-tag">Fúria</span><span class="id-tag">Glória</span><span class="id-tag">Supremacia</span>
+        </div>
+        <p class="fc-desc">
+          <strong>Ignivar</strong> não busca apenas vencer — ele deseja esmagar qualquer oposição até que reste apenas um nome. Para ele, a unificação é uma prova de superioridade. Apenas o fogo possui a força necessária para purificar o mundo da fraqueza e da divisão. Seu exército avança como uma devastação: não há recuo, não há negociação.
+        </p>
+      </div>
+
+      <div class="faction-card water">
+        <span class="fc-icon">💧</span>
+        <div class="fc-name">Reino da Água</div>
+        <div class="fc-realm">Vastidão Alagada</div>
+        <div class="identity-tags water">
+          <span class="id-tag">Estratégia</span><span class="id-tag">Profundidade</span><span class="id-tag">Pressão</span><span class="id-tag">Controle</span>
+        </div>
+        <p class="fc-desc">
+          <strong>Thalassor</strong> é paciente e calculista. Ele não crê na força bruta — o verdadeiro soberano domina o fluxo do mundo, moldando guerras como marés moldam continentes. Seu desejo não é destruir, mas submeter a uma ordem inevitável. Os exércitos da Água vencem quando o inimigo percebe tarde demais que já foi cercado.
+        </p>
+      </div>
+
+      <div class="faction-card forest">
+        <span class="fc-icon">🌿</span>
+        <div class="fc-name">Reino da Floresta</div>
+        <div class="fc-realm">Vastidão Selvagem</div>
+        <div class="identity-tags forest">
+          <span class="id-tag">Equilíbrio</span><span class="id-tag">Ancestralidade</span><span class="id-tag">Preservação</span><span class="id-tag">Vida</span>
+        </div>
+        <p class="fc-desc">
+          <strong>Sylpharis</strong> não luta por ambição vazia. Ela acredita que a unificação só é justa sob a proteção da vida e da memória ancestral. Governar não é dominar — é preservar. Ainda assim, quando a guerra chegou às raízes de seu reino, ela aceitou que a paz só sobreviveria se sua coroa prevalecesse.
+        </p>
+      </div>
+
+      <div class="faction-card earth">
+        <span class="fc-icon">🪨</span>
+        <div class="fc-name">Reino da Terra</div>
+        <div class="fc-realm">Vastidão Árida</div>
+        <div class="identity-tags earth">
+          <span class="id-tag">Resistência</span><span class="id-tag">Honra</span><span class="id-tag">Firmeza</span><span class="id-tag">Permanência</span>
+        </div>
+        <p class="fc-desc">
+          <strong>Grondar</strong> é a personificação da resistência. Não acredita em pressa nem em impulsividade. O rei soberano deve ser inabalável, capaz de suportar o peso de todas as raças sem se curvar. Sua coroa não foi feita para brilhar — foi feita para durar. Os outros reis são instáveis demais para carregar o mundo unificado.
+        </p>
+      </div>
+
+      <div class="faction-card neutral">
+        <span class="fc-icon">⭐</span>
+        <div class="fc-name">Os Errantes — Neutros</div>
+        <div class="fc-realm">Terras Esquecidas</div>
+        <div class="identity-tags neutral">
+          <span class="id-tag">Liberdade</span><span class="id-tag">Exílio</span><span class="id-tag">Ruptura</span><span class="id-tag">Escolha</span>
+        </div>
+        <p class="fc-desc">
+          <strong>Azhakar</strong> não usa coroa — e a rejeitou. Ele abandonou a ideia de unificação pela guerra, pois nenhuma das coroas deseja realmente unir as raças: elas desejam governá-las. Nas Terras Esquecidas, reuniu desertores, renegados e guerreiros de todos os elementos. Eles não lutam pela coroa. Lutam para impedir que ela consuma tudo.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- ════════════════ ESTRUTURA DE PODER ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> A Estrutura do Poder <span class="title-icon">⁕</span></div>
+    <p class="lore no-i" style="margin-bottom:18px;">Em cada reino, o poder se organiza em três pilares fundamentais — cada um essencial para que o trono permaneça de pé durante a guerra.</p>
+
+    <div class="power-row">
+      <div class="power-block">
+        <span class="pb-num">I</span>
+        <div class="pb-title">O Rei</div>
+        <div class="pb-desc">A figura máxima do reino. Representa a visão de unificação, a legitimidade da coroa e o direito de governar sobre todas as raças.</div>
+      </div>
+      <div class="power-block">
+        <span class="pb-num">II</span>
+        <div class="pb-title">A Mão do Rei</div>
+        <div class="pb-desc">Não é apenas um conselheiro. É o guardião da vontade do soberano, o executor dos decretos. Mantém o trono de pé quando o rei está em guerra.</div>
+      </div>
+      <div class="power-block">
+        <span class="pb-num">III</span>
+        <div class="pb-title">Os Generais</div>
+        <div class="pb-desc">Os comandantes da linha de frente. Conduzem exércitos, defendem territórios e representam o aspecto mais brutal de cada reino nos campos de batalha.</div>
+      </div>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- ════════════════ PERSONAGENS ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> Os Protagonistas da Guerra <span class="title-icon">⁕</span></div>
+
+    <!-- FOGO -->
+    <div class="char-group">
+      <div class="cg-label fire">🔥 Fogo</div>
+      <div class="char-grid">
+        <div class="char-card">
+          <span class="badge king">♔ Rei</span>
+          <div class="char-name">Ignivar</div>
+          <div class="char-title">Rei da Coroa Flamejante</div>
+          <div class="char-bio">Governa com imponência absoluta. Acredita que apenas o fogo possui a força para purificar o mundo — pela destruição se necessário.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge hand">✦ Mão do Rei</span>
+          <div class="char-name">Valtherion</div>
+          <div class="char-title">Chama da Coroa · Demônio</div>
+          <div class="char-bio">Astuto e cruel. Executa a vontade de Ignivar sem hesitação. Se o rei é a coroa, Valtherion é a chama que queima tudo ao redor.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Drakarion</div>
+          <div class="char-title">Asa Rubra</div>
+          <div class="char-bio">Seus exércitos são feitos para romper linhas, espalhar medo e consumir tudo que resiste.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Drakthazar</div>
+          <div class="char-title">O Híbrido</div>
+          <div class="char-bio">Não marcha — avança como uma devastação. O terror que antecede o exército de Ignivar.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÁGUA -->
+    <div class="char-group">
+      <div class="cg-label water">💧 Água</div>
+      <div class="char-grid">
+        <div class="char-card">
+          <span class="badge king">♔ Rei</span>
+          <div class="char-name">Thalassor</div>
+          <div class="char-title">Rei das Marés Eternas · Tritão</div>
+          <div class="char-bio">Paciente e calculista. Domina o fluxo da batalha, moldando guerras como marés moldam continentes.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge hand">✦ Mão do Rei</span>
+          <div class="char-name">Nerith</div>
+          <div class="char-title">Voz das Profundezas · Elfo Aquático</div>
+          <div class="char-bio">Conselheiro, diplomata e executor silencioso. Parece calmo antes de afogar. O mais perigoso dos aliados.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Marilis</div>
+          <div class="char-title">Tempestade Abissal</div>
+          <div class="char-bio">Controla o campo com pressão constante. Vence quando o inimigo percebe que já foi cercado.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Hydrus</div>
+          <div class="char-title">O Escudo dos Mares</div>
+          <div class="char-bio">Resistência absoluta. Não vence no impulso — vence sustentando o que outros não conseguem.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLORESTA -->
+    <div class="char-group">
+      <div class="cg-label forest">🌿 Floresta</div>
+      <div class="char-grid">
+        <div class="char-card">
+          <span class="badge king">♔ Rainha</span>
+          <div class="char-name">Sylpharis</div>
+          <div class="char-title">Rainha da Raiz Ancestral · Elfa</div>
+          <div class="char-bio">Acredita que governar é preservar. A floresta não esquece — e não perdoa. Sua coroa é feita de memória ancestral.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge hand">✦ Mão do Rei</span>
+          <div class="char-name">Kaelthorn</div>
+          <div class="char-title">Guardião da Lua Verde · Lobisomem</div>
+          <div class="char-bio">Metade instinto, metade disciplina. Onde Sylpharis pensa, Kaelthorn age. Força selvagem a serviço da ordem natural.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Faelar</div>
+          <div class="char-title">Lâmina Verde</div>
+          <div class="char-bio">Silencioso, letal e inevitável. Não precisa dominar o campo — faz o campo lutar por ele.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Thalor</div>
+          <div class="char-title">Sentinela do Bosque</div>
+          <div class="char-bio">Guarda as fronteiras onde as árvores têm memória e as sombras sussurram segredos antigos.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERRA -->
+    <div class="char-group">
+      <div class="cg-label earth">🪨 Terra</div>
+      <div class="char-grid">
+        <div class="char-card">
+          <span class="badge king">♔ Rei</span>
+          <div class="char-name">Grondar</div>
+          <div class="char-title">Rei da Coroa Rochosa · Anão</div>
+          <div class="char-bio">Inabalável, sem pressa. Sua coroa não brilha — dura. A pedra resiste ao tempo, à guerra e ao caos.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge hand">✦ Mão do Rei</span>
+          <div class="char-name">Durmak</div>
+          <div class="char-title">Martelo da Coroa · Golem</div>
+          <div class="char-bio">A muralha viva do trono rochoso. Não questiona, não hesita, não recua. O golpe que abre caminho para Grondar.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ General</span>
+          <div class="char-name">Brumgar</div>
+          <div class="char-title">Colosso de Pedra</div>
+          <div class="char-bio">Seus exércitos marcham como avalanches. Não são rápidos — mas quando chegam, tornam-se impossíveis de deter.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEUTRO -->
+    <div class="char-group">
+      <div class="cg-label neutral">⭐ Neutros — Os Errantes</div>
+      <div class="char-grid">
+        <div class="char-card">
+          <span class="badge leader">✧ Líder</span>
+          <div class="char-name">Azhakar</div>
+          <div class="char-title">O Dragão Exilado · Dragão</div>
+          <div class="char-bio">Rejeitou a coroa. Reuniu os esquecidos de todos os elementos para impedir que a guerra consuma o mundo inteiro.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge hand">✦ Mão do Líder</span>
+          <div class="char-name">Zeraphion</div>
+          <div class="char-title">O Dissidente · Demônio</div>
+          <div class="char-bio">Conhece por dentro as estruturas de poder das coroas. Inteligente e implacável, une os que perderam a fé nos reis.</div>
+        </div>
+        <div class="char-card">
+          <span class="badge general">⚔ Errante</span>
+          <div class="char-name">Ravix</div>
+          <div class="char-title">O Errante</div>
+          <div class="char-bio">Uma lenda viva. Surge onde há injustiça e guerra sem honra. Não luta por glória — luta por escolha. E nas Terras Esquecidas, escolha vale mais que qualquer coroa.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- ════════════════ A PROFECIA INTERPRETADA ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> A Profecia — Cinco Leituras, Um Destino <span class="title-icon">⁕</span></div>
+    <p class="lore no-i" style="margin-bottom:18px;">Quando os sinais antigos emergiram das ruínas do mundo, cada trono ouviu a mesma profecia — mas nenhum ouviu o mesmo significado.</p>
+
+    <div class="prophecy-grid">
+      <div class="prophecy-item">
+        <span class="pi-icon">🔥</span>
+        <div class="pi-text"><strong>Ignivar</strong>Viu nela a permissão para conquistar. A profecia como licença para purificar o mundo pelo fogo.</div>
+      </div>
+      <div class="prophecy-item">
+        <span class="pi-icon">💧</span>
+        <div class="pi-text"><strong>Thalassor</strong>Viu um chamado para governar com ordem. A profecia como corrente inevitável a ser controlada.</div>
+      </div>
+      <div class="prophecy-item">
+        <span class="pi-icon">🌿</span>
+        <div class="pi-text"><strong>Sylpharis</strong>Viu a necessidade de proteger o equilíbrio. A profecia como responsabilidade da vida sobre a guerra.</div>
+      </div>
+      <div class="prophecy-item">
+        <span class="pi-icon">🪨</span>
+        <div class="pi-text"><strong>Grondar</strong>Viu a obrigação de sustentar a estabilidade. A profecia como dever eterno da pedra que nunca cede.</div>
+      </div>
+      <div class="prophecy-item">
+        <span class="pi-icon">⭐</span>
+        <div class="pi-text"><strong>Azhakar</strong>Viu um aviso de destruição. A profecia não como chamado ao poder — mas como alerta de que todos erram.</div>
+      </div>
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- ════════════════ CRÔNICAS ════════════════ -->
+    <div class="section-title"><span class="title-icon">⁕</span> Crônicas de TheKings TCG <span class="title-icon">⁕</span></div>
+
+    <div class="chronicle-list">
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA I</div>
+        <div class="chron-name">As Coroas Despertam</div>
+        <p class="chron-text">Quando os sinais antigos emergiram das ruínas do mundo, os reis entenderam que a era da separação havia chegado ao fim. Cada trono ouviu a mesma profecia, mas nenhum ouviu o mesmo significado. Das montanhas em chamas às cidades afundadas, das florestas eternas às muralhas de pedra — a guerra deixou de ser uma possibilidade. Tornou-se destino.</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA II</div>
+        <div class="chron-name">O Fogo Exige o Trono</div>
+        <p class="chron-text">Ignivar, Rei da Coroa Flamejante, foi o primeiro a declarar que não haveria paz entre iguais. Para ele, um mundo dividido é um mundo fraco. Sob suas asas ardentes e sob a voz cruel de Valtherion, o Fogo avançou com a certeza de que apenas a destruição poderia abrir caminho para a verdadeira unificação.</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA III</div>
+        <div class="chron-name">As Marés se Erguem</div>
+        <p class="chron-text">Thalassor não respondeu com fúria, mas com cálculo. O rei das Marés Eternas viu na guerra uma corrente inevitável. Ao lado de Nerith, sua voz das profundezas, preparou exércitos para dominar não pelo caos, mas pela pressão contínua, pela estratégia e pelo controle absoluto do fluxo da batalha.</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA IV</div>
+        <div class="chron-name">A Floresta Não se Curva</div>
+        <p class="chron-text">Sylpharis, Rainha da Raiz Ancestral, recusou-se a deixar que reis ambiciosos decidissem o destino da vida. Com Kaelthorn à sua direita e os generais do bosque à frente, a Floresta ergueu raízes, lâminas e criaturas antigas para mostrar que a natureza não aceitaria ser reduzida a um reino conquistado.</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA V</div>
+        <div class="chron-name">A Rocha Responde</div>
+        <p class="chron-text">Grondar permaneceu em silêncio enquanto os outros tronos se agitavam. Mas quando a guerra alcançou a Vastidão Árida, o Rei da Coroa Rochosa compreendeu que resistir já não bastava. Com Durmak e Brumgar, a Terra marchou não para conquistar rapidamente, mas para permanecer até que todos os outros desmoronassem.</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA VI</div>
+        <div class="chron-name">O Exilado sem Coroa</div>
+        <p class="chron-text">Nas Terras Esquecidas, longe das promessas de glória, Azhakar observava o mundo se partir. O Dragão Exilado conhecia a ambição por trás dos tronos e rejeitava o título de rei soberano. Ao lado de Zeraphion e do errante Ravix, reuniu os esquecidos, os traídos e os livres. Eles não lutavam pela coroa. Lutavam para impedir que qualquer coroa consumisse tudo.</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA VII</div>
+        <div class="chron-name">Os Campos Decidem</div>
+        <p class="chron-text">As Vastidões tornaram-se arenas de destino. Cada batalha travada já não representava apenas vitória ou derrota, mas a queda gradual de um ideal. Em cada general derrotado, em cada mão do rei abatida, o mundo se aproximava da pergunta final: quem será digno de governar todas as raças?</p>
+      </div>
+
+      <div class="chronicle-item">
+        <div class="chron-num">CRÔNICA VIII</div>
+        <div class="chron-name">A Ascensão de um Único Rei</div>
+        <p class="chron-text">No fim da guerra, apenas um nome poderá permanecer acima de todos. Mas quando o último trono se erguer, a unificação revelará sua verdade: foi ela salvação… ou o início de um reinado absoluto do qual ninguém poderá escapar? Talvez o maior perigo não seja a guerra em si — e sim o que acontecerá quando ela terminar.</p>
+      </div>
+
+    </div>
+
+    <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+    <!-- FRASE CENTRAL -->
+    <div class="quote-block">
+      <p class="quote-text" style="font-size:clamp(15px,2.5vw,20px); font-weight:500;">
+        "Quando as coroas colidem,<br>apenas um soberano pode permanecer."
+      </p>
+      <p class="quote-attr">— Frase Central · TheKings TCG</p>
+    </div>
+
+    <!-- BOTÃO VOLTAR AO MENU (final da página) -->
+    <div style="text-align:center; margin: 40px 0 0;">
+      <a href="index.html" class="back-btn">Voltar ao Menu</a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="page-footer">
+      <div class="footer-logo">
+        <span class="footer-thekings">TheKings</span><span class="footer-tcg">TCG</span>
+      </div>
+      <div class="footer-sub">✦ Crônicas da Unificação ✦</div>
+      <div class="footer-phrase">Dev. por Edson C.S.F. · Criação: Janeiro de 2026</div>
+    </div>
+
+  </div><!-- .page -->
+</div><!-- .wrapper -->
+
+<!-- BOTÃO VOLTAR AO TOPO -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">↑</button>
+
+<script>
+  // Mostrar/ocultar botão ao rolar
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTopBtn');
+    btn.classList.toggle('visible', window.scrollY > 300);
+  });
+</script>
+
+<script>
+  // Ember particles
+  const ec = document.getElementById('embers');
+  for(let i=0;i<40;i++){
+    const e=document.createElement('div');
+    e.className='ember';
+    const sz=1+Math.random()*3;
+    const d=(Math.random()-.5)*140;
+    const dur=7+Math.random()*14;
+    const delay=Math.random()*20;
+    e.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${Math.random()>.5?'#f0c040':'#c83008'};--d:${d}px;animation-duration:${dur}s;animation-delay:${delay}s`;
+    ec.appendChild(e);
+  }
+
+  // Fade-in on scroll
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }});
+  },{threshold:0.1});
+  document.querySelectorAll('.chronicle-item,.faction-card,.char-card,.bf-card,.power-block,.prophecy-item').forEach(el=>{
+    el.style.cssText+='opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
+ 

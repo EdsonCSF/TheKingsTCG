@@ -1,0 +1,1078 @@
+/* --- RESET & VARIÁVEIS --- */
+:root {
+    --bg-color: #0f0f13;
+    --gold: #ffd700;
+    --panel: #1a1a20;
+    --text: #e0e0e0;
+    --fire: #ff4500; --water: #00bfff; --forest: #32cd32; --earth: #8B4513; --neutral: #ffffff;
+}
+
+* { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text);
+
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: flex-start;  /* 🔥 muda aqui */
+    align-items: stretch;         /* 🔥 muda aqui */
+}
+/* --- UTILITÁRIOS --- */
+.hidden { display: none !important; }
+button {
+    background: linear-gradient(to bottom, #d41132, #7a0a1e); border: 1px solid #fff;
+    color: #fff; font-weight: bold; border-radius: 4px; padding: 6px 12px; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5); margin: 2px;
+    white-space: nowrap;
+}
+button:active { opacity: 0.8; }
+button:disabled { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; }
+
+.btn-exit {
+    background: linear-gradient(to bottom, #d41132, #7a0a1e); border: 1px solid #fff;
+    color: #fff; font-weight: bold; border-radius: 4px; padding: 6px 12px; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.btn-exit:active { opacity: 0.8; }
+
+/* --- SISTEMA DE TELAS --- */
+.screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; z-index: 10;
+    background: var(--bg-color);
+}
+
+/* --- COLEÇÃO & LOJA --- */
+.top-bar {
+    height: 50px; background: var(--panel); border-bottom: 1px solid #333;
+    display: flex; justify-content: space-between; align-items: center; padding: 0 10px; flex-shrink: 0;
+}
+.content-scroll { flex: 1; overflow-y: auto; padding: 10px; }
+.card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;
+    padding-bottom: 80px;
+}
+.deck-editor-container h3 { text-align: center; margin: 10px 0; color: var(--gold); }
+.deck-editor-container p { text-align: center; font-size: 0.9rem; margin-top: 15px; color: #aaa; }
+
+.deck-badge {
+    position: absolute; top: 2px; right: 2px;
+    background: #000; border: 1px solid gold;
+    color: #fff; font-size: 0.6rem; padding: 2px 4px;
+    border-radius: 4px; pointer-events: none; font-weight: bold;
+}
+
+/* --- TELA DE BATALHA --- */
+#battle-screen { height: 100%; }
+
+.hud {
+    height: 40px; background: rgba(0,0,0,0.7); display: flex; justify-content: space-between; align-items: center; padding: 0 10px;
+    border-bottom: 1px solid #333; flex-shrink: 0; font-size: 0.9rem;
+}
+.score { font-weight: bold; }
+.s-p { color: #5f5; } .s-e { color: #f55; }
+
+.enemy-area {
+    height: 60px;
+    background: rgba(10, 10, 10, 0.6);
+    display: flex; align-items: center; padding: 0 10px; overflow-x: auto; flex-shrink: 0; border-bottom: 2px solid #444;
+}
+.e-card-mini {
+    display: block !important;
+    width: 40px; 
+    height: 60px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #333;
+}
+
+.e-card-mini[data-el="fire"]    { background-image: url('../Img/backcards/fire.webp'); }
+.e-card-mini[data-el="water"]   { background-image: url('../Img/backcards/water.webp'); }
+.e-card-mini[data-el="forest"]   { background-image: url('../Img/backcards/forest.webp'); }
+.e-card-mini[data-el="earth"]   { background-image: url('../Img/backcards/earth.webp'); }
+.e-card-mini[data-el="neutral"] { background-image: url('../Img/backcards/neutral.webp'); }
+
+.e-card-mini div {
+    display: none; 
+}
+
+.arena {
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+    padding: 5px; 
+    overflow-y: auto; 
+    justify-content: center;
+    background: transparent;
+}
+
+.field {
+    flex: 1; 
+    background-color: transparent; 
+    border-radius: 8px; 
+    border: none; 
+    position: relative; 
+    min-height: 250px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    padding: 5px;
+    gap: 5px;
+}
+
+.player-field-rows, .enemy-field-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.card-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    height: 115px;
+    padding: 2px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.card-slot {
+    width: 75px;
+    height: 110px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.field-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    background: #222; 
+    border: 1px solid #666; 
+    background-size: cover; 
+    background-position: center;
+    position: relative; 
+    box-shadow: 0 2px 3px rgba(0,0,0,0.6);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.field-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--gold);
+    z-index: 10;
+}
+
+.field-card-info {
+    position: absolute; top: 1px; right: 1px; background: rgba(0,0,0,0.9);
+    color: #fff; font-weight: bold; font-size: 0.6rem; padding: 1px 2px; border-radius: 2px; border: 1px solid #fff; display: flex; justify-content: center;
+    pointer-events: none;
+}
+
+.field-card-mode {
+    position: absolute; top: 1px; left: 1px; background: rgba(0,0,0,0.9);
+    color: #fff; font-weight: bold; font-size: 0.6rem; padding: 1px 2px; border-radius: 2px; border: 1px solid #fff;
+    pointer-events: none;
+}
+.mode-atk { color: var(--gold); }
+.mode-def { color: #4da6ff; }
+
+.player-area {
+    height: auto; min-height: 140px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+    border-top: 1px solid #333; flex-shrink: 0;
+}
+.hand-scroll {
+    display: flex; align-items: flex-end; overflow-x: auto; width: 100%; padding: 0 10px;
+}
+
+.flying-card{
+    width:80px;
+    height:110px;
+    background-size:cover;
+    background-position:center;
+    border-radius:8px;
+    pointer-events:none;
+    z-index:9999;
+    box-shadow:0 14px 30px rgba(0,0,0,0.6);
+}
+
+.card {
+    width: 80px; height: 110px; background: #222; border-radius: 5px;
+    border: 2px solid #555; display: flex; flex-direction: column; justify-content: flex-end;
+    background-size: cover; background-position: center; position: relative; flex-shrink: 0;
+    margin-right: 5px; box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+}
+@media (max-width: 400px) {
+    .card { width: 60px; height: 85px; }
+    .card-slot { width: 55px; height: 80px; }
+    .card-row { height: 85px; }
+}
+
+.card.selected { 
+    border-color: var(--gold); 
+    box-shadow: 0 0 15px var(--gold); 
+    transform: translateY(-10px); 
+    z-index: 10; 
+}
+/* --- CORREÇÃO: cartas na mao maior --- */
+.card.focused {
+    position: fixed;
+    bottom: 160px;
+    left: 50%;
+
+    width: 240px;
+    height: 330px;
+
+    transform: translateX(-50%);
+    z-index: 50000;
+
+    box-shadow:
+        0 0 40px rgba(255,215,0,0.9),
+        0 30px 80px rgba(0,0,0,0.9);
+
+    border-color: #fff;
+    transition: all 0.25s ease;
+}
+
+
+
+.card-info {
+    background: rgba(0,0,0,0.9); padding: 2px 4px; border-radius: 3px;
+    font-size: 0.7rem; text-align: center; color: #fff;
+    display: flex; justify-content: space-around; width: 100%;
+    pointer-events: none;
+}
+.card-atk { color: var(--gold); font-weight: bold; font-size: 0.8rem; }
+.card-def { color: #4da6ff; font-weight: bold; font-size: 0.7rem; }
+
+#modal {
+    position: fixed; top:0; left:0; width:100%; height: 100%;
+    background: rgba(0,0,0,0.95); z-index: 100;
+    display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+}
+#modal h1 { font-size: 2.5rem; margin-bottom: 10px; }
+
+.toast-cont { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 200; text-align: center; }
+.toast { background: rgba(0,0,0,0.8); color: #fff; padding: 5px 10px; border-radius: 10px; margin-bottom: 5px; border: 1px solid var(--gold); animation: fade 1.5s forwards; }
+@keyframes fade { 0%{opacity:0;} 20%{opacity:1;} 80%{opacity:1;} 100%{opacity:0;} }
+
+#card-preview {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.preview-card {
+    width: 340px;
+    height: 480px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    box-shadow:
+      0 0 40px rgba(255,215,0,0.6),
+      0 20px 60px rgba(0,0,0,0.9);
+    animation: previewIn 0.35s ease-out forwards;
+    border: none;
+}
+
+@keyframes previewIn {
+    from { transform: scale(0.6) translateY(80px); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* --- CORREÇÃO: BACKGROUND FULLSCREEN E FIXO --- */
+#battle-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 1s ease-in-out;
+    filter: brightness(0.9);
+    pointer-events: none;
+}
+
+#battle-screen {
+    background: transparent !important;
+}
+
+.hud, .player-area {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(5px);
+    position: relative;
+    z-index: 1;
+}
+
+.arena, .enemy-area {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================ */
+/* BARRA CENTRAL DE INTERFACE   */
+/* ============================ */
+
+#center-ui-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    max-width: 480px;
+    height: 64px;
+    margin: 8px auto;
+    padding: 0 12px;
+
+    background-image: url('../img/icones/faixa_central.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 105% 125%;
+
+    border: none;
+    box-shadow: 0 0 18px rgba(0,0,0,0.9);
+
+    border-radius: 6px;
+    position: relative;
+    z-index: 10;
+    overflow: visible;
+}
+
+/* remove os enfeites dourados da faixa */
+#center-ui-strip::before,
+#center-ui-strip::after {
+    display: none;
+}
+
+/* Timer Total (Esquerda) */
+.center-left {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    order: 3;
+    padding-left: 0;
+    padding-right: 18px;
+}
+
+.battle-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.75);
+    background: rgba(0,0,0,0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+}
+
+.battle-timer .material-symbols-outlined {
+    font-size: 0.9rem;
+    color: var(--gold);
+    opacity: 0.8;
+}
+
+/* Centro — Nome do campo + MD3 */
+.center-middle {
+    flex: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    order: 2;
+}
+
+.field-name {
+    font-size: 0.80rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow:
+        0 0 10px rgba(255,215,0,0.5),
+        0 2px 4px #000;
+    font-family: 'Cinzel', serif;
+    white-space: nowrap;
+}
+
+#md3-score {
+    font-size: 0.80rem !important;
+    color: rgba(255,215,0,0.85) !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-family: 'Cinzel', serif;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.35);
+    padding: 1px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.center-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    order: 1;
+    padding-left: 18px;
+    padding-right: 0;
+}
+
+/* medalhão medieval */
+.turn-timer {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.10), transparent 30%),
+        radial-gradient(circle, #4a3420 0%, #2d1f12 58%, #161009 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(92, 63, 32, 0.95);
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,240,210,0.10),
+        inset 0 -2px 4px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+
+/* aro interno discreto */
+.turn-timer::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    border: 1px solid rgba(160,120,70,0.45);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* fill do countdown */
+.turn-timer-fill {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(rgba(193,154,82,0.95) 360deg, rgba(42,28,16,0.2) 0deg);
+    transition: background 1s linear;
+    z-index: 1;
+    opacity: 0.34;
+}
+
+/* centro do medalhão */
+.turn-timer-core {
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.08), transparent 35%),
+        radial-gradient(circle, #2a1d11 0%, #1a120b 100%);
+    z-index: 3;
+}
+
+.turn-timer-shine {
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 28%, rgba(255,255,255,0.08), transparent 60%);
+    z-index: 4;
+    pointer-events: none;
+}
+
+/* TEXTO */
+.turn-timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #f0d7a0;
+    font-weight: bold;
+    font-size: 0.95rem;
+    font-family: 'Cinzel', serif;
+    text-shadow: 0 1px 2px #000, 0 0 4px rgba(0,0,0,0.45);
+    z-index: 10;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+/* pressão */
+.turn-timer.pressure {
+    animation: pulse-orbe 0.8s ease-in-out infinite;
+    border-color: rgba(120,40,20,0.95);
+    box-shadow:
+        0 0 8px rgba(255,69,0,0.20),
+        0 3px 8px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,220,180,0.08),
+        inset 0 -2px 4px rgba(0,0,0,0.35);
+}
+
+.turn-timer.pressure::before {
+    border-color: rgba(190,90,40,0.45);
+}
+
+.turn-timer.pressure .turn-timer-fill {
+    background: conic-gradient(rgba(255,90,40,0.95) 360deg, rgba(42,18,12,0.2) 0deg);
+    opacity: 0.36;
+}
+
+.turn-timer.pressure .turn-timer-core {
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.07), transparent 35%),
+        radial-gradient(circle, #35180f 0%, #1d0d08 100%);
+}
+
+.turn-timer.pressure .turn-timer-text {
+    color: #ffb08a;
+    text-shadow: 0 1px 2px #000, 0 0 5px rgba(255,69,0,0.18);
+}
+
+@keyframes pulse-orbe {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+/* --- ANIMAÇÃO DE REVELAÇÃO (FLIP) E DESTAQUES --- */
+@keyframes flipCard {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(90deg); opacity: 0.7; }
+    100% { transform: rotateY(0deg); opacity: 1; }
+}
+
+.field-card.revealing {
+    animation: flipCard 0.6s ease-in-out;
+}
+
+.field-card.face-down {
+    background-size: cover;
+    border: 2px solid #555 !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+.field-card.face-down .field-card-mode,
+.field-card.face-down .field-card-info {
+    display: none !important;
+}
+
+.field-card.reveal-highlight {
+    animation: pulse-gold 1.5s infinite;
+}
+
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.9); }
+    100% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+}
+
+/* =================== */
+/* ESTILO DO BOTÃO DE AÇÃO (FINALIZAR TURNO) */
+/* =================== */
+
+#btn-end {
+    /* Aparência Principal */
+    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); /* Gradiente Dourado */
+    border: 2px solid #ffffff; /* Borda Branca forte */
+    border-radius: 8px;
+    
+    /* Texto */
+    color: #1a1a1a; /* Cor escura para contrastar com o fundo claro */
+    font-family: 'Arial', sans-serif; /* Use a fonte do seu jogo */
+    font-weight: 900; /* Bem grosso */
+    font-size: 1rem;
+    text-transform: uppercase; /* Letras maiúsculas */
+    letter-spacing: 1px;
+    
+    /* Efeitos e Layout */
+    padding: 12px 30px;
+    cursor: pointer;
+    outline: none;
+    
+    /* Sombra 3D (efeito "pop") */
+    box-shadow: 0 4px 0 #8b6914, 0 6px 10px rgba(0,0,0,0.5);
+    
+    /* Transição suave para o hover */
+    transition: all 0.1s ease;
+}
+
+/* Efeito ao passar o mouse (Hover) */
+#btn-end:hover:not(:disabled) {
+    background: linear-gradient(180deg, #ffec8b 0%, #daa520 100%);
+    transform: translateY(-2px); /* Levanta um pouco */
+    box-shadow: 0 6px 0 #8b6914, 0 8px 15px rgba(0,0,0,0.6);
+}
+
+/* Efeito ao clicar (Active) */
+#btn-end:active:not(:disabled) {
+    transform: translateY(2px); /* Afunda */
+    box-shadow: 0 2px 0 #8b6914, 0 3px 5px rgba(0,0,0,0.5);
+}
+
+/* Estado Desabilitado (Cinza) */
+#btn-end:disabled {
+    background: linear-gradient(180deg, #555 0%, #333 100%);
+    border-color: #666;
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: 0 4px 0 #111;
+    transform: none;
+}
+.hud-img {
+    position: relative;
+    width: 100%;
+    height: 95px; /* altura real do HUD */
+    overflow: visible; /* não corta mais o escudo */
+    z-index: 100;
+}
+
+.hud-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* NÃO CORTA MAIS */
+    display: block;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+    .hud-img {
+        height: 70px;
+    }
+}
+ 
+
+/* Base dos scores */
+.score-enemy,
+.score-player {
+    position: absolute;
+    top: 55%; /* alinhamento vertical fino */
+    transform: translateY(-50%);
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    font-size: 19px; /* menor e mais elegante */
+    text-shadow: 0 0 10px black;
+}
+
+/* ESQUERDA (Player 1) */
+.score-enemy {
+    left: 34%;   /* alinhado abaixo do PLAYER 1 */
+    color: #647cf5;
+}
+
+/* DIREITA (Player 2) */
+.score-player {
+    right: 34%;  /* alinhado abaixo do PLAYER 2 */
+    color: #55ff55;
+}
+.card.focused {
+    z-index: 50000 !important;
+}
+
+#card-preview {
+    z-index: 40000 !important;
+}
+/* aumentar texto da carta quando focada */
+.card.focused .card-info {
+    font-size: 1rem;
+}
+
+/* Otimização de animações das cartas */
+.field-card,
+.flying-card{
+    will-change: transform;
+    transform: translateZ(0);
+}
+#col-grid{
+    overflow-y: auto;
+    max-height: 70vh;
+}
+#col-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px,1fr));
+    gap:10px;
+}
+/* ===================== */
+/* POSIÇÃO DOS CEMITÉRIOS */
+/* ===================== */
+
+.battle-controls-container {
+    position: absolute;
+    bottom: 105px; /* Ajuste para não cobrir a mão */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    display: flex;
+    align-items: flex-end; /* Alinha a base das lápides com o botão */
+    justify-content: center;
+    gap: 20px; /* Espaço entre as lápides e o botão central */
+    z-index: 200;
+    pointer-events: none; /* Container não bloqueia cliques na arena */
+}
+
+/* Botão Finalizar Turno */
+.btn-end-turn {
+    pointer-events: auto;
+    transition: all 0.2s;
+}
+.btn-end-turn img {
+    height: 45px; /* Ajuste o tamanho conforme sua imagem */
+    width: auto;
+    display: block;
+}
+.btn-end-turn:active { transform: scale(0.9); }
+
+/* Estilo Lápide Corrigido */
+.tombstone-btn {
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 55px;
+    background: linear-gradient(180deg, #2a2a2a 0%, #111 100%);
+    border: 2px solid #444;
+    border-bottom: none;
+    border-radius: 20px 20px 5px 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+}
+
+/* Contadores sobre as lápides */
+.grave-counter {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #111;
+    color: #ffd700;
+    border: 1px solid #ffd700;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.tombstone-btn span.material-symbols-outlined { font-size: 16px; color: #ccc; }
+.tombstone-btn small { font-size: 7px; color: #888; font-weight: bold; }
+.my-grave { border-top-color: #ffd700; }
+.enemy-grave { border-top-color: #d41132; }
+
+
+/* contador */
+
+.grave-count{
+position:absolute;
+top:-6px;
+right:-6px;
+background:#ff4444;
+color:white;
+width:20px;
+height:20px;
+font-size:11px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid var(--gold);
+}
+.grave-counter {
+    @apply absolute -top-2 -right-1 bg-zinc-800 text-gold border border-gold/50 rounded-full;
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'MedievalSharp', cursive;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+/* Diferenciação de cor para o rival se desejar */
+.enemy-grave .grave-counter {
+    @apply text-red-500 border-red-500/50;
+}
+#grave-cards,
+.grave-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    flex: 1;              /* ocupa o espaço restante do container */
+    overflow-y: auto;
+    padding: 10px;
+    width: 100%;
+}
+.grave-modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:1200;
+}
+/* --- MODAL CEMITÉRIO --- */
+.grave-container {
+    background: url('../img/backgrounds/bg-cemiterio.png') center/cover no-repeat;
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    padding: 20px;
+    width: 90vw;          /* largura fixa igual para jogador e rival */
+    max-width: 420px;     /* limite máximo consistente */
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;     /* evita vazamento do conteúdo interno */
+}
+
+.grave-container h2 {
+    color: #ffd700;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.grave-card {
+    width: 70px;
+    height: 100px;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+    background-color: #333;
+    border: 1px solid #555;
+    flex-shrink: 0;
+}
+/* ============================================================
+   ⚔️ COMBATE DA VANGUARDA
+   ============================================================ */
+
+/* Overlay de resultado de combate (aparece no centro da tela) */
+.combat-result-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 14px 24px;
+    text-align: center;
+    z-index: 9999;
+    pointer-events: none;
+    min-width: 90px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+/* Destaque pulsante na carta da vanguarda durante combate */
+.field-card.combat-highlight {
+    box-shadow: 0 0 28px 4px var(--gold);
+    z-index: 10;
+}
+#res-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+#res-msg {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: center;
+    color: #f2e6c9;
+    font-size: 0.98rem;
+    line-height: 1.45;
+}
+
+.result-subtitle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 240px;
+    margin: 0 auto 14px auto;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 6px 18px rgba(0,0,0,0.28);
+    background: linear-gradient(to bottom, rgba(40,28,20,0.95), rgba(18,12,8,0.92));
+}
+
+.result-subtitle.win {
+    color: #ffe08a;
+    border-color: rgba(255, 209, 102, 0.45);
+    background: linear-gradient(to bottom, rgba(90,40,20,0.95), rgba(45,18,10,0.95));
+    text-shadow: 0 0 8px rgba(255, 209, 102, 0.28);
+}
+
+.result-subtitle.lose {
+    color: #ffb3b3;
+    border-color: rgba(255, 90, 90, 0.42);
+    background: linear-gradient(to bottom, rgba(85,20,20,0.95), rgba(38,8,8,0.95));
+    text-shadow: 0 0 8px rgba(255, 90, 90, 0.22);
+}
+
+.result-subtitle.neutral {
+    color: #f1f1f1;
+    border-color: rgba(220, 220, 220, 0.28);
+    background: linear-gradient(to bottom, rgba(60,60,60,0.95), rgba(28,28,28,0.95));
+    text-shadow: 0 0 8px rgba(255,255,255,0.12);
+}
+.result-panel {
+    background: rgba(20, 12, 8, 0.72);
+    border: 1px solid rgba(255, 215, 160, 0.18);
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: inset 0 0 12px rgba(255,255,255,0.03);
+    margin-bottom: 14px;
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 0;
+}
+
+.result-label {
+    font-size: 0.95rem;
+    color: #d8c7a3;
+    font-weight: 600;
+}
+
+.result-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.result-value.player {
+    color: #7CFC98;
+}
+
+.result-value.enemy {
+    color: #ff8e8e;
+}
+
+.result-value.series {
+    color: #ffd166;
+}
+
+.result-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,215,130,0.45), transparent);
+    margin: 6px 0;
+}
+
+.result-rewards {
+    background: rgba(60, 20, 20, 0.55);
+    border: 1px solid rgba(212, 17, 50, 0.35);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.reward-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffd166;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.reward-items {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.reward-box {
+    min-width: 110px;
+    background: rgba(0,0,0,0.24);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reward-name {
+    font-size: 0.82rem;
+    color: #d6c29d;
+    margin-bottom: 4px;
+}
+
+.reward-number {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #fff3c4;
+}
+
+.reward-warning {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    color: #ff9f9f;
+}
+
+.result-footer {
+    margin-top: 10px;
+    background: rgba(0,0,0,0.24);
+    border-radius: 12px;
+    padding: 10px 12px;
+    color: #ddd0b2;
+    font-size: 0.88rem;
+}
+
+.result-footer div + div {
+    margin-top: 4px;
+}

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tutorial — TheKingsTCG</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/tutorial.css">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            background: #0a0a0c;
+            color: #fff;
+            font-family: 'Spline Sans', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Faz a section preencher a tela toda */
+        #tutorial-screen {
+            position: fixed;
+            inset: 0;
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* Remove classes do index que escondem a section */
+        .screen { display: flex; }
+        .hidden { display: none; }
+        .rpg-screen {}
+    </style>
+</head>
+<body>
+
+<section id="tutorial-screen" class="screen rpg-screen">
+
+    <header class="tut-header">
+        <div class="tut-title-wrap">
+            <span class="material-symbols-outlined tut-header-icon">menu_book</span>
+            <div>
+                <div class="tut-title">Manual do Rei</div>
+                <div class="tut-subtitle">TheKingsTCG — Guia de Jogo</div>
+            </div>
+        </div>
+        <button onclick="history.back()" class="tut-back-btn">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Voltar
+        </button>
+    </header>
+
+    <nav class="tut-nav" id="tut-nav">
+        <button class="tut-tab active" data-tab="0" onclick="TutorialUI.go(0)"><span class="tab-icon">📜</span>Mundo</button>
+        <button class="tut-tab" data-tab="1" onclick="TutorialUI.go(1)"><span class="tab-icon">🎴</span>Cartas</button>
+        <button class="tut-tab" data-tab="2" onclick="TutorialUI.go(2)"><span class="tab-icon">⭐</span>Raridade</button>
+        <button class="tut-tab" data-tab="3" onclick="TutorialUI.go(3)"><span class="tab-icon">👑</span>Hierarquia</button>
+        <button class="tut-tab" data-tab="4" onclick="TutorialUI.go(4)"><span class="tab-icon">🧱</span>Deck</button>
+        <button class="tut-tab" data-tab="5" onclick="TutorialUI.go(5)"><span class="tab-icon">⚔️</span>Campo</button>
+        <button class="tut-tab" data-tab="6" onclick="TutorialUI.go(6)"><span class="tab-icon">🎮</span>Jogada</button>
+        <button class="tut-tab" data-tab="7" onclick="TutorialUI.go(7)"><span class="tab-icon">🔄</span>Elementos</button>
+        <button class="tut-tab" data-tab="8" onclick="TutorialUI.go(8)"><span class="tab-icon">🏆</span>Vitória</button>
+        <button class="tut-tab" data-tab="9" onclick="TutorialUI.go(9)"><span class="tab-icon">⚔️</span>Campanha</button>
+    </nav>
+
+    <div class="tut-body">
+        <div class="tut-page active" id="tut-p-0">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">I</div>
+                <div class="tut-chapter-info">
+                    <h2>O Mundo em Guerra</h2>
+                    <p>Os reinos elementais disputam a ascensão de um único soberano.</p>
+                </div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">🌍</span> Visão Geral</div>
+                <p>O mundo de <strong>TheKingsTCG</strong> é dividido entre cinco forças: <strong>Fogo</strong>, <strong>Água</strong>, <strong>Floresta</strong>, <strong>Terra</strong> e os <strong>Neutros</strong>. Cada facção possui identidade própria, visão de poder e uma forma diferente de encarar a unificação.</p>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">⚔️</span> Conflito Central</div>
+                <p>A guerra não existe apenas por território. Cada coroa quer decidir qual visão de mundo prevalecerá no fim do conflito. O objetivo final é simples e brutal: <strong>apenas um soberano pode permanecer</strong>.</p>
+            </div>
+            <div class="tut-tip"><strong>Frase central:</strong> "Quando as coroas colidem, apenas um soberano pode permanecer."</div>
+        </div>
+
+        <div class="tut-page" id="tut-p-1">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">II</div>
+                <div class="tut-chapter-info">
+                    <h2>Tipos de Cartas</h2>
+                    <p>Cada carta representa um guerreiro, líder ou peça estratégica do reino.</p>
+                </div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">📋</span> Estrutura da Carta</div>
+                <p>As cartas podem conter <strong>nome</strong>, <strong>elemento</strong>, <strong>ATK</strong>, <strong>DEF</strong>, <strong>raça</strong>, <strong>classe</strong> e, em alguns casos, <strong>habilidade</strong>.</p>
+            </div>
+            <div class="tut-card dual-card">
+                <div class="mode-box atk">
+                    <div class="mode-icon">⚔️</div>
+                    <div class="mode-title">Modo ATK</div>
+                    <div class="mode-desc">Usa o valor de ataque no confronto e na pressão ofensiva.</div>
+                </div>
+                <div class="mode-box def">
+                    <div class="mode-icon">🛡️</div>
+                    <div class="mode-title">Modo DEF</div>
+                    <div class="mode-desc">Usa o valor de defesa quando a carta entra em posição defensiva.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-2">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">III</div>
+                <div class="tut-chapter-info">
+                    <h2>Raridade</h2>
+                    <p>Cartas mais raras tendem a ser mais marcantes e estratégicas.</p>
+                </div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">✨</span> Progressão</div>
+                <p>Use raridades para diferenciar impacto, presença e valor de coleção. Reis, Mãos do Rei e generais costumam ter maior peso visual e tático dentro do deck.</p>
+            </div>
+            <div class="rarity-list">
+                <div class="rarity-row"><span class="rarity-dot" style="color:#cfcfcf;background:#cfcfcf;"></span><span class="rarity-name" style="color:#cfcfcf;">Comum</span><span class="rarity-badge">Base</span></div>
+                <div class="rarity-row"><span class="rarity-dot" style="color:#4ecb71;background:#4ecb71;"></span><span class="rarity-name" style="color:#4ecb71;">Rara</span><span class="rarity-badge">Estratégica</span></div>
+                <div class="rarity-row"><span class="rarity-dot" style="color:#6cb6ff;background:#6cb6ff;"></span><span class="rarity-name" style="color:#6cb6ff;">Épica</span><span class="rarity-badge">Destaque</span></div>
+                <div class="rarity-row"><span class="rarity-dot" style="color:#ffd700;background:#ffd700;"></span><span class="rarity-name" style="color:#ffd700;">Lendária</span><span class="rarity-badge">Elite</span></div>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-3">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">IV</div>
+                <div class="tut-chapter-info">
+                    <h2>Hierarquia do Reino</h2>
+                    <p>O poder de cada facção se apoia em três pilares principais.</p>
+                </div>
+            </div>
+            <div class="hierarchy-list tut-card">
+                <div class="hierarchy-row">
+                    <div class="hierarchy-rank gold">1</div>
+                    <div class="hierarchy-info">
+                        <div class="h-title">O Rei / Rainha</div>
+                        <div class="h-sub">Figura máxima do reino e símbolo da visão de unificação.</div>
+                    </div>
+                </div>
+                <div class="hierarchy-row">
+                    <div class="hierarchy-rank red">2</div>
+                    <div class="hierarchy-info">
+                        <div class="h-title">A Mão do Rei</div>
+                        <div class="h-sub">Guardião da vontade do soberano, segunda autoridade e executor do trono.</div>
+                    </div>
+                </div>
+                <div class="hierarchy-row">
+                    <div class="hierarchy-rank stone">3</div>
+                    <div class="hierarchy-info">
+                        <div class="h-title">Os Generais</div>
+                        <div class="h-sub">Linha de frente da guerra, comandando tropas e batalhas decisivas.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-4">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">V</div>
+                <div class="tut-chapter-info">
+                    <h2>Montagem de Deck</h2>
+                    <p>Monte sua força antes de entrar no campo de batalha.</p>
+                </div>
+            </div>
+            <div class="deck-rules-grid">
+                <div class="deck-rule-box"><div class="deck-rule-val">20</div><div class="deck-rule-lbl">Deck Inicial</div></div>
+                <div class="deck-rule-box"><div class="deck-rule-val">30</div><div class="deck-rule-lbl">Campanhas Maiores</div></div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">🧠</span> Estratégia</div>
+                <p>Equilibre seu deck entre pressão, defesa, sinergia de elemento e cartas centrais como reis, mãos do rei e generais. Um deck forte não depende só de números altos, mas de função tática.</p>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-5">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">VI</div>
+                <div class="tut-chapter-info">
+                    <h2>Campo de Batalha</h2>
+                    <p>O campo representa a guerra direta entre dois exércitos.</p>
+                </div>
+            </div>
+            <div class="battlefield-diagram">
+                <div class="bf-section bf-enemy">Campo Inimigo <span class="bf-row-label">linha de pressão adversária</span></div>
+                <div class="bf-section bf-neutral">Zona de confronto</div>
+                <div class="bf-section bf-player">Seu Campo <span class="bf-row-label">linha de defesa e avanço</span></div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">🎯</span> Leitura de Campo</div>
+                <p>O posicionamento define ritmo, risco e resposta. Cartas em ATK pressionam. Cartas em DEF sustentam. Cartas ocultas criam ameaça e leitura psicológica.</p>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-6">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">VII</div>
+                <div class="tut-chapter-info">
+                    <h2>Fluxo de Jogada</h2>
+                    <p>Cada turno deve ser pensado como uma decisão de guerra.</p>
+                </div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">🎮</span> Sequência Básica</div>
+                <p>Compre, posicione, ataque, revele, proteja e reaja. Seu turno é a construção da vantagem; o turno inimigo é a prova da sua solidez.</p>
+            </div>
+            <div class="tut-tip"><strong>Dica:</strong> Uma jogada forte nem sempre é a mais agressiva. Às vezes, manter uma carta oculta ou defender um setor vale mais do que atacar cedo demais.</div>
+        </div>
+
+        <div class="tut-page" id="tut-p-7">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">VIII</div>
+                <div class="tut-chapter-info">
+                    <h2>Ciclo de Elementos</h2>
+                    <p>Cada reino combate de forma diferente.</p>
+                </div>
+            </div>
+            <div class="element-cycle-grid">
+                <div class="cycle-row fire"><div class="cycle-elem">🔥</div><div class="cycle-info"><div class="cycle-name">Fogo</div><div class="cycle-vs">conquista • fúria • supremacia</div></div></div>
+                <div class="cycle-row water"><div class="cycle-elem">💧</div><div class="cycle-info"><div class="cycle-name">Água</div><div class="cycle-vs">estratégia • adaptação • controle</div></div></div>
+                <div class="cycle-row forest"><div class="cycle-elem">🌿</div><div class="cycle-info"><div class="cycle-name">Floresta</div><div class="cycle-vs">equilíbrio • ancestralidade • vida</div></div></div>
+                <div class="cycle-row earth"><div class="cycle-elem">🪨</div><div class="cycle-info"><div class="cycle-name">Terra</div><div class="cycle-vs">resistência • firmeza • permanência</div></div></div>
+                <div class="cycle-row neutral"><div class="cycle-elem">⭐</div><div class="cycle-info"><div class="cycle-name">Neutro</div><div class="cycle-vs">liberdade • ruptura • sobrevivência</div></div></div>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-8">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">IX</div>
+                <div class="tut-chapter-info">
+                    <h2>Vitória</h2>
+                    <p>O triunfo pertence a quem sustenta sua visão até o fim.</p>
+                </div>
+            </div>
+            <div class="md3-diagram">
+                <div class="md3-box"><div class="md3-icon">I</div><div class="md3-label">Jogo 1</div></div>
+                <div class="md3-box"><div class="md3-icon">II</div><div class="md3-label">Jogo 2</div></div>
+                <div class="md3-box"><div class="md3-icon">III</div><div class="md3-label">Desempate</div></div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">🏆</span> Condição Final</div>
+                <p>Uma vitória não representa apenas ganhar uma partida. Em <strong>TheKingsTCG</strong>, cada confronto aproxima o mundo do momento em que um único rei se erguerá acima de todos.</p>
+            </div>
+        </div>
+
+        <div class="tut-page" id="tut-p-9">
+            <div class="tut-chapter-hero">
+                <div class="tut-chapter-num">X</div>
+                <div class="tut-chapter-info">
+                    <h2>Campanhas</h2>
+                    <p>As campanhas representam a guerra em escala crescente.</p>
+                </div>
+            </div>
+            <div class="tut-card">
+                <div class="tut-card-title"><span class="tct-icon">⚔️</span> Progressão</div>
+                <p>Cada campanha possui inimigos, dificuldade crescente e exigência de preparação melhor. À medida que os generais caem, a guerra se aproxima dos tronos.</p>
+            </div>
+            <div class="tut-tip"><strong>Objetivo:</strong> Enfrentar líderes, generais e mãos do rei até decidir qual facção merece alcançar o desfecho da unificação.</div>
+        </div>
+    </div>
+
+    <footer class="tut-progress">
+        <button class="tut-prev-btn" onclick="TutorialUI.prev()">
+            <span class="material-symbols-outlined">chevron_left</span>
+            Anterior
+        </button>
+        <div class="tut-dots">
+            <span class="tut-dot active" onclick="TutorialUI.go(0)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(1)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(2)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(3)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(4)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(5)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(6)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(7)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(8)"></span>
+            <span class="tut-dot" onclick="TutorialUI.go(9)"></span>
+        </div>
+        <button class="tut-next-btn" onclick="TutorialUI.next()">
+            Próximo
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    </footer>
+
+</section>
+
+<script src="js/tutorial.js"></script>
+
+</body>
+</html>
