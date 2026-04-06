@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #fdf6e3;
+      --bg2:      #fff8f0;
+      --yellow:   #ffd93d;
+      --orange:   #ff6b35;
+      --red:      #e63946;
+      --green:    #06d6a0;
+      --blue:     #4361ee;
+      --purple:   #7b2d8b;
+      --dark:     #1a1a2e;
+      --ink:      #2b2b2b;
+      --white:    #ffffff;
+      --shadow:   4px 4px 0px var(--ink);
+      --shadow-lg:6px 6px 0px var(--ink);
+      --radius:   16px;
+      --border:   3px solid var(--ink);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── POLKA DOT BG ── */
+    body {
+      background-color: #fdf6e3;
+      background-image: radial-gradient(circle, #e8d9b0 1.5px, transparent 1.5px);
+      background-size: 28px 28px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 44px 24px 28px;
+      position: relative;
+    }
+
+    .logo-wrap {
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      padding: 10px 36px 12px;
+      margin-bottom: 12px;
+    }
+
+    .logo {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      color: var(--ink);
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .logo span {
+      color: var(--orange);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+      margin-top: 6px;
+    }
+
+    .header-stars {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: 1.4rem;
+    }
+
+    /* ── MAIN GRID ── */
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 24px 80px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 720px) {
+      main { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    }
+    @media (max-width: 480px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /* ── CARD ── */
+    .game-card {
+      position: relative;
+      background: var(--white);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.18s cubic-bezier(.22,.68,0,1.3), box-shadow 0.18s;
+      animation: popIn 0.45s cubic-bezier(.22,.68,0,1.4) both;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px) rotate(-1deg);
+      box-shadow: 8px 10px 0px var(--ink);
+    }
+
+    .game-card:active {
+      transform: translateY(2px);
+      box-shadow: 2px 2px 0px var(--ink);
+    }
+
+    /* stagger */
+    .game-card:nth-child(1) { animation-delay: 0.05s; }
+    .game-card:nth-child(2) { animation-delay: 0.12s; }
+    .game-card:nth-child(3) { animation-delay: 0.19s; }
+    .game-card:nth-child(4) { animation-delay: 0.26s; }
+    .game-card:nth-child(5) { animation-delay: 0.33s; }
+    .game-card:nth-child(6) { animation-delay: 0.40s; }
+    .game-card:nth-child(7) { animation-delay: 0.47s; }
+
+    /* ── THUMB ── */
+    .card-thumb {
+      width: 100%;
+      height: 170px;
+      overflow: hidden;
+      position: relative;
+      background: #e8f4ff;
+      border-bottom: var(--border);
+      flex-shrink: 0;
+    }
+
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .game-card:hover .card-thumb img {
+      transform: scale(1.07);
+    }
+
+    .no-img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      background: linear-gradient(135deg, #e8f4ff, #d0e8ff);
+    }
+
+    /* play overlay */
+    .play-btn {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .game-card:hover .play-btn { opacity: 1; }
+
+    .play-circle {
+      width: 52px; height: 52px;
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      box-shadow: 3px 3px 0 var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      transform: scale(0.8);
+      transition: transform 0.2s cubic-bezier(.22,.68,0,1.4);
+    }
+
+    .game-card:hover .play-circle { transform: scale(1); }
+
+    /* ── BADGE ── */
+    .card-status {
+      position: absolute;
+      top: 10px; left: 10px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 30px;
+      border: 2.5px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      z-index: 5;
+    }
+
+    .status-play { background: var(--green);  color: var(--ink); }
+    .status-beta { background: var(--yellow); color: var(--ink); }
+    .status-soon { background: #c8c8d8;       color: var(--ink); }
+    .status-test { background: var(--orange); color: var(--white); }
+
+    /* ── CARD INFO ── */
+    .card-info {
+      padding: 12px 14px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--orange);
+    }
+
+    .card-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.15rem;
+      color: var(--ink);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: #555;
+      font-weight: 600;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* colored top stripe per card */
+    .stripe { height: 6px; width: 100%; flex-shrink: 0; }
+
+    /* ── ADD CARD ── */
+    .card-add {
+      background: var(--bg2);
+      border: 3px dashed #b0a890;
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 240px;
+      color: #b0a890;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      cursor: default;
+    }
+
+    .card-add .plus {
+      font-size: 2.4rem;
+      line-height: 1;
+      color: #c8bca0;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 20px 24px 32px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #8a7a60;
+      border-top: 3px solid #e0d5c0;
+    }
+
+    footer a { color: var(--orange); text-decoration: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo">GAME<span>HUB</span></div>
+  </div>
+  <div class="subtitle">✦ Escolha seu jogo e divirta-se! ✦</div>
+  <div class="header-stars">🎮 🕹️ 👾</div>
+</header>
+
+<main>
+
+  <!-- ═══════════════════════════════
+       JOGO 1
+       href → pasta do jogo
+       src  → img/nome.png
+       ═══════════════════════════════ -->
+<a class="game-card" href="thekings/index.html">
+    <div class="stripe" style="background:#4361ee;"></div>
+    <div class="card-thumb">
+      <img src="img/thekings.png" alt="TheKings TCG"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="no-img" style="display:none">👑</div>
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+    <span class="card-status status-beta">Beta</span>
+    <div class="card-info">
+      <div class="card-tag">Card Game</div>
+      <div class="card-title">TheKings TCG</div>
+      <div class="card-desc">Domine os reinos com suas cartas. A ascensão de um único rei.</div>
+    </div>
+  </a>
+
+  <!-- ═══════ JOGO 2 ═══════ -->
+  <a class="game-card" href="chopper/index.html">
+    <div class="stripe" style="background:#ff6b35;"></div>
+    <div class="card-thumb">
+      <img src="img/chopper.png" alt="Chopper"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="no-img" style="display:none">🚁</div>
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+    <span class="card-status status-test">Teste</span>
+    <div class="card-info">
+      <div class="card-tag">Top-down</div>
+      <div class="card-title">Chopper</div>
+      <div class="card-desc">Proteja o cachorro para não se contaminar.</div>
+    </div>
+  </a>
+  
+
+  <!-- ═══════ JOGO 3 ═══════ -->
+  <a class="game-card" href="jogo3/index.html">
+    <div class="stripe" style="background:#06d6a0;"></div>
+    <div class="card-thumb">
+      <img src="img/jogo3.png" alt="Jogo 3"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="no-img" style="display:none">🎮</div>
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+    <span class="card-status status-soon">Em Breve</span>
+    <div class="card-info">
+      <div class="card-tag">Puzzle</div>
+      <div class="card-title">Nome do Jogo 3</div>
+      <div class="card-desc">Descrição breve do jogo aqui. Edite como quiser.</div>
+    </div>
+  </a>
+
+  <!-- ═══════ JOGO 4 ═══════ -->
+  <a class="game-card" href="jogo4/index.html">
+    <div class="stripe" style="background:#ffd93d;"></div>
+    <div class="card-thumb">
+      <img src="img/jogo4.png" alt="Jogo 4"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="no-img" style="display:none">🕹️</div>
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+    <span class="card-status status-soon">Em Breve</span>
+    <div class="card-info">
+      <div class="card-tag">Arcade</div>
+      <div class="card-title">Nome do Jogo 4</div>
+      <div class="card-desc">Descrição breve do jogo aqui. Edite como quiser.</div>
+    </div>
+  </a>
+
+  <!-- ═══════ JOGO 5 ═══════ -->
+  <a class="game-card" href="jogo5/index.html">
+    <div class="stripe" style="background:#e63946;"></div>
+    <div class="card-thumb">
+      <img src="img/jogo5.png" alt="Jogo 5"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="no-img" style="display:none">⚔️</div>
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+    <span class="card-status status-soon">Em Breve</span>
+    <div class="card-info">
+      <div class="card-tag">RPG</div>
+      <div class="card-title">Nome do Jogo 5</div>
+      <div class="card-desc">Descrição breve do jogo aqui. Edite como quiser.</div>
+    </div>
+  </a>
+
+  <!-- ═══════ JOGO 6 ═══════ -->
+  <a class="game-card" href="jogo6/index.html">
+    <div class="stripe" style="background:#7b2d8b;"></div>
+    <div class="card-thumb">
+      <img src="img/jogo6.png" alt="Jogo 6"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="no-img" style="display:none">🌌</div>
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+        <span class="card-status status-soon">Em Breve</span>
+    <div class="card-info">
+      <div class="card-tag">Strategy</div>
+      <div class="card-title">Nome do Jogo 6</div>
+      <div class="card-desc">Descrição breve do jogo aqui. Edite como quiser.</div>
+    </div>
+  </a>
+
+  <!-- ═══════ SLOT VAZIO ═══════ -->
+  <div class="card-add">
+    <div class="plus">＋</div>
+    ADICIONAR JOGO
+  </div>
+
+</main>
+
+<footer>
+  &copy; 2026 · Game Hub · EdsonCSF
+</footer>
+
+</body>
+</html>

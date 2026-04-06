@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chopper: Não Come Isso!</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <!-- MENU -->
+  <div id="menuScreen" class="screen active">
+    <div class="menu-clouds" id="menuClouds"></div>
+    <div class="menu-content">
+      <div class="game-title"><h1>🐾 CHOPPER</h1><h2>Não Come Isso!</h2></div>
+      <canvas id="menuCv"></canvas>
+      <div class="stats-bar">
+        <div class="stat-i">🪙<span id="mGold">0</span></div>
+        <div class="sdiv"></div>
+        <div class="stat-i">⭐<span id="mXP">0</span>XP</div>
+        <div class="sdiv"></div>
+        <div class="stat-i">🏆Nv.<span id="mLv">1</span></div>
+      </div>
+      <div class="xp-wrap">
+        <div class="xp-lbl">XP para próximo nível</div>
+        <div class="xp-bg"><div class="xp-fill" id="mXpBar" style="width:0%"></div></div>
+      </div>
+      <button class="mbtn btn-play" id="btnPlay">▶ JOGAR</button>
+      <button class="mbtn btn-shop" id="btnShop">🛒 LOJA</button>
+      <div class="ver-tag">Chopper v3.0 - Modular</div>
+    </div>
+  </div>
+
+  <!-- FASES -->
+  <div id="phaseScreen" class="screen">
+    <div style="background:linear-gradient(180deg,#2d5a27,#1a3a1a);padding:13px;display:flex;flex-direction:column;align-items:center;gap:9px;height:100%;overflow-y:auto;">
+      <div class="ph-title">🗺️ Selecione a Fase</div>
+      <div class="ph-grid" id="phGrid"></div>
+      <button class="btn-back" id="backFromPhases">← Voltar</button>
+    </div>
+  </div>
+
+  <!-- LOJA -->
+  <div id="shopScreen" class="screen">
+    <div style="background:linear-gradient(180deg,#1a0533,#2d0a5c);padding:13px;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;overflow-y:auto;">
+      <div class="sh-title">🛒 Loja</div>
+      <div class="sh-gold">🪙 <span id="shGold">0</span> Gold</div>
+      <div class="sh-tabs" id="shTabs"></div>
+      <div class="sh-grid" id="shGrid"></div>
+      <button class="btn-back" id="backFromShop">← Voltar</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+<div id="gameScreen" class="screen">
+  <div id="hudTop"></div>
+
+  <div id="cvWrap">
+    <canvas id="gCv"></canvas>
+  </div>
+
+  <div id="hudBot">
+    <div class="ab" data-action="distract">
+      <div class="ab-icon" id="distractIcon">🧸</div><div class="ab-lbl">Distrair</div>
+      <div class="ab-cnt" id="cnDistract">3</div>
+      <div class="cd-bar" id="cdDistract" style="width:0%"></div>
+    </div>
+
+    <div class="ab" data-action="call">
+      <div class="ab-icon">🏠</div><div class="ab-lbl">Chamar</div>
+      <div class="ab-cnt" id="cnCall">∞</div>
+      <div class="cd-bar" id="cdCall" style="width:0%"></div>
+    </div>
+
+    <div class="ab" data-action="clean">
+      <div class="ab-icon">🧹</div><div class="ab-lbl">Limpar</div>
+      <div class="ab-cnt" id="cnClean">∞</div>
+      <div class="cd-bar" id="cdClean" style="width:0%"></div>
+    </div>
+
+    <div class="ab" data-action="medicine">
+      <div class="ab-icon">💊</div><div class="ab-lbl">Remédio</div>
+      <div class="ab-cnt" id="cnMedicine">1</div>
+      <div class="cd-bar" id="cdMedicine" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+  <!-- FIM -->
+  <div id="endScreen" class="screen">
+    <div class="end-title" id="endTitle">🎉 FASE COMPLETA!</div>
+    <canvas id="endCv"></canvas>
+    <div class="stars-row" id="starsRow">⭐⭐⭐</div>
+    <div class="end-stats" id="endStats"></div>
+    <div class="end-rew" id="endRew"></div>
+    <div class="ate-box" id="ateBox" style="display:none"></div>
+    <div class="end-btns" id="endBtns"></div>
+  </div>
+
+  <div id="notif"></div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
