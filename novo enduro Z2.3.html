@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Enduro Retro Aprimorado</title>
+<style>
+    body {
+        background: #191825;
+        color: #fff;
+        font-family: 'Courier New', monospace;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+    }
+    .game-title { 
+        font-size: 32px;
+        color: #ff9800;
+        font-weight: bold;
+        text-shadow: 2px 2px 0 #222;
+        margin-top: 20px;
+        margin-bottom: 7px;
+        text-align: center;
+    }
+    .main-container { 
+        max-width: 880px;
+        width: 100%;
+        position: relative;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        flex-grow: 1;
+    }
+    #gameCanvas { 
+        display: block;
+        margin: 0 auto;
+        border: 4px solid #444;
+        border-radius: 12px;
+        box-shadow: 0 6px 34px #19182560;
+        background-color: #77ceeb;
+        image-rendering: pixelated;
+        touch-action: none;
+        box-sizing: border-box;
+    }
+    .start-screen, .end-screen { 
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 14px;
+        background: rgba(32, 32, 40, 0.95);
+        transition: opacity 0.5s;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+    .screen-card {
+        background: #232335dd;
+        border-radius: 13px;
+        border: 2px solid #ff980080;
+        box-shadow: 0 2px 36px #19182599;
+        padding: 28px 24px;
+        width: 90%;
+        max-width: 400px;
+        box-sizing: border-box;
+        margin: auto;
+    }
+    .start-btn, .restart-btn {
+        font-size: 21px;
+        font-family: inherit;
+        font-weight: bold;
+        padding: 13px 38px;
+        border-radius: 7px;
+        border: none;
+        background: #ff9800;
+        color: #282828;
+        margin-top: 15px;
+        box-shadow: 0 2px #c88100;
+        cursor: pointer;
+        transition: 0.18s;
+    }
+    .start-btn:hover, .restart-btn:hover {
+        background: #ffaa36;
+    }
+    .footer-info {
+        margin: 28px auto 12px auto;
+        text-align: center;
+        color: #ddd;
+        font-size: 15px;
+        opacity: 0.81;
+    }
+    .ranking, .trophies {
+        margin: 0;
+        background: #222c;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid #ffa80080;
+        width: 100%;
+        max-width: 180px;
+        box-sizing: border-box;
+    }
+    .ranking h3, .trophies h3 {
+        color: #ff9800;
+        font-size: 14px;
+        margin-bottom: 4px;
+        letter-spacing: 1px;
+        text-align: center;
+    }
+    .ranking-item, .trophy-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3px;
+        font-size: 12px;
+    }
+    .ranking .name {
+        width: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .trophy-item.unlocked {
+        color: #ff9800;
+    }
+    .trophy-item.locked {
+        color: #888;
+    }
+    .control-btn {
+        font-size: 18px;
+        background: #191825;
+        color: #fff;
+        padding: 12px 18px;
+        border: 2px solid #ff9800;
+        margin: 8px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 3px #ffb840;
+        transition: 0.18s;
+    }
+    .control-btn:hover {
+        background: #242447;
+    }
+    .game-info {
+        display: flex;
+        gap: 28px;
+        font-size: 16px;
+        justify-content: center;
+        margin: 12px 0;
+        flex-wrap: wrap;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: #222c;
+        padding: 8px 14px;
+        border-radius: 5px;
+    }
+    .sound-toggle {
+        background: #222c;
+        color: #ffb840;
+        border: 1px solid #ff9800;
+        padding: 8px 17px;
+        border-radius: 7px;
+        margin-top: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.18s;
+    }
+    .sound-toggle:hover {
+        background: #333f;
+    }
+    .on-screen-message {
+        position: absolute;
+        top: 25%; /* Posição ajustada para baixo */
+        left: 50%;
+        transform: translate(-50%, 0);
+        color: #ffbc38;
+        font-weight: bold;
+        font-size: 19px;
+        text-shadow: 2px 2px 4px #000;
+        z-index: 10;
+        background: rgba(22, 22, 22, 0.7);
+        border-radius: 9px;
+        padding: 8px 18px;
+        opacity: 0;
+        transition: opacity 0.7s;
+    }
+    .trophy-message {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        color: #ff9800;
+        font-weight: bold;
+        font-size: 28px;
+        text-shadow: 0 0 10px #ff9800, 0 0 20px #ff9800;
+        z-index: 15;
+        background: rgba(22, 22, 22, 0.9);
+        border: 3px solid #ff9800;
+        border-radius: 15px;
+        padding: 15px 25px;
+        opacity: 0;
+        transition: opacity 0.7s;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: translate(-50%, 0) scale(1); }
+        50% { transform: translate(-50%, 0) scale(1.05); }
+        100% { transform: translate(-50%, 0) scale(1); }
+    }
+    .game-panels {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .game-panels .ranking, .game-panels .trophies {
+        flex: 1;
+        max-width: none;
+        box-sizing: border-box;
+    }
+    .menu-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .menu-section {
+        margin-bottom: 15px;
+        width: 100%;
+        max-width: 400px;
+    }
+    .trophies-scroll, .ranking-scroll { /* Adicionado .ranking-scroll */
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 10px;
+        padding-right: 5px; /* Espaço para a barra de rolagem */
+    }
+    /* Estilização da barra de rolagem */
+    .trophies-scroll::-webkit-scrollbar, .ranking-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+    .trophies-scroll::-webkit-scrollbar-track, .ranking-scroll::-webkit-scrollbar-track {
+        background: #222c;
+    }
+    .trophies-scroll::-webkit-scrollbar-thumb, .ranking-scroll::-webkit-scrollbar-thumb {
+        background-color: #ff9800;
+        border-radius: 10px;
+        border: 2px solid #222c;
+    }
+    @media (max-width: 700px) {
+        .main-container { 
+            max-width: 100vw;
+            padding: 0 5px;
+            box-sizing: border-box;
+        }
+        #gameCanvas { 
+            width: 100% !important; 
+            height: auto !important;
+            max-height: 60vh;
+            box-sizing: border-box;
+        }
+        .game-title { 
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .screen-card {
+            padding: 14px 5px;
+            width: 90%;
+            max-width: 350px;
+            box-sizing: border-box;
+        }
+        .ranking, .trophies {
+            max-width: 250px;
+            font-size: 12px;
+            padding: 6px 8px;
+            box-sizing: border-box;
+        }
+        .ranking h3, .trophies h3 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .ranking-item, .trophy-item {
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+        .info-item {
+            padding: 8px 2px;
+            font-size: 13px;
+        }
+        .control-btn {
+            font-size: 14px;
+            padding: 10px 8px;
+            margin: 5px;
+        }
+        .on-screen-message {
+            font-size: 13px;
+            padding: 6px 11px;
+        }
+        .trophy-message {
+            font-size: 20px;
+            padding: 10px 15px;
+        }
+        .start-btn, .restart-btn {
+            font-size: 16px;
+            padding: 10px 20px;
+            width: 100%;
+            max-width: 250px;
+        }
+        .sound-toggle {
+            font-size: 14px;
+            padding: 6px 12px;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            max-width: 200px;
+            padding: 8px;
+            font-size: 14px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        .main-container > div:last-of-type {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .game-panels {
+            flex-direction: column;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="game-title">ENDURO RETRO</div>
+<div class="main-container" style="position:relative;">
+    <div id="startScreen" class="start-screen" style="display:flex;">
+        <div class="menu-container">
+            <div class="screen-card menu-section">
+                <h1 style="color:#ff9800;">Enduro Retro</h1>
+                <p>
+                    Desafie-se a ultrapassar o máximo de veículos nos cenários mais variados:<br>
+                    praia, mar, cidade, floresta, deserto, entardecer.<br>
+                    Obstáculos e acidentes descontam pontos! <br>
+                    Toque ou arraste na pista (mobile), ou use os botões/teclas.
+                </p>
+                <button class="sound-toggle" id="menuSoundToggle">🔊 SOM: LIGADO</button><br>
+                <button class="start-btn" id="startBtn">INICIAR JOGO</button>
+            </div>
+            
+            <div class="menu-section">
+                <div class="trophies" id="trophiesMenu">
+                    <h3>🏆 TROFÉUS</h3>
+                    <div class="trophies-scroll" id="trophiesListMenu"></div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <div class="ranking" id="rankingMenu">
+                    <h3>🏆 RANKING TOP 10</h3>
+                    <div class="ranking-scroll" id="rankingListMenu"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="endScreen" class="end-screen" style="display:none;">
+        <div class="screen-card">
+            <h2 style="color:#ff2400;">FIM DE JOGO</h2>
+            <div style="font-size:22px;margin-bottom:10px;">
+                <span id="finalScore">0</span> veículos ultrapassados
+            </div>
+            <div style="font-size:16px;">Tempo: <span id="finalTime">0</span>s</div>
+            <div id="highScoreText" style="color:#ff9800;font-size:21px;margin:10px;"></div>
+            <input type="text" id="playerName" placeholder="Seu nome" maxlength="10" style="font-size:16px;margin:10px 0; text-align:center; border-radius: 5px; border: 1px solid #ff9800; background: #333; color: #fff;">
+            <button class="restart-btn" id="saveScoreBtn">SALVAR E JOGAR NOVAMENTE</button>
+            <button class="restart-btn" id="menuBtn" style="background:#888;">VOLTAR AO MENU</button>
+            
+            <div class="trophies" id="trophiesEnd">
+                <h3>🏆 TROFÉUS CONQUISTADOS</h3>
+                <div class="trophies-scroll" id="trophiesListEnd"></div>
+            </div>
+            
+            <div class="ranking" id="rankingEnd">
+                <h3>🏆 RANKING TOP 10</h3>
+                <div class="ranking-scroll" id="rankingListEnd"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="game-panels" id="gamePanels" style="display:none;">
+        <div class="trophies">
+            <h3>🏆 TROFÉUS</h3>
+            <div id="trophiesListGame"></div>
+        </div>
+        <div class="ranking">
+            <h3>🏆 RANKING TOP 10</h3>
+            <div id="rankingListGame"></div>
+        </div>
+    </div>
+    
+    <div class="game-info" id="gameInfo" style="display:none;">
+        <div class="info-item">⏱️ Tempo: <span id="time">0</span>s</div>
+        <div class="info-item">🚗 Ultrapassados: <span id="score">0</span></div>
+        <div class="info-item">🚌 Ônibus: <span id="busesCount">0</span></div>
+        <div class="info-item">🚛 Caminhões: <span id="trucksCount">0</span></div>
+        <div class="info-item">🌤️ <span id="weather">Dia</span></div>
+        <div class="info-item">❤️ Vidas: <span id="lives">3</span></div>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div style="text-align:center;">
+        <button class="control-btn" id="leftBtn" style="display:none;">← ESQUERDA</button>
+        <button class="control-btn" id="rightBtn" style="display:none;">DIREITA →</button>
+    </div>
+    <div class="on-screen-message" id="onScreenMessage"></div>
+    <div class="trophy-message" id="trophyMessage"></div>
+</div>
+<div class="footer-info">
+    Criado por Edson C.S.F. &nbsp;|&nbsp; <a href="mailto:edsony1@gmail.com" style="color:#ff9800">edsony1@gmail.com</a> <br>
+    Versão: v3.5 &copy; 2025
+</div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Responsividade canvas
+function resizeCanvas() {
+    const container = document.querySelector('.main-container');
+    const containerWidth = container.clientWidth - 24;
+    const containerHeight = window.innerHeight - 250; // Ajustado para dar mais espaço vertical ao canvas
+    
+    const aspectRatio = 800 / 600;
+    let canvasWidth = containerWidth;
+    let canvasHeight = canvasWidth / aspectRatio;
+    
+    if (canvasHeight > containerHeight) {
+        canvasHeight = containerHeight;
+        canvasWidth = canvasHeight * aspectRatio;
+    }
+    
+    if (canvasWidth > window.innerWidth - 40) {
+        canvasWidth = window.innerWidth - 40;
+        canvasHeight = canvasWidth / aspectRatio;
+    }
+    
+    canvas.style.width = canvasWidth + 'px';
+    canvas.style.height = canvasHeight + 'px';
+    
+    canvas.width = 800;
+    canvas.height = 600;
+    
+    game.width = 800;
+    game.height = 600;
+}
+
+window.addEventListener('resize', resizeCanvas);
+setTimeout(resizeCanvas, 100);
+
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let soundEnabled = true, engineSound = null;
+
+function playSound(freq, dur, type='sine') {
+    if (!soundEnabled || !audioContext) return;
+    try {
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode); 
+        gainNode.connect(audioContext.destination);
+        oscillator.type = type; 
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.25, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + dur);
+    } catch(e) {
+        console.error("Erro ao tocar som:", e);
+    }
+}
+
+function startEngineSound() {
+    if (!soundEnabled || engineSound || !audioContext) return;
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    engineSound = audioContext.createOscillator(); 
+    const gainNode = audioContext.createGain();
+    engineSound.connect(gainNode); 
+    gainNode.connect(audioContext.destination);
+    engineSound.type = 'sawtooth'; 
+    engineSound.frequency.setValueAtTime(100, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0.11, audioContext.currentTime); 
+    engineSound.start();
+}
+
+function stopEngineSound() { 
+    if (engineSound) { 
+        engineSound.stop(); 
+        engineSound = null; 
+    } 
+}
+
+const sounds = {
+    move: () => playSound(220, 0.08, 'sine'),
+    crash: () => playSound(120, 0.45, 'sawtooth'),
+    score: () => playSound(900, 0.10, 'square'),
+    weatherChange: () => playSound(330, 0.28, 'triangle'),
+    levelUp: () => playSound(720, 0.30, 'sawtooth'),
+    hit: () => playSound(320, 0.18, 'square'),
+    animal: () => playSound(500, 0.06, 'triangle'),
+    busPass: () => playSound(450, 0.14, 'square'),
+    trophy: () => playSound(880, 0.40, 'square'),
+    loseLife: () => playSound(150, 0.50, 'sawtooth'),
+    gainLife: () => playSound(523, 0.30, 'sine')
+};
+
+// GAME STATE
+const game = {
+    width: 800, 
+    height: 600,
+    roadWidth: 500, 
+    laneWidth: 100,
+    playerX: 400, 
+    playerY: 480,
+    playerWidth: 40, 
+    playerHeight: 70,
+    playerSpeed: 9, 
+    basePlayerSpeed: 9,
+    enemySpeed: 5, 
+    enemySpawnRate: 52,
+    score: 0, 
+    time: 0,
+    lives: 3,
+    isGameOver: false, 
+    isStarted: false,
+    timeOfDay: 'day',
+    weatherCondition: 'clear',
+    scenery: 'default',
+    weatherDuration: 1300, 
+    weatherTimer: 0,
+    lastTime: 0, 
+    deltaTime: 0, 
+    transitionProgress: 0,
+    difficultyLevel: 0,
+    busesPassed: 0,
+    trucksPassed: 0,
+    busesPassedForLife: 0,
+    trucksPassedForLife: 0,
+    livesLost: 0,
+    livesGained: 0,
+    collisions: 0,
+    trophies: {}, // Será resetado
+    visitedSceneries: [],
+    visitedWeathers: [],
+    visitedSceneryCombos: new Set(),
+    visitedWeatherScenery: {
+        rain: new Set(),
+        snow: new Set(),
+        dust: new Set(),
+        fog: new Set(),
+        clear: new Set()
+    }
+};
+
+// Função para resetar os troféus
+function resetTrophies() {
+    game.trophies = {
+        firstWin: false,
+        speedDemon: false,
+        survivor: false,
+        collector: false,
+        explorer: false,
+        weatherExplorer: false,
+        masterExplorer: false,
+        sceneryMaster: false,
+        rainMaster: false,
+        snowMaster: false,
+        dustMaster: false,
+        fogMaster: false,
+        clearMaster: false,
+        lifeKing: false,
+        lifeLoser: false,
+        crasher: false
+    };
+}
+
+let ranking = JSON.parse(localStorage.getItem('enduroRanking')) || [];
+
+function updateRanking(name, score, time) {
+    ranking.push({ name, score, time, date: new Date().toLocaleDateString() });
+    ranking.sort((a, b) => b.score - a.score);
+    ranking = ranking.slice(0, 10); // Aumentado para Top 10
+    localStorage.setItem('enduroRanking', JSON.stringify(ranking));
+    displayRanking(true, true, true); // Atualiza todos os painéis
+}
+
+function displayRanking(menu = false, end = false, gamePanel = false) {
+    const destinations = [];
+    if (menu) destinations.push(document.getElementById('rankingListMenu'));
+    if (end) destinations.push(document.getElementById('rankingListEnd'));
+    if (gamePanel) destinations.push(document.getElementById('rankingListGame'));
+    
+    destinations.forEach(dest => {
+        if (!dest) return;
+        let html = "";
+        if (ranking.length === 0) {
+            html = `<div class="ranking-item"><span>Nenhuma pontuação</span></div>`;
+        } else {
+            ranking.forEach((entry, idx) => {
+                html += `<div class="ranking-item">
+                    <span>${idx + 1}.</span>
+                    <span class="name">${entry.name || 'Anônimo'}</span>
+                    <span>${entry.score}</span>
+                    <span style="opacity:.6;font-size:10px;">${entry.time}s</span>
+                </div>`;
+            });
+        }
+        dest.innerHTML = html;
+    });
+}
+
+function displayTrophies(menu = false, end = false, gamePanel = false) {
+    const destinations = [];
+    if (menu) destinations.push(document.getElementById('trophiesListMenu'));
+    if (end) destinations.push(document.getElementById('trophiesListEnd'));
+    if (gamePanel) destinations.push(document.getElementById('trophiesListGame'));
+
+    destinations.forEach(dest => {
+        if (!dest) return;
+        
+        let html = "";
+        const trophyOrder = [
+            { key: 'firstWin', label: 'Primeira Vitória', goal: '10' },
+            { key: 'speedDemon', label: 'Velocidade', goal: '50' },
+            { key: 'survivor', label: 'Sobrevivente', goal: '60s' },
+            { key: 'collector', label: 'Colecionador', goal: '100' },
+            { key: 'explorer', label: 'Explorador', goal: 'Todos' },
+            { key: 'weatherExplorer', label: 'Meteorologista', goal: 'Climas' },
+            { key: 'masterExplorer', label: 'Mestre Exp.', goal: 'Tudo' },
+            { key: 'sceneryMaster', label: 'Mestre Cen.', goal: 'Combos' },
+            { key: 'rainMaster', label: 'Mestre Chuva', goal: 'Cenários' },
+            { key: 'snowMaster', label: 'Mestre Neve', goal: 'Cenários' },
+            { key: 'dustMaster', label: 'Mestre Poeira', goal: 'Cenários' },
+            { key: 'fogMaster', label: 'Mestre Neblina', goal: 'Cenários' },
+            { key: 'clearMaster', label: 'Mestre Céu Limpo', goal: 'Cenários' },
+            { key: 'lifeKing', label: 'Rei da Vida', goal: '10 vidas' },
+            { key: 'lifeLoser', label: 'Perdedor', goal: '10 vidas' },
+            { key: 'crasher', label: 'Barbeiro', goal: '15 batidas' }
+        ];
+
+        trophyOrder.forEach(trophy => {
+            const unlocked = game.trophies[trophy.key];
+            html += `<div class="trophy-item ${unlocked ? 'unlocked' : 'locked'}">
+                <span>${unlocked ? '🏆' : '🔒'} ${trophy.label}</span>
+                <span>${unlocked ? 'OK' : trophy.goal}</span>
+            </div>`;
+        });
+        
+        dest.innerHTML = html;
+    });
+}
+
+resetTrophies(); // Garante que os troféus comecem zerados
+displayRanking(true, false, false);
+displayTrophies(true, false, false);
+
+let enemies = [], roadLines = [], particles = [], obstacles = [], scenery = [], streetlights = [],
+    pedestrians = [], animals = [];
+
+function initRoadLines() {
+    roadLines = [];
+    for (let i = 0; i < 10; i++) roadLines.push({ y: i * 80, width: game.roadWidth, height: 10 });
+}
+
+function initScenery() {
+    scenery = [], streetlights = [], pedestrians = [], animals = [];
+    let cnt = 30;
+    for (let i = 0; i < cnt; i++) {
+        let scenarioType;
+        
+        if (game.scenery === "desert") {
+            scenarioType = Math.random() < 0.5 ? "cactus" : "rock";
+        } else if (game.weatherCondition === "snow") {
+            scenarioType = Math.random() < 0.8 ? "tree" : "rock";
+        } else if (game.scenery === "city") {
+            scenarioType = "building";
+        } else if (game.scenery === "beach") {
+            scenarioType = Math.random() < 0.7 ? "palmtree" : "umbrella";
+        } else if (game.scenery === "sea") {
+            scenarioType = Math
+} else if (game.scenery === "forest") {
+            scenarioType = Math.random() < 0.78 ? "tree" : "grass";
+        } else {
+            scenarioType = Math.random() < 0.6 ? "tree" : "grass";
+        }
+        
+        scenery.push({
+            x: Math.random() < 0.5 ? Math.random() * (game.width / 2 - game.roadWidth / 2 - 20) : game.width / 2 + game.roadWidth / 2 + Math.random() * (game.width / 2 - game.roadWidth / 2),
+            y: Math.random() * game.height,
+            size: Math.random() * 17 + 10,
+            type: scenarioType
+        });
+    }
+}
+
+function roundRect(x, y, w, h, r, fill, stroke) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+}
+
+function drawCar(x, y, w, h, body = '#6cf', detail = '#cfe6ff', headlights = false) {
+    const r = 10;
+    ctx.fillStyle = body;
+    roundRect(x, y, w, h, r, true, false);
+    
+    ctx.fillStyle = '#0b1a24';
+    roundRect(x + 8, y + 16, w - 16, h * 0.32, 8, true, false);
+    
+    ctx.fillStyle = detail;
+    ctx.fillRect(x + w * 0.42, y + h * 0.1, w * 0.16, h * 0.06);
+    
+    ctx.fillStyle = '#222';
+    ctx.fillRect(x + 6, y + h * 0.18, 8, h * 0.24);
+    ctx.fillRect(x + w - 14, y + h * 0.18, 8, h * 0.24);
+    ctx.fillRect(x + 6, y + h * 0.66, 8, h * 0.22);
+    ctx.fillRect(x + w - 14, y + h * 0.66, 8, h * 0.22);
+    
+    if (headlights) {
+        ctx.globalAlpha = 0.35;
+        ctx.fillStyle = '#fff1b3';
+        ctx.beginPath();
+        ctx.moveTo(x + 4, y);
+        ctx.lineTo(x + w - 4, y);
+        ctx.lineTo(x + w + 40, y - 70);
+        ctx.lineTo(x - 40, y - 70);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+}
+
+function drawBus(x, y, w, h, body = '#F7B801', detail = '#ffffff', headlights = false) {
+    const r = 8;
+    ctx.fillStyle = body;
+    roundRect(x, y, w, h, r, true, false);
+    
+    ctx.fillStyle = detail;
+    ctx.fillRect(x, y, w, 8);
+    
+    ctx.fillStyle = '#0b1a24';
+    roundRect(x + 5, y + 12, w - 10, 15, 3, true, false);
+    
+    ctx.fillStyle = '#87CEEB';
+    roundRect(x + 8, y + 14, 8, 11, 2, true, false);
+    roundRect(x + 18, y + 14, 8, 11, 2, true, false);
+    roundRect(x + 28, y + 14, 8, 11, 2, true, false);
+    
+    ctx.fillStyle = '#333';
+    ctx.fillRect(x + w - 15, y + h * 0.6, 12, h * 0.35);
+    
+    ctx.fillStyle = '#222';
+    ctx.fillRect(x + 5, y + h * 0.75, 10, h * 0.2);
+    ctx.fillRect(x + w - 15, y + h * 0.75, 10, h * 0.2);
+    
+    if (headlights) {
+        ctx.globalAlpha = 0.35;
+        ctx.fillStyle = '#fff1b3';
+        ctx.beginPath();
+        ctx.moveTo(x + 4, y);
+        ctx.lineTo(x + w - 4, y);
+        ctx.lineTo(x + w + 40, y - 70);
+        ctx.lineTo(x - 40, y - 70);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+}
+
+function drawTruck(x, y, w, h, body = '#6666ff', detail = '#ffffff', headlights = false) {
+    ctx.fillStyle = body;
+    roundRect(x, y, w, h * 0.4, 8, true, false);
+    
+    ctx.fillStyle = '#0b1a24';
+    roundRect(x + 5, y + 5, w - 10, h * 0.25, 5, true, false);
+    
+    ctx.fillStyle = body;
+    roundRect(x, y + h * 0.4, w, h * 0.6, 5, true, false);
+    
+    ctx.fillStyle = detail;
+    ctx.fillRect(x + 5, y + h * 0.45, w - 10, 3);
+    
+    ctx.fillStyle = '#222';
+    ctx.fillRect(x + 5, y + h * 0.35, 8, h * 0.15);
+    ctx.fillRect(x + w - 13, y + h * 0.35, 8, h * 0.15);
+    
+    ctx.fillRect(x + 5, y + h * 0.75, 10, h * 0.2);
+    ctx.fillRect(x + w - 15, y + h * 0.75, 10, h * 0.2);
+    
+    if (headlights) {
+        ctx.globalAlpha = 0.35;
+        ctx.fillStyle = '#fff1b3';
+        ctx.beginPath();
+        ctx.moveTo(x + 4, y);
+        ctx.lineTo(x + w - 4, y);
+        ctx.lineTo(x + w + 40, y - 70);
+        ctx.lineTo(x - 40, y - 70);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+}
+
+class Enemy {
+    constructor(lane, type = 'car', isBoss = false) {
+        this.type = type;
+        if (type === "car") { this.width = isBoss ? 60 : 40; this.height = isBoss ? 90 : 70; }
+        else if (type === "bus") { this.width = 40; this.height = 120; }
+        else if (type === "truck") { this.width = 40; this.height = 100; }
+        this.lane = lane; this.isBoss = isBoss;
+        this.x = game.width / 2 - game.roadWidth / 2 + lane * game.laneWidth + game.laneWidth / 2 - this.width / 2;
+        this.y = -this.height;
+        this.speed = game.enemySpeed + (type === "car" ? Math.random() * 2 : Math.random() * 1.2) + (isBoss ? 3 : 0);
+        this.color = isBoss ? '#ff4400' : type === 'bus' ? '#F7B801' : type === 'truck' ? '#6666ff' : this.getRandomColor();
+        this.laneChangeTimer = 0; this.laneChangeInterval = Math.random() * 500 + 300; this.targetX = this.x;
+        this.passed = false;
+    }
+    getRandomColor() {
+        const colors = ['#ff5555', '#55ff55', '#5555ff', '#ffff55', '#ff55ff', '#55ffff'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+    update() {
+        this.y += this.speed;
+        if (game.score >= 85) { 
+            this.laneChangeTimer++; 
+            if (this.laneChangeTimer >= this.laneChangeInterval) {
+                this.laneChangeTimer = 0; 
+                let newLane;
+                do {
+                    newLane = Math.floor(Math.random() * 5);
+                } while (newLane === this.lane);
+                
+                this.lane = newLane;
+                this.targetX = game.width / 2 - game.roadWidth / 2 + newLane * game.laneWidth + game.laneWidth / 2 - (this.width / 2);
+            }
+            
+            const diff = this.targetX - this.x;
+            if (Math.abs(diff) > 1) {
+                this.x += diff * 0.08;
+            }
+        }
+    }
+    draw() {
+        const headlights = game.timeOfDay === 'night';
+        
+        if (this.type === 'car') {
+            const detailColor = this.isBoss ? '#ffaaaa' : '#cfe6ff';
+            drawCar(this.x, this.y, this.width, this.height, this.color, detailColor, headlights);
+            
+            if (this.isBoss) {
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(this.x + this.width / 2, this.y + this.height * 0.38, 13, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(this.x + this.width / 2 - 6, this.y + this.height * 0.32, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(this.x + this.width / 2 + 6, this.y + this.height * 0.32, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillRect(this.x + this.width / 2 - 5, this.y + this.height * 0.45, 10, 4);
+            }
+        } 
+        else if (this.type === 'bus') {
+            drawBus(this.x, this.y, this.width, this.height, this.color, '#ffffff', headlights);
+        }
+        else if (this.type === 'truck') {
+            drawTruck(this.x, this.y, this.width, this.height, this.color, '#ffffff', headlights);
+        }
+    }
+}
+
+class Obstacle {
+    constructor(type) {
+        this.type = type; this.y = -32;
+        if (type === "hole") { 
+            this.width = 34; 
+            this.height = 34; 
+            this.penalty = 1;
+        }
+        else if (type === "log") { 
+            this.width = 30; 
+            this.height = 35; 
+            this.penalty = 2;
+        }
+        else if (type === "rock") { 
+            this.width = 33; 
+            this.height = 28; 
+            this.penalty = Math.random() < 0.5 ? 1 : 3; 
+        }
+        this.x = game.width / 2 - game.roadWidth / 2 + Math.random() * game.roadWidth;
+        this.color = type === 'hole' ? '#131313' : type === 'log' ? '#9b8349' : '#757575';
+        this.isHit = false;
+    }
+    update() { this.y += game.enemySpeed; }
+    draw() {
+        if (this.type === 'hole') {
+            ctx.fillStyle = this.color;
+            ctx.beginPath(); ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#282828'; ctx.beginPath(); ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 10, 0, Math.PI * 2); ctx.fill();
+        } else if (this.type === 'log') {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.strokeStyle = '#654321'; ctx.lineWidth = 2; ctx.strokeRect(this.x, this.y, this.width, this.height);
+            ctx.fillStyle = '#422'; ctx.fillRect(this.x + 4, this.y + 15, 18, 7);
+        } else if (this.type === 'rock') {
+            ctx.fillStyle = this.color;
+            if (this.penalty === 1) {
+                ctx.beginPath(); ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 10, 0, Math.PI * 2); ctx.fill();
+            } else {
+                ctx.beginPath(); ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 14, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.fillStyle = '#eee'; ctx.beginPath(); ctx.arc(this.x + this.width / 2 + 5, this.y + this.height / 2 - 3, 5, 0, Math.PI * 2); ctx.fill();
+        }
+    }
+}
+
+class Pedestrian {
+    constructor() {
+        this.width = 15; this.height = 32;
+        this.lane = Math.floor(Math.random() * 5);
+        this.x = game.width / 2 - game.roadWidth / 2 + this.lane * game.laneWidth + game.laneWidth / 2 - this.width / 2;
+        this.y = -this.height; this.speed = game.enemySpeed;
+        this.color = Math.random() < 0.4 ? '#ff6347' : '#35ddff';
+        this.penalty = 5;
+    }
+    update() { this.y += this.speed; }
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y + 10, this.width, this.height - 10);
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2, this.y + 8, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(this.x - 3, this.y + 15, 5, 15);
+        ctx.fillRect(this.x + this.width - 2, this.y + 15, 5, 15);
+        ctx.fillRect(this.x + 2, this.y + this.height - 12, 4, 12);
+        ctx.fillRect(this.x + this.width - 6, this.y + this.height - 12, 4, 12);
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2 - 3, this.y + 6, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2 + 3, this.y + 6, 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+class Animal {
+    constructor() {
+        this.width = 26; this.height = 26;
+        this.x = game.width / 2 - game.roadWidth / 2 + Math.random() * game.roadWidth;
+        this.y = -this.height; this.speed = game.enemySpeed;
+        this.kind = Math.random() < 0.5 ? "dog" : "fox";
+        this.penalty = 4;
+    }
+    update() { this.y += this.speed + 0.7; }
+    draw() {
+        ctx.fillStyle = this.kind === "dog" ? "#ffd98b" : "#bf5520";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2, this.y + this.height / 3, this.width / 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2 - 4, this.y + this.height / 3 - 2, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2 + 4, this.y + this.height / 3 - 2, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#333";
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2 - 4, this.y + this.height / 3 - 2, 1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x + this.width / 2 + 4, this.y + this.height / 3 - 2, 1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = this.kind === "dog" ? "#ffd98b" : "#bf5520";
+        if (this.kind === "dog") {
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width / 4, this.y);
+            ctx.lineTo(this.x + this.width / 4 - 4, this.y - 6);
+            ctx.lineTo(this.x + this.width / 4 + 4, this.y - 6);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width * 3 / 4, this.y);
+            ctx.lineTo(this.x + this.width * 3 / 4 - 4, this.y - 6);
+            ctx.lineTo(this.x + this.width * 3 / 4 + 4, this.y - 6);
+            ctx.closePath();
+            ctx.fill();
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width / 4, this.y);
+            ctx.lineTo(this.x + this.width / 4 - 6, this.y - 10);
+            ctx.lineTo(this.x + this.width / 4 + 2, this.y - 4);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(this.x + this.width * 3 / 4, this.y);
+            ctx.lineTo(this.x + this.width * 3 / 4 + 6, this.y - 10);
+            ctx.lineTo(this.x + this.width * 3 / 4 - 2, this.y - 4);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        ctx.beginPath();
+        ctx.moveTo(this.x + this.width, this.y + this.height / 2);
+        ctx.lineTo(this.x + this.width + 8, this.y + this.height / 3);
+        ctx.lineTo(this.x + this.width + 5, this.y + this.height / 2 + 5);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.fillRect(this.x + 3, this.y + this.height - 8, 4, 8);
+        ctx.fillRect(this.x + this.width - 7, this.y + this.height - 8, 4, 8);
+    }
+}
+
+class Particle { 
+    constructor(type) {
+        this.type = type; 
+        this.x = Math.random() * game.width; 
+        this.y = Math.random() * game.height;
+        
+        if (type === 'rain') {
+            this.size = Math.random() * 3 + 1;
+            this.speed = Math.random() * 10 + 5;
+            this.opacity = Math.random() * 0.5 + 0.5;
+        } else if (type === 'snow') {
+            this.size = Math.random() * 4 + 2;
+            this.speed = Math.random() * 3 + 1;
+            this.opacity = Math.random() * 0.5 + 0.5;
+        } else if (type === 'fog') {
+            this.size = Math.random() * 40 + 30;
+            this.speed = Math.random() * 1 + 0.3;
+            this.opacity = Math.random() * 0.3 + 0.4;
+        } else if (type === 'dust') {
+            this.size = Math.random() * 20 + 10;
+            this.speed = Math.random() * 4 + 2;
+            this.opacity = Math.random() * 0.5 + 0.4;
+        }
+    } 
+    
+    update() { 
+        this.y += this.speed; 
+        
+        if (this.type === 'rain') { 
+            this.x += Math.random() * 2 - 1; 
+        } else if (this.type === 'snow') {
+            this.x += Math.sin(this.y * 0.01) * 1;
+        } else if (this.type === 'fog') {
+            this.x += Math.random() * 0.3 - 0.15;
+        } else if (this.type === 'dust') {
+            this.x += Math.random() * 2 - 1;
+        }
+        
+        if (this.y > game.height) { 
+            this.y = -10; 
+            this.x = Math.random() * game.width; 
+        } 
+    }
+    
+    draw() {
+        ctx.globalAlpha = this.opacity;
+        
+        if (this.type === 'rain') { 
+            ctx.strokeStyle = '#aaaaff'; 
+            ctx.lineWidth = this.size; 
+            ctx.beginPath(); 
+            ctx.moveTo(this.x, this.y); 
+            ctx.lineTo(this.x, this.y + 10); 
+            ctx.stroke(); 
+        } else if (this.type === 'snow') { 
+            ctx.fillStyle = '#fff'; 
+            ctx.beginPath(); 
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+            ctx.fill(); 
+        } else if (this.type === 'fog') {
+            ctx.fillStyle = '#f0f0f0';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (this.type === 'dust') {
+            ctx.fillStyle = '#d2b48c';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        ctx.globalAlpha = 1;
+    }
+}
+
+function initWeatherParticles() {
+    particles = []; 
+    
+    if (game.weatherCondition === 'rain') { 
+        for (let i = 0; i < 95; i++) particles.push(new Particle('rain')); 
+    } else if (game.weatherCondition === 'snow') { 
+        for (let i = 0; i < 68; i++) particles.push(new Particle('snow')); 
+    } else if (game.weatherCondition === 'fog') { 
+        for (let i = 0; i < 30; i++) particles.push(new Particle('fog'));
+    } else if (game.weatherCondition === 'dust') { 
+        for (let i = 0; i < 80; i++) particles.push(new Particle('dust')); 
+    }
+}
+
+function drawRoad() {
+    let roadColor = '#333';
+    
+    if (game.scenery === 'desert') {
+        roadColor = '#d6a15a';
+    } else if (game.weatherCondition === 'snow') {
+        roadColor = '#e0e0e0';
+    }
+    
+    ctx.fillStyle = roadColor;
+    ctx.fillRect(game.width / 2 - game.roadWidth / 2, 0, game.roadWidth, game.height);
+    
+    ctx.fillStyle = '#fff';
+    roadLines.forEach(line => {
+        ctx.fillRect(game.width / 2 - game.roadWidth / 2 + game.laneWidth, line.y, 5, line.height);
+        ctx.fillRect(game.width / 2 - game.roadWidth / 2 + game.laneWidth * 2, line.y, 5, line.height);
+        ctx.fillRect(game.width / 2 - game.roadWidth / 2 + game.laneWidth * 3, line.y, 5, line.height);
+        ctx.fillRect(game.width / 2 - game.roadWidth / 2 + game.laneWidth * 4, line.y, 5, line.height);
+    });
+    
+    ctx.fillStyle = '#FFD700';
+    ctx.fillRect(game.width / 2 - game.roadWidth / 2 - 5, 0, 5, game.height);
+    ctx.fillRect(game.width / 2 + game.roadWidth / 2, 0, 5, game.height);
+    
+    roadLines.forEach(line => { 
+        line.y += game.enemySpeed; 
+        if (line.y > game.height) line.y = -line.height; 
+    });
+}
+
+function drawPlayer() {
+    const centerX = game.playerX, centerY = game.playerY;
+    const headlights = game.timeOfDay === 'night';
+    drawCar(centerX - game.playerWidth / 2, centerY, game.playerWidth, game.playerHeight, '#00ff35', '#abf7b8', headlights);
+}
+
+function drawHUD() { 
+    document.getElementById('time').textContent = Math.floor(game.time); 
+    document.getElementById('score').textContent = game.score;
+    document.getElementById('lives').textContent = game.lives;
+    document.getElementById('busesCount').textContent = game.busesPassed;
+    document.getElementById('trucksCount').textContent = game.trucksPassed;
+    
+    let timeText = game.timeOfDay === "night" ? "Noite" : 
+        game.timeOfDay === "sunset" ? "Entardecer" : "Dia";
+    
+    let weatherText = game.weatherCondition === "clear" ? "Céu Limpo" : 
+        game.weatherCondition === "rain" ? "Chuva" : 
+        game.weatherCondition === "snow" ? "Neve" :
+        game.weatherCondition === "fog" ? "Neblina" :
+        game.weatherCondition === "dust" ? "Poeira" : "Céu Limpo";
+    
+    let sceneryText = game.scenery === "default" ? "Estrada" : 
+        game.scenery === "beach" ? "Praia" : 
+        game.scenery === "sea" ? "Mar" :
+        game.scenery === "forest" ? "Floresta" :
+        game.scenery === "city" ? "Cidade" :
+        game.scenery === "desert" ? "Deserto" : "Estrada";
+    
+    document.getElementById('weather').textContent = `${timeText} | ${weatherText} | ${sceneryText}`;
+}
+
+function showOnScreenMessage(msg) {
+    const el = document.getElementById('onScreenMessage'); 
+    el.textContent = msg; 
+    el.style.opacity = 1; 
+    setTimeout(() => { 
+        el.style.opacity = 0; 
+    }, 1500);
+}
+
+function showTrophyMessage(msg) {
+    const el = document.getElementById('trophyMessage'); 
+    el.textContent = msg; 
+    el.style.opacity = 1; 
+    setTimeout(() => { 
+        el.style.opacity = 0; 
+    }, 3000);
+}
+
+function drawWeatherEffects() {
+    ctx.globalAlpha = game.transitionProgress > 0 ? game.transitionProgress : 1;
+    
+    if (game.timeOfDay === 'night') { 
+        ctx.fillStyle = 'rgba(0,0,50,0.7)'; 
+        ctx.fillRect(0, 0, game.width, game.height); 
+    } else if (game.timeOfDay === 'sunset') { 
+        let grad = ctx.createLinearGradient(0, 0, 0, game.height); 
+        grad.addColorStop(0, "#fef6e7"); 
+        grad.addColorStop(.48, "#f8b961"); 
+        grad.addColorStop(1, "#f65a29"); 
+        ctx.fillStyle = grad; 
+        ctx.globalAlpha = .12; 
+        ctx.fillRect(0, 0, game.width, game.height); 
+    }
+    
+    if (game.weatherCondition === 'rain') { 
+        ctx.fillStyle = 'rgba(100,100,160,0.22)'; 
+        ctx.fillRect(0, 0, game.width, game.height); 
+    } else if (game.weatherCondition === 'snow') { 
+        ctx.fillStyle = 'rgba(220,220,255,0.30)'; 
+        ctx.fillRect(0, 0, game.width, game.height); 
+    } else if (game.weatherCondition === 'fog') { 
+        ctx.fillStyle = 'rgba(200,200,200,0.50)';
+        ctx.fillRect(0, 0, game.width, game.height); 
+    } else if (game.weatherCondition === 'dust') { 
+        ctx.fillStyle = 'rgba(210,180,140,0.60)'; 
+        ctx.fillRect(0, 0, game.width, game.height); 
+    }
+    
+    ctx.globalAlpha = 1; 
+    
+    particles.forEach(p => { 
+        p.update(); 
+        p.draw(); 
+    });
+}
+
+function drawScenery() {
+    scenery.forEach(item => {
+        if (game.scenery === 'desert') {
+            if (item.type === "cactus") { 
+                ctx.fillStyle = "#bb8e38"; 
+                ctx.fillRect(item.x, item.y, item.size / 4, item.size); 
+                ctx.fillRect(item.x - item.size / 2, item.y + item.size / 3, item.size / 2, item.size / 3); 
+            } else if (item.type === "rock") { 
+                ctx.fillStyle = "#ae8e7c"; 
+                ctx.beginPath(); 
+                ctx.arc(item.x, item.y, item.size / 2, 0, Math.PI * 2); 
+                ctx.fill();
+            }
+        } else if (game.weatherCondition === 'snow') {
+            if (item.type === "tree") { 
+                ctx.fillStyle = "#eaf6ff"; 
+                ctx.beginPath(); 
+                ctx.moveTo(item.x, item.y); 
+                ctx.lineTo(item.x - item.size / 2, item.y + item.size); 
+                ctx.lineTo(item.x + item.size / 2, item.y + item.size); 
+                ctx.closePath(); 
+                ctx.fill(); 
+                ctx.fillStyle = "#c4dbe6"; 
+                ctx.fillRect(item.x - 4, item.y + item.size, 8, 12); 
+            } else if (item.type === "rock") { 
+                ctx.fillStyle = "#ddeef9"; 
+                ctx.beginPath(); 
+                ctx.arc(item.x, item.y, item.size / 2, 0, Math.PI * 2); 
+                ctx.fill(); 
+            }
+        } else if (game.scenery === 'city') {
+            ctx.fillStyle = "#adaebb"; 
+            ctx.fillRect(item.x, item.y, item.size, item.size * 2); 
+            ctx.fillStyle = "#222"; 
+            ctx.fillRect(item.x + item.size * 0.13, item.y + item.size * 0.13, item.size * 0.24, item.size * 0.18);
+        } else if (game.scenery === 'beach') {
+            if (item.type === "umbrella") { 
+                ctx.fillStyle = "#fee120"; 
+                ctx.beginPath(); 
+                ctx.arc(item.x, item.y, item.size, Math.PI, Math.PI * 2); 
+                ctx.fill(); 
+                ctx.fillStyle = "#ff4081"; 
+                ctx.fillRect(item.x - 3, item.y, item.size / 7, item.size); 
+            } else { 
+                ctx.fillStyle = "#067019"; 
+                ctx.fillRect(item.x, item.y, item.size / 7, item.size); 
+                ctx.fillStyle = "#f8cf51"; 
+                ctx.beginPath(); 
+                ctx.arc(item.x, item.y, item.size / 2, 0, Math.PI * 2); 
+                ctx.fill(); 
+            }
+        } else if (game.scenery === 'sea') {
+            if (item.type === "boat") { 
+                ctx.fillStyle = "#028be2"; 
+                ctx.fillRect(item.x, item.y, item.size * 1.2, item.size / 4); 
+                ctx.fillStyle = "#f4e13b"; 
+                ctx.fillRect(item.x + 3, item.y - 3, item.size / 5, item.size / 2); 
+            } else { 
+                ctx.fillStyle = "#fff"; 
+                ctx.beginPath(); 
+                ctx.arc(item.x, item.y, item.size / 2, 0, Math.PI * 2); 
+                ctx.fill(); 
+            }
+        } else if (game.scenery === 'forest') {
+            if (item.type === "tree") { 
+                ctx.fillStyle = "#348b22"; 
+                ctx.beginPath(); 
+                ctx.moveTo(item.x, item.y); 
+                ctx.lineTo(item.x - item.size / 2, item.y + item.size); 
+                ctx.lineTo(item.x + item.size / 2, item.y + item.size); 
+                ctx.closePath(); 
+                ctx.fill(); 
+                ctx.fillStyle = "#4f321b"; 
+                ctx.fillRect(item.x - 3, item.y + item.size, 7, 15); 
+            } else { 
+                ctx.fillStyle = "#60b943"; 
+                ctx.fillRect(item.x, item.y, item.size / 2, item.size / 3); 
+            }
+        } else if (game.timeOfDay === 'sunset') {
+            ctx.fillStyle = "#fd6e0c"; 
+            ctx.beginPath(); 
+            ctx.moveTo(item.x, item.y); 
+            ctx.lineTo(item.x - item.size / 2, item.y + item.size); 
+            ctx.lineTo(item.x + item.size / 2, item.y + item.size); 
+            ctx.closePath(); 
+            ctx.fill(); 
+            ctx.fillStyle = "#d6521a"; 
+            ctx.fillRect(item.x - 4, item.y + item.size, 8, 19); 
+        } else {
+            ctx.fillStyle = "#228b22"; 
+            ctx.beginPath(); 
+            ctx.moveTo(item.x, item.y); 
+            ctx.lineTo(item.x - item.size / 2, item.y + item.size); 
+            ctx.lineTo(item.x + item.size / 2, item.y + item.size); 
+            ctx.closePath(); 
+            ctx.fill(); 
+            ctx.fillStyle = "#654321"; 
+            ctx.fillRect(item.x - 3, item.y + item.size, 6, 15); 
+        }
+        item.y += game.enemySpeed; 
+        if (item.y > game.height) { 
+            item.y = -item.size; 
+            item.x = Math.random() < 0.5 ? Math.random() * (game.width / 2 - game.roadWidth / 2 - 20) : game.width / 2 + game.roadWidth / 2 + Math.random() * (game.width / 2 - game.roadWidth / 2); 
+        }
+    });
+}
+
+function updateWeather() {
+    game.weatherTimer++;
+    
+    if (game.weatherTimer >= game.weatherDuration) {
+        game.weatherTimer = 0;
+        
+        const timesOfDay = ['day', 'sunset', 'night'];
+        const currentIndex = timesOfDay.indexOf(game.timeOfDay);
+        game.timeOfDay = timesOfDay[(currentIndex + 1) % timesOfDay.length];
+        
+        const weatherConditions = ['clear', 'rain', 'snow', 'fog', 'dust'];
+        game.weatherCondition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+        
+        if (!game.visitedWeathers.includes(game.weatherCondition)) {
+            game.visitedWeathers.push(game.weatherCondition);
+        }
+        
+        const sceneries = ['default', 'beach', 'sea', 'forest', 'city', 'desert'];
+        game.scenery = sceneries[Math.floor(Math.random() * sceneries.length)];
+        
+        if (!game.visitedSceneries.includes(game.scenery)) {
+            game.visitedSceneries.push(game.scenery);
+        }
+        
+        const comboKey = `${game.scenery}_${game.weatherCondition}_${game.timeOfDay}`;
+        game.visitedSceneryCombos.add(comboKey);
+        
+        game.visitedWeatherScenery[game.weatherCondition].add(game.scenery);
+        
+        game.transitionProgress = 1;
+        initWeatherParticles(); 
+        sounds.weatherChange(); 
+        initScenery();
+    }
+}
+
+function updateDifficulty() {
+    const curr = game.difficultyLevel;
+    if (game.score >= 45 && curr < 1) { 
+        game.difficultyLevel = 1; 
+        game.enemySpeed += 0.6; 
+        showOnScreenMessage('Dificuldade aumentou!'); 
+        sounds.levelUp(); 
+    } else if (game.score >= 95 && curr < 2) { 
+        game.difficultyLevel = 2; 
+        game.enemySpeed += 0.9; 
+        showOnScreenMessage('Mais caminhões e ônibus!'); 
+        sounds.levelUp(); 
+    } else if (game.score >= 145 && curr < 3) { 
+        game.difficultyLevel = 3; 
+        game.enemySpeed += 0.7; 
+        showOnScreenMessage('Ação acelerada!'); 
+        sounds.levelUp(); 
+    } else if (game.score >= 200 && curr < 4) { 
+        game.difficultyLevel = 4; 
+        game.enemySpeed += 0.8; 
+        showOnScreenMessage('Chefes na pista!'); 
+        sounds.levelUp(); 
+    } else if (game.score >= 260 && curr < 5) { 
+        game.difficultyLevel = 5; 
+        game.enemySpeed += 1.1; 
+        showOnScreenMessage('Velocidade máxima!'); 
+        sounds.levelUp(); 
+    }
+}
+
+function checkTrophies() {
+    let gainedLife = false;
+    
+    const gainLifeForTrophy = () => {
+        if (!gainedLife) {
+            game.lives++;
+            game.livesGained++;
+            gainedLife = true;
+            sounds.gainLife();
+            showOnScreenMessage('Vida extra! +1 ❤️');
+        }
+    };
+
+    const unlockTrophy = (key, message) => {
+        game.trophies[key] = true;
+        showTrophyMessage(`🏆 TROFÉU: ${message}!`);
+        sounds.trophy();
+        displayTrophies(false, false, true);
+        gainLifeForTrophy();
+    };
+
+    if (game.score >= 10 && !game.trophies.firstWin) unlockTrophy('firstWin', 'Primeira Vitória');
+    if (game.score >= 50 && !game.trophies.speedDemon) unlockTrophy('speedDemon', 'Demônio da Velocidade');
+    if (game.time >= 60 && !game.trophies.survivor) unlockTrophy('survivor', 'Sobrevivente');
+    if (game.score >= 100 && !game.trophies.collector) unlockTrophy('collector', 'Colecionador');
+
+    const allSceneries = ['default', 'beach', 'sea', 'forest', 'city', 'desert'];
+    if (allSceneries.every(s => game.visitedSceneries.includes(s)) && !game.trophies.explorer) {
+        unlockTrophy('explorer', 'Explorador');
+    }
+    
+    const allWeathers = ['clear', 'rain', 'snow', 'fog', 'dust'];
+    if (allWeathers.every(w => game.visitedWeathers.includes(w)) && !game.trophies.weatherExplorer) {
+        unlockTrophy('weatherExplorer', 'Meteorologista');
+    }
+    
+    if (game.trophies.explorer && game.trophies.weatherExplorer && !game.trophies.masterExplorer) {
+        unlockTrophy('masterExplorer', 'Mestre Explorador');
+    }
+    
+    if (game.visitedSceneryCombos.size >= 90 && !game.trophies.sceneryMaster) unlockTrophy('sceneryMaster', 'Mestre de Cenários');
+    if (game.visitedWeatherScenery.rain.size >= 6 && !game.trophies.rainMaster) unlockTrophy('rainMaster', 'Mestre da Chuva');
+    if (game.visitedWeatherScenery.snow.size >= 6 && !game.trophies.snowMaster) unlockTrophy('snowMaster', 'Mestre da Neve');
+    if (game.visitedWeatherScenery.dust.size >= 6 && !game.trophies.dustMaster) unlockTrophy('dustMaster', 'Mestre da Poeira');
+    if (game.visitedWeatherScenery.fog.size >= 6 && !game.trophies.fogMaster) unlockTrophy('fogMaster', 'Mestre da Neblina');
+    if (game.visitedWeatherScenery.clear.size >= 6 && !game.trophies.clearMaster) unlockTrophy('clearMaster', 'Mestre do Céu Limpo');
+    
+    if (game.livesGained >= 10 && !game.trophies.lifeKing) unlockTrophy('lifeKing', 'Rei da Vida');
+    
+    if (game.livesLost >= 10 && !game.trophies.lifeLoser) {
+        game.trophies.lifeLoser = true;
+        showTrophyMessage('🏆 TROFÉU: Perdedor!');
+        sounds.trophy();
+        displayTrophies(false, false, true);
+    }
+    
+    if (game.collisions >= 15 && !game.trophies.crasher) {
+        game.trophies.crasher = true;
+        showTrophyMessage('🏆 TROFÉU: Barbeiro!');
+        sounds.trophy();
+        displayTrophies(false, false, true);
+    }
+}
+
+function spawnEnemy() {
+    const lane = Math.floor(Math.random() * 5);
+    let type = 'car';
+    
+    if (game.difficultyLevel >= 2) {
+        const rand = Math.random();
+        if (rand < 0.15) type = 'bus';
+        else if (rand < 0.3) type = 'truck';
+    }
+    
+    const isBoss = game.difficultyLevel >= 4 && Math.random() < 0.1;
+    enemies.push(new Enemy(lane, type, isBoss));
+}
+
+function spawnObstacle() {
+    if (Math.random() < 0.02) {
+        const types = ['hole', 'log', 'rock'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        obstacles.push(new Obstacle(type));
+    }
+}
+
+function spawnPedestrian() {
+    if (Math.random() < 0.01) {
+        pedestrians.push(new Pedestrian());
+    }
+}
+
+function spawnAnimal() {
+    if (Math.random() < 0.008) {
+        animals.push(new Animal());
+    }
+}
+
+function update(currentTime) {
+    if (!game.isStarted || game.isGameOver) return;
+    
+    if (game.lastTime === 0) game.lastTime = currentTime;
+    game.deltaTime = (currentTime - game.lastTime) / 1000;
+    game.lastTime = currentTime;
+    
+    game.time += game.deltaTime;
+    
+    if (game.transitionProgress > 0) {
+        game.transitionProgress -= 0.01;
+        if (game.transitionProgress < 0) game.transitionProgress = 0;
+    }
+    
+    updateWeather();
+    updateDifficulty();
+    checkTrophies();
+    
+    if (Math.random() < 0.02 + (game.difficultyLevel * 0.005)) {
+        spawnEnemy();
+    }
+    
+    spawnObstacle();
+    spawnPedestrian();
+    spawnAnimal();
+    
+    enemies.forEach(enemy => enemy.update());
+    enemies = enemies.filter(enemy => enemy.y < game.height + 100);
+    
+    obstacles.forEach(obstacle => obstacle.update());
+    obstacles = obstacles.filter(obstacle => obstacle.y < game.height + 50);
+    
+    pedestrians.forEach(pedestrian => pedestrian.update());
+    pedestrians = pedestrians.filter(pedestrian => pedestrian.y < game.height + 50);
+    
+    animals.forEach(animal => animal.update());
+    animals = animals.filter(animal => animal.y < game.height + 50);
+    
+    checkCollisions();
+    checkPassings();
+    drawHUD();
+}
+
+function checkCollisions() {
+    const check = (list, onCollision) => {
+        list.forEach((item, index) => {
+            if (isColliding(
+                game.playerX - game.playerWidth / 2, game.playerY, game.playerWidth, game.playerHeight,
+                item.x, item.y, item.width, item.height
+            )) {
+                onCollision(item, index);
+            }
+        });
+    };
+
+    check(enemies, (enemy, index) => {
+        game.collisions++;
+        
+        if (enemy.type === 'bus' || enemy.type === 'truck') {
+            game.lives -= 2;
+            game.livesLost += 2;
+            showOnScreenMessage(`Colisão! -2 vidas`);
+            if (enemy.type === 'bus') game.busesPassedForLife = Math.max(0, game.busesPassedForLife - 20);
+            else game.trucksPassedForLife = Math.max(0, game.trucksPassedForLife - 20);
+        } else {
+            game.lives--;
+            game.livesLost++;
+            game.score = Math.max(0, game.score - 20);
+            showOnScreenMessage('Colisão! -1 vida e -20 pontos');
+        }
+        sounds.loseLife();
+        enemies.splice(index, 1);
+        if (game.lives <= 0) endGame();
+    });
+    
+    check(obstacles, (obstacle) => {
+        if (!obstacle.isHit) {
+            game.score = Math.max(0, game.score - obstacle.penalty);
+            sounds.hit();
+            showOnScreenMessage(`${obstacle.type.charAt(0).toUpperCase() + obstacle.type.slice(1)}! -${obstacle.penalty} ponto${obstacle.penalty > 1 ? 's' : ''}`);
+            obstacle.isHit = true;
+        }
+    });
+    
+    check(pedestrians, (pedestrian, index) => {
+        game.score = Math.max(0, game.score - pedestrian.penalty);
+        sounds.crash();
+        showOnScreenMessage(`Atropelamento! -${pedestrian.penalty} pontos`);
+        pedestrians.splice(index, 1);
+    });
+    
+    check(animals, (animal, index) => {
+        game.score = Math.max(0, game.score - animal.penalty);
+        sounds.animal();
+        showOnScreenMessage(`Animal! -${animal.penalty} pontos`);
+        animals.splice(index, 1);
+    });
+}
+
+function checkPassings() {
+    enemies.forEach(enemy => {
+        if (enemy.y > game.playerY + game.playerHeight && !enemy.passed) {
+            enemy.passed = true;
+            game.score++;
+            
+            if (enemy.type === 'bus') {
+                game.busesPassed++;
+                game.busesPassedForLife++;
+                game.score += 2;
+                sounds.busPass();
+                if (game.busesPassedForLife >= 30) {
+                    game.lives++;
+                    game.livesGained++;
+                    game.busesPassedForLife -= 30;
+                    sounds.gainLife();
+                    showOnScreenMessage('Vida extra por ônibus! +1 ❤️');
+                }
+            } else if (enemy.type === 'truck') {
+                game.trucksPassed++;
+                game.trucksPassedForLife++;
+                game.score += 3; // Caminhão vale mais pontos
+                sounds.busPass(); // Som similar
+                if (game.trucksPassedForLife >= 30) {
+                    game.lives++;
+                    game.livesGained++;
+                    game.trucksPassedForLife -= 30;
+                    sounds.gainLife();
+                    showOnScreenMessage('Vida extra por caminhão! +1 ❤️');
+                }
+            } else {
+                sounds.score();
+            }
+            
+            if (enemy.isBoss) {
+                game.score += 5;
+                showOnScreenMessage('Chefe ultrapassado! +6 pontos');
+            }
+        }
+    });
+}
+
+function isColliding(x1, y1, w1, h1, x2, y2, w2, h2) {
+    return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
+}
+
+function render() {
+    ctx.clearRect(0, 0, game.width, game.height);
+    drawScenery();
+    drawRoad();
+    obstacles.forEach(o => o.draw());
+    animals.forEach(a => a.draw());
+    pedestrians.forEach(p => p.draw());
+    enemies.forEach(e => e.draw());
+    drawPlayer();
+    drawWeatherEffects();
+}
+
+function gameLoop(currentTime) {
+    if(game.isStarted) {
+        update(currentTime);
+        render();
+    }
+    requestAnimationFrame(gameLoop);
+}
+
+function initGame() {
+    game.score = 0;
+    game.time = 0;
+    game.lives = 3;
+    game.isGameOver = false;
+    game.playerX = 400;
+    game.difficultyLevel = 0;
+    game.enemySpeed = 5;
+    game.weatherTimer = 0;
+    game.transitionProgress = 0;
+    game.timeOfDay = 'day';
+    game.weatherCondition = 'clear';
+    game.scenery = 'default';
+    game.visitedSceneries = ['default'];
+    game.visitedWeathers = ['clear'];
+    game.busesPassed = 0;
+    game.trucksPassed = 0;
+    game.busesPassedForLife = 0;
+    game.trucksPassedForLife = 0;
+    game.livesLost = 0;
+    game.livesGained = 0;
+    game.collisions = 0;
+    game.visitedSceneryCombos.clear();
+    Object.keys(game.visitedWeatherScenery).forEach(key => game.visitedWeatherScenery[key].clear());
+    
+    resetTrophies(); // Reseta os troféus para o novo jogo
+    
+    enemies = [];
+    obstacles = [];
+    pedestrians = [];
+    animals = [];
+    
+    initRoadLines();
+    initScenery();
+    initWeatherParticles();
+    
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('endScreen').style.display = 'none';
+    document.getElementById('gameInfo').style.display = 'flex';
+    document.getElementById('gamePanels').style.display = 'flex';
+    
+    displayRanking(false, false, true);
+    displayTrophies(false, false, true);
+    
+    if (soundEnabled) startEngineSound();
+    
+    game.isStarted = true;
+    game.lastTime = 0;
+}
+
+function endGame() {
+    game.isGameOver = true;
+    game.isStarted = false;
+    stopEngineSound();
+    
+    document.getElementById('finalScore').textContent = game.score;
+    document.getElementById('finalTime').textContent = Math.floor(game.time);
+    
+    const isHighScore = ranking.length === 0 || game.score > (ranking[0]?.score || 0);
+    document.getElementById('highScoreText').textContent = isHighScore ? 'NOVO RECORDE!' : '';
+    
+    document.getElementById('gameInfo').style.display = 'none';
+    document.getElementById('gamePanels').style.display = 'none';
+    document.getElementById('endScreen').style.display = 'flex';
+    
+    displayRanking(false, true, false);
+    displayTrophies(false, true, false);
+}
+
+function movePlayer(direction) {
+    if (!game.isStarted || game.isGameOver) return;
+    
+    const roadLeft = game.width / 2 - game.roadWidth / 2;
+    const roadRight = game.width / 2 + game.roadWidth / 2;
+    
+    if (direction === 'left') {
+        game.playerX = Math.max(roadLeft + game.playerWidth / 2, game.playerX - game.playerSpeed);
+        sounds.move();
+    } else if (direction === 'right') {
+        game.playerX = Math.min(roadRight - game.playerWidth / 2, game.playerX + game.playerSpeed);
+        sounds.move();
+    }
+}
+
+function handleUserAction() {
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+}
+
+document.getElementById('startBtn').addEventListener('click', () => {
+    handleUserAction();
+    initGame();
+    window.scrollTo(0, document.body.scrollHeight);
+});
+
+document.getElementById('saveScoreBtn').addEventListener('click', () => {
+    handleUserAction();
+    const playerName = document.getElementById('playerName').value.trim() || 'Anônimo';
+    updateRanking(playerName, game.score, Math.floor(game.time));
+    initGame();
+});
+
+document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('endScreen').style.display = 'none';
+    document.getElementById('startScreen').style.display = 'flex';
+});
+
+document.getElementById('leftBtn').addEventListener('click', () => movePlayer('left'));
+document.getElementById('rightBtn').addEventListener('click', () => movePlayer('right'));
+
+document.getElementById('menuSoundToggle').addEventListener('click', () => {
+    handleUserAction();
+    soundEnabled = !soundEnabled;
+    document.getElementById('menuSoundToggle').textContent = soundEnabled ? '🔊 SOM: LIGADO' : '🔇 SOM: DESLIGADO';
+    
+    if (game.isStarted && !game.isGameOver) {
+        if (soundEnabled) startEngineSound();
+        else stopEngineSound();
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') movePlayer('left');
+    else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') movePlayer('right');
+    else if (e.key === 'Escape' && game.isStarted) {
+        game.isStarted = false;
+        stopEngineSound();
+        document.getElementById('gameInfo').style.display = 'none';
+        document.getElementById('gamePanels').style.display = 'none';
+        document.getElementById('startScreen').style.display = 'flex';
+    }
+});
+
+let touchStartX = null;
+canvas.addEventListener('touchstart', (e) => {
+    handleUserAction();
+    touchStartX = e.touches[0].clientX;
+    e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+    if (!touchStartX || !game.isStarted || game.isGameOver) return;
+    
+    const touchX = e.touches[0].clientX;
+    const diffX = touchX - touchStartX;
+    
+    game.playerX += diffX * 1.5; // Movimento mais direto com o dedo
+
+    const roadLeft = game.width / 2 - game.roadWidth / 2;
+    const roadRight = game.width / 2 + game.roadWidth / 2;
+    game.playerX = Math.max(roadLeft + game.playerWidth / 2, Math.min(roadRight - game.playerWidth / 2, game.playerX));
+
+    touchStartX = touchX;
+    e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => {
+    touchStartX = null;
+});
+
+if ('ontouchstart' in window) {
+    document.getElementById('leftBtn').style.display = 'inline-block';
+    document.getElementById('rightBtn').style.display = 'inline-block';
+}
+
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>
