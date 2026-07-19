@@ -1,0 +1,3028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>O Último Mundo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #c8a84b; --gold-light: #f0d080; --gold-dark: #8a6a1a;
+    --purple-deep: #0a0612; --purple-dark: #12082a; --purple-mid: #1e0d3e;
+    --purple-accent: #4a1a6e; --purple-bright: #7b2fd4;
+    --crimson: #c0392b; --text-light: #e8d5a3; --text-dim: #9a8060;
+    --blue-glow: #4080ff; --green-glow: #40c080;
+  }
+  html, body { width:100%; height:100%; overflow:hidden; font-family:'Open Sans',sans-serif; background:var(--purple-deep); color:var(--text-light); touch-action:none; }
+  .screen { position:fixed; inset:0; display:none; z-index:1; }
+  .screen.active { display:flex; }
+
+  /* ===== MENU ===== */
+  #menu { flex-direction:column; align-items:center; justify-content:space-between; background:radial-gradient(ellipse at 50% 30%,#1e0d3e 0%,#0a0612 70%); overflow:hidden; }
+  #particles { position:absolute; inset:0; pointer-events:none; }
+  .particle { position:absolute; border-radius:50%; background:var(--gold); opacity:0; animation:floatUp linear infinite; }
+  @keyframes floatUp { 0%{opacity:0;transform:translateY(0) scale(.5)} 10%{opacity:.6} 90%{opacity:.3} 100%{opacity:0;transform:translateY(-100vh) scale(1.2)} }
+  .mist { position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 50% 80%,rgba(74,26,110,.5) 0%,transparent 70%); animation:mistPulse 4s ease-in-out infinite; }
+  @keyframes mistPulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+  .menu-logo-area { position:relative; z-index:2; text-align:center; padding:48px 24px 16px; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .logo-eyebrow { font-family:'Cinzel',serif; font-size:11px; letter-spacing:4px; color:var(--gold-dark); text-transform:uppercase; margin-bottom:10px; }
+  .logo-title { font-family:'Cinzel Decorative',serif; font-size:clamp(28px,9vw,52px); font-weight:700; line-height:1.1; color:var(--gold-light); text-shadow:0 0 40px rgba(200,168,75,.8),0 0 80px rgba(200,168,75,.4),0 4px 8px rgba(0,0,0,.8); animation:titleGlow 3s ease-in-out infinite; }
+  @keyframes titleGlow { 0%,100%{text-shadow:0 0 40px rgba(200,168,75,.8),0 0 80px rgba(200,168,75,.4),0 4px 8px rgba(0,0,0,.8)} 50%{text-shadow:0 0 60px rgba(200,168,75,1),0 0 120px rgba(200,168,75,.6),0 4px 8px rgba(0,0,0,.8)} }
+  .logo-divider { width:80px; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:14px auto; }
+  .logo-sub { font-family:'Cinzel',serif; font-size:12px; letter-spacing:3px; color:var(--text-dim); }
+  .logo-dragon { font-size:56px; margin:20px 0; filter:drop-shadow(0 0 20px rgba(200,168,75,.6)); animation:dragonFloat 3s ease-in-out infinite; }
+  @keyframes dragonFloat { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-10px) rotate(2deg)} }
+  .menu-form { position:relative; z-index:2; width:100%; padding:0 32px; display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .input-label { font-family:'Cinzel',serif; font-size:11px; letter-spacing:3px; color:var(--gold-dark); text-transform:uppercase; align-self:flex-start; }
+  .name-input { width:100%; max-width:340px; padding:14px 20px; background:rgba(255,255,255,.05); border:1px solid var(--gold-dark); border-radius:4px; color:var(--gold-light); font-family:'Cinzel',serif; font-size:16px; letter-spacing:2px; text-align:center; outline:none; transition:border-color .2s,box-shadow .2s; }
+  .name-input::placeholder { color:var(--text-dim); }
+  .name-input:focus { border-color:var(--gold); box-shadow:0 0 16px rgba(200,168,75,.3); }
+  .btn-start { width:100%; max-width:340px; padding:18px; background:linear-gradient(135deg,#8a6a1a 0%,#c8a84b 40%,#f0d080 60%,#c8a84b 80%,#8a6a1a 100%); border:none; border-radius:4px; font-family:'Cinzel',serif; font-size:15px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:#1a0a06; cursor:pointer; position:relative; overflow:hidden; box-shadow:0 4px 24px rgba(200,168,75,.4),inset 0 1px 0 rgba(255,255,255,.3); transition:transform .1s,box-shadow .2s; -webkit-tap-highlight-color:transparent; }
+  .btn-start::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%); transform:translateX(-100%); animation:shimmer 2.5s ease-in-out infinite; }
+  @keyframes shimmer { 0%{transform:translateX(-100%)} 60%{transform:translateX(100%)} 100%{transform:translateX(100%)} }
+  .btn-start:active { transform:scale(.97); }
+  .menu-footer { position:relative; z-index:2; width:100%; padding:20px 24px; text-align:center; border-top:1px solid rgba(200,168,75,.1); }
+  .footer-tagline { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); line-height:1.8; }
+  .footer-tagline span { color:var(--gold-dark); }
+
+  /* ===== MAP ===== */
+  #map-screen { flex-direction:column; background:#060310; }
+  .map-header { position:fixed; top:0; left:0; right:0; height:52px; z-index:100; background:linear-gradient(180deg,rgba(6,3,16,.98) 0%,rgba(6,3,16,.6) 100%); border-bottom:1px solid rgba(200,168,75,.2); display:flex; align-items:center; justify-content:space-between; padding:0 16px; }
+  .map-player-info { display:flex; align-items:center; gap:10px; }
+  .player-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--purple-accent),var(--purple-bright)); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .player-name-small { font-family:'Cinzel',serif; font-size:12px; color:var(--gold-light); letter-spacing:1px; }
+  .player-level { font-size:10px; color:var(--text-dim); letter-spacing:1px; }
+  .map-title-small { font-family:'Cinzel Decorative',serif; font-size:13px; color:var(--gold); letter-spacing:1px; }
+  .map-header-right { display:flex; align-items:center; gap:8px; }
+  .icon-btn { width:34px; height:34px; background:rgba(255,255,255,.07); border:1px solid rgba(200,168,75,.3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  #map-viewport { position:fixed; top:52px; bottom:0; left:0; right:0; overflow:hidden; cursor:grab; }
+  #map-viewport.dragging { cursor:grabbing; }
+  #map-canvas { position:absolute; width:1512px; height:810px; transform-origin:0 0; user-select:none; -webkit-user-select:none; }
+  #map-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+  .map-fog { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 50%,transparent 60%,rgba(6,3,16,.4) 100%); pointer-events:none; z-index:5; }
+  .region-marker { position:absolute; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; cursor:pointer; z-index:10; -webkit-tap-highlight-color:transparent; transition:filter .2s; }
+  .region-pin { width:26px; height:26px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:linear-gradient(135deg,#8a6a1a,#c8a84b); border:2px solid var(--gold-light); display:flex; align-items:center; justify-content:center; transition:transform .2s,filter .2s; box-shadow:0 2px 8px rgba(0,0,0,.6); }
+  .region-marker.active .region-pin { background:linear-gradient(135deg,var(--purple-bright),#a050ff); border-color:#c0a0ff; filter:drop-shadow(0 0 12px var(--gold)); transform:rotate(-45deg) scale(1.15); }
+  .region-num { transform:rotate(45deg); font-family:'Cinzel',serif; font-size:12px; font-weight:700; color:#1a0a06; line-height:1; }
+  .region-label { margin-top:6px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.5px; color:var(--gold-light); background:rgba(10,6,18,.85); border:1px solid rgba(200,168,75,.4); border-radius:3px; padding:2px 6px; text-align:center; white-space:nowrap; pointer-events:none; max-width:150px; line-height:1.3; }
+
+  /* PIN conquistado (verde) / não conquistado (vermelho) */
+  .region-pin.conquered { background:linear-gradient(135deg,#1a5c1a,#30c030); border-color:#80ff80; }
+  .region-pin.unconquered { background:linear-gradient(135deg,#5c1a1a,#c03030); border-color:#ff8080; }
+  .region-marker.active .region-pin.conquered,
+  .region-marker.active .region-pin.unconquered { background:linear-gradient(135deg,var(--purple-bright),#a050ff); border-color:#c0a0ff; }
+  .region-num.conquered { color:#e0ffe0; }
+  .region-num.unconquered { color:#ffe0e0; }
+
+  /* Botão Continuar no menu */
+  .btn-continue { width:100%; max-width:340px; padding:15px; background:linear-gradient(135deg,#0e3020,#1a6040,#30c080,#1a6040,#0e3020); border:none; border-radius:4px; font-family:'Cinzel',serif; font-size:13px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#e0fff0; cursor:pointer; position:relative; overflow:hidden; box-shadow:0 4px 20px rgba(48,192,128,.3); transition:transform .1s; -webkit-tap-highlight-color:transparent; display:none; }
+  .btn-continue:active { transform:scale(.97); }
+  .save-info { font-family:'Cinzel',serif; font-size:10px; color:var(--text-dim); letter-spacing:1px; text-align:center; display:none; }
+  #region-panel { position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(0deg,rgba(6,3,16,.99) 0%,rgba(10,6,24,.97) 100%); border-top:1px solid rgba(200,168,75,.3); padding:16px 16px 24px; transform:translateY(100%); transition:transform .35s cubic-bezier(.32,.72,0,1); }
+  #region-panel.open { transform:translateY(0); }
+  .panel-handle { width:40px; height:4px; background:rgba(200,168,75,.3); border-radius:2px; margin:0 auto 14px; }
+  .panel-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+  .panel-region-id { font-family:'Cinzel',serif; font-size:10px; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; }
+  .panel-region-name { font-family:'Cinzel Decorative',serif; font-size:17px; color:var(--gold-light); line-height:1.2; margin-top:2px; }
+  .panel-close { width:30px; height:30px; background:rgba(255,255,255,.07); border:1px solid rgba(200,168,75,.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; color:var(--text-dim); flex-shrink:0; margin-left:12px; -webkit-tap-highlight-color:transparent; }
+  .panel-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:12px 6px; border-radius:8px; border:1px solid; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:filter .15s,transform .1s; }
+  .action-btn:active { transform:scale(.95); filter:brightness(1.3); }
+  .action-btn .icon { font-size:22px; line-height:1; }
+  .action-btn .label { font-family:'Cinzel',serif; font-size:9px; letter-spacing:.5px; text-align:center; line-height:1.2; }
+  .action-btn.region { background:rgba(74,26,110,.3); border-color:rgba(123,47,212,.5); color:#c0a0ff; }
+  .action-btn.boss { background:rgba(192,57,43,.25); border-color:rgba(192,57,43,.5); color:#ff8070; }
+  .action-btn.dungeon { background:rgba(30,50,80,.4); border-color:rgba(64,128,255,.4); color:#80b0ff; }
+  .action-btn.event { background:rgba(30,80,50,.35); border-color:rgba(64,192,128,.4); color:#80e0a0; }
+
+  /* PIN conquistado (verde) / não conquistado (vermelho) */
+  .region-pin.conquered { background:linear-gradient(135deg,#1a5c1a,#30c030) !important; border-color:#80ff80 !important; }
+  .region-pin.unconquered { background:linear-gradient(135deg,#5c1a1a,#c03030) !important; border-color:#ff8080 !important; }
+  .region-num { transform:rotate(45deg); font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:#fff; line-height:1; text-shadow:0 1px 3px rgba(0,0,0,.8); }
+
+  /* Botão Continuar menu */
+  .btn-continue { width:100%; max-width:340px; padding:15px; background:linear-gradient(135deg,#0e3020,#1a6040,#30c080,#1a6040,#0e3020); border:none; border-radius:4px; font-family:'Cinzel',serif; font-size:13px; font-weight:700; letter-spacing:3px; color:#e0fff0; cursor:pointer; box-shadow:0 4px 20px rgba(48,192,128,.3); transition:transform .1s; -webkit-tap-highlight-color:transparent; display:none; }
+  .btn-continue:active { transform:scale(.97); }
+  .save-info { font-family:'Cinzel',serif; font-size:10px; color:var(--text-dim); letter-spacing:1px; text-align:center; display:none; margin-top:-6px; }
+
+  /* ===== CRAFTBANK ===== */
+  .cb-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+  .cb-item-card { background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.15); border-radius:10px; padding:10px 6px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:border-color .15s,background .15s; position:relative; }
+  .cb-item-card:active,.cb-item-card.cb-selected { background:rgba(200,168,75,.12); border-color:rgba(200,168,75,.7); }
+  .cb-item-icon { font-size:28px; line-height:1; }
+  .cb-item-name { font-family:'Cinzel',serif; font-size:8px; color:var(--text-light); text-align:center; line-height:1.2; }
+  .cb-item-cost { font-family:'Cinzel',serif; font-size:9px; color:#f0c040; }
+  .cb-item-badge { position:absolute; top:4px; right:5px; font-size:10px; }
+  .cb-recipe-panel { background:rgba(10,6,24,.8); border:1px solid rgba(200,168,75,.25); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cb-recipe-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .cb-recipe-icon { font-size:36px; }
+  .cb-recipe-name { font-family:'Cinzel Decorative',serif; font-size:15px; color:var(--gold-light); line-height:1.2; }
+  .cb-recipe-desc { font-size:11px; color:var(--text-dim); margin-top:2px; }
+  .cb-ing-list { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .cb-ing-row { display:flex; align-items:center; gap:10px; padding:8px 10px; background:rgba(255,255,255,.04); border-radius:8px; border:1px solid; }
+  .cb-ing-row.has { border-color:rgba(64,192,128,.35); }
+  .cb-ing-row.miss { border-color:rgba(192,57,43,.35); }
+  .cb-ing-icon { font-size:18px; flex-shrink:0; }
+  .cb-ing-info { flex:1; }
+  .cb-ing-name { font-family:'Cinzel',serif; font-size:11px; color:var(--text-light); }
+  .cb-ing-qty { font-size:10px; margin-top:1px; }
+  .cb-ing-qty.has { color:#80e0a0; }
+  .cb-ing-qty.miss { color:#ff8070; }
+  .cb-cost-row { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(240,192,64,.08); border:1px solid rgba(240,192,64,.2); border-radius:8px; margin-bottom:12px; font-family:'Cinzel',serif; font-size:12px; }
+  .cb-cost-label { color:var(--text-dim); }
+  .cb-cost-val { color:#f0c040; font-weight:700; }
+  .cb-craft-btn { display:block; width:100%; padding:14px; border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:13px; letter-spacing:2px; font-weight:700; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:filter .15s,transform .1s; }
+  .cb-craft-btn:active:not(:disabled) { transform:scale(.97); filter:brightness(1.2); }
+  .cb-craft-btn.ready { background:linear-gradient(135deg,#8a6a1a,#c8a84b,#f0d080,#c8a84b,#8a6a1a); color:#1a0a06; }
+  .cb-craft-btn.locked { background:rgba(255,255,255,.06); color:var(--text-dim); cursor:default; }
+  .cb-none { text-align:center; padding:24px 16px; color:var(--text-dim); font-family:'Cinzel',serif; font-size:11px; line-height:1.9; }
+
+  /* ===== FAB ROW (Inventário | Home | Portal) ===== */
+  #fab-row { position:fixed; bottom:20px; left:0; right:0; z-index:150; display:flex; align-items:flex-end; justify-content:center; gap:20px; pointer-events:none; }
+  .fab { pointer-events:all; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .fab-btn { border-radius:50%; display:flex; align-items:center; justify-content:center; transition:transform .1s; border:2px solid; }
+  .fab-btn:active { transform:scale(.9) !important; }
+  .fab-label { font-family:'Cinzel',serif; font-size:8px; letter-spacing:1px; text-align:center; pointer-events:none; }
+  #fab-portal .fab-btn { width:62px;height:62px;font-size:26px; background:radial-gradient(circle at 40% 40%,#7b2fd4,#2a0a5e); border-color:var(--purple-bright); box-shadow:0 0 0 3px rgba(123,47,212,.2),0 0 20px rgba(123,47,212,.5); animation:portalPulse 2s ease-in-out infinite; }
+  #fab-portal .fab-label { color:rgba(150,100,220,.9); }
+  @keyframes portalPulse { 0%,100%{box-shadow:0 0 0 3px rgba(123,47,212,.2),0 0 20px rgba(123,47,212,.5)} 50%{box-shadow:0 0 0 6px rgba(123,47,212,.15),0 0 36px rgba(123,47,212,.8)} }
+  #fab-home .fab-btn { width:54px;height:54px;font-size:22px; background:radial-gradient(circle at 40% 40%,#2a4a1a,#0e1e06); border-color:var(--gold-dark); box-shadow:0 0 16px rgba(200,168,75,.3); }
+  #fab-home .fab-label { color:var(--gold-dark); }
+  #fab-inv .fab-btn { width:54px;height:54px;font-size:22px; background:radial-gradient(circle at 40% 40%,#1a2a4a,#060e1e); border-color:rgba(64,128,255,.5); box-shadow:0 0 16px rgba(64,128,255,.3); }
+  #fab-inv .fab-label { color:rgba(100,160,255,.9); }
+
+  /* ===== TELA INVENTÁRIO ===== */
+  #inv-screen { flex-direction:column; background:linear-gradient(180deg,#0d0520 0%,#060310 100%); z-index:600; }
+  .inv-header { height:52px; background:rgba(6,3,16,.98); border-bottom:1px solid rgba(64,128,255,.25); display:flex; align-items:center; justify-content:space-between; padding:0 16px; flex-shrink:0; }
+  .inv-header-title { font-family:'Cinzel Decorative',serif; font-size:16px; color:#90c0ff; letter-spacing:1px; }
+  .inv-back { width:34px; height:34px; background:rgba(255,255,255,.07); border:1px solid rgba(64,128,255,.3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .inv-tabs { display:flex; border-bottom:1px solid rgba(64,128,255,.15); flex-shrink:0; }
+  .inv-tab { flex:1; padding:12px 0; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; text-align:center; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; transition:color .2s,border-color .2s; -webkit-tap-highlight-color:transparent; }
+  .inv-tab.active { color:#90c0ff; border-bottom-color:#4080ff; }
+  .inv-body { flex:1; overflow-y:auto; padding:16px; }
+
+  /* Grid de itens */
+  .item-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  .item-slot { aspect-ratio:1; background:rgba(255,255,255,.04); border:1px solid rgba(64,128,255,.15); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; -webkit-tap-highlight-color:transparent; position:relative; transition:border-color .15s,background .15s; }
+  .item-slot:active { background:rgba(64,128,255,.12); }
+  .item-slot.filled { border-color:rgba(200,168,75,.3); }
+  .item-slot.filled:active { border-color:var(--gold); }
+  .item-icon { font-size:26px; line-height:1; }
+  .item-name { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.3px; color:var(--text-dim); text-align:center; line-height:1.2; padding:0 2px; }
+  .item-qty { position:absolute; top:4px; right:6px; font-family:'Cinzel',serif; font-size:9px; color:var(--gold); font-weight:700; }
+  .item-rarity { position:absolute; bottom:0; left:0; right:0; height:3px; border-radius:0 0 9px 9px; }
+  .rarity-common   { background:#aaa; }
+  .rarity-uncommon { background:#40c060; }
+  .rarity-rare     { background:#4080ff; }
+  .rarity-epic     { background:#a040d0; }
+  .rarity-legend   { background:var(--gold); }
+  .empty-slot-icon { font-size:20px; opacity:.2; }
+
+  /* Seção crafting */
+  .craft-section-title { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:12px; }
+  .craft-card { background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.15); border-radius:10px; padding:14px; margin-bottom:12px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:border-color .15s,background .15s; }
+  .craft-card:active { background:rgba(200,168,75,.08); border-color:rgba(200,168,75,.4); }
+  .craft-card-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .craft-result-icon { font-size:32px; }
+  .craft-result-info .name { font-family:'Cinzel',serif; font-size:13px; color:var(--gold-light); letter-spacing:.5px; }
+  .craft-result-info .desc { font-size:11px; color:var(--text-dim); margin-top:2px; }
+  .craft-ingredients { display:flex; gap:8px; flex-wrap:wrap; }
+  .craft-ing { display:flex; align-items:center; gap:5px; padding:5px 10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:20px; font-family:'Cinzel',serif; font-size:10px; color:var(--text-dim); }
+  .craft-ing.has { border-color:rgba(64,192,128,.3); color:#80e0a0; }
+  .craft-ing.missing { border-color:rgba(192,57,43,.3); color:#ff8070; }
+  .craft-btn { display:block; width:100%; margin-top:12px; padding:11px; background:linear-gradient(135deg,#8a6a1a,#c8a84b,#f0d080,#c8a84b,#8a6a1a); border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; font-weight:700; color:#1a0a06; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .craft-btn:disabled { background:rgba(255,255,255,.07); color:var(--text-dim); cursor:default; }
+
+  /* ===== MENU MODAL (Sair / Música / Status) ===== */
+  #menu-modal { position:fixed; inset:0; z-index:700; background:rgba(6,3,16,.92); display:none; align-items:flex-end; justify-content:center; }
+  #menu-modal.open { display:flex; }
+  .menu-modal-inner { width:100%; max-width:400px; background:linear-gradient(180deg,#14083a 0%,#0a0520 100%); border:1px solid rgba(200,168,75,.25); border-radius:20px 20px 0 0; padding:24px 20px 36px; }
+  .menu-modal-handle { width:40px; height:4px; background:rgba(200,168,75,.3); border-radius:2px; margin:0 auto 20px; }
+  .menu-modal-title { font-family:'Cinzel Decorative',serif; font-size:15px; color:var(--gold-light); text-align:center; margin-bottom:20px; letter-spacing:1px; }
+
+  /* Status card */
+  .status-card { background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.15); border-radius:10px; padding:14px; margin-bottom:14px; }
+  .status-card-title { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:12px; }
+  .status-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .status-row:last-child { margin-bottom:0; }
+  .status-label { font-family:'Cinzel',serif; font-size:11px; color:var(--text-dim); display:flex; align-items:center; gap:6px; }
+  .status-value { font-family:'Cinzel',serif; font-size:12px; color:var(--gold-light); font-weight:700; }
+  .stat-bar { flex:1; height:6px; background:rgba(255,255,255,.08); border-radius:3px; margin:0 10px; overflow:hidden; }
+  .stat-bar-fill { height:100%; border-radius:3px; }
+  .bar-hp   { background:linear-gradient(90deg,#c03020,#ff6050); }
+  .bar-mp   { background:linear-gradient(90deg,#2040c0,#4080ff); }
+  .bar-xp   { background:linear-gradient(90deg,#8a6a1a,#f0d080); }
+
+  /* Botões do menu */
+  .menu-modal-btns { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .mm-btn { display:flex; align-items:center; gap:14px; padding:15px 16px; border-radius:10px; border:1px solid; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:filter .15s,transform .1s; font-family:'Cinzel',serif; font-size:13px; letter-spacing:1px; }
+  .mm-btn:active { transform:scale(.97); filter:brightness(1.2); }
+  .mm-btn .mm-icon { font-size:20px; }
+  .mm-btn.music { background:rgba(30,80,50,.3); border-color:rgba(64,192,128,.3); color:#80e0a0; }
+  .mm-btn.quit  { background:rgba(120,20,20,.2); border-color:rgba(192,57,43,.3); color:#ff8070; }
+  .mm-btn.codex { background:rgba(74,26,110,.35); border-color:rgba(200,168,75,.35); color:var(--gold-light); }
+  .mm-btn.close-mm { background:rgba(255,255,255,.05); border-color:rgba(200,168,75,.15); color:var(--text-dim); }
+  .music-status { margin-left:auto; font-size:11px; }
+
+  /* ===== CODEX MODAL (galeria de assets enviados) ===== */
+  #codex-modal { position:fixed; inset:0; z-index:750; background:rgba(6,3,16,.95); display:none; flex-direction:column; align-items:center; justify-content:center; padding:16px; }
+  #codex-modal.open { display:flex; }
+  .codex-inner { width:100%; max-width:900px; max-height:92vh; background:linear-gradient(180deg,#14083a 0%,#0a0520 100%); border:1px solid rgba(200,168,75,.3); border-radius:14px; padding:14px 14px 18px; display:flex; flex-direction:column; box-shadow:0 12px 40px rgba(0,0,0,.6); }
+  .codex-header { display:flex; align-items:center; justify-content:space-between; padding:4px 6px 12px; border-bottom:1px solid rgba(200,168,75,.15); margin-bottom:10px; }
+  .codex-title { font-family:'Cinzel Decorative',serif; font-size:15px; color:var(--gold-light); letter-spacing:1px; }
+  .codex-close { width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid rgba(200,168,75,.2); color:var(--gold-light); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
+  .codex-close:active { transform:scale(.92); }
+  .codex-body { overflow-y:auto; -webkit-overflow-scrolling:touch; flex:1; display:flex; flex-direction:column; gap:14px; padding:4px; }
+  .codex-page { background:rgba(0,0,0,.3); border:1px solid rgba(200,168,75,.12); border-radius:8px; padding:8px; }
+  .codex-page-caption { font-family:'Cinzel',serif; font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-bottom:6px; text-align:center; }
+  .codex-page img { display:block; width:100%; height:auto; border-radius:4px; }
+  .codex-empty { color:var(--text-dim); font-family:'Cinzel',serif; font-size:12px; text-align:center; padding:30px 10px; }
+
+  /* ===== PORTAL MODAL ===== */
+  #portal-modal { position:fixed; inset:0; z-index:300; background:rgba(6,3,16,.92); display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+  #portal-modal.open { display:flex; }
+  .portal-modal-inner { width:100%; max-width:380px; background:linear-gradient(180deg,#14083a 0%,#0a0520 100%); border:1px solid rgba(123,47,212,.5); border-radius:12px; padding:24px; box-shadow:0 0 60px rgba(123,47,212,.3); max-height:80vh; overflow-y:auto; }
+  .portal-modal-title { font-family:'Cinzel Decorative',serif; font-size:16px; color:var(--purple-bright); text-align:center; margin-bottom:6px; letter-spacing:1px; }
+  .portal-modal-sub { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-align:center; margin-bottom:20px; }
+  .portal-region-list { display:flex; flex-direction:column; gap:8px; }
+  .portal-region-item { display:flex; align-items:center; gap:12px; padding:12px 14px; background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.15); border-radius:8px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .15s,border-color .15s; }
+  .portal-region-item:active,.portal-region-item:hover { background:rgba(123,47,212,.2); border-color:rgba(123,47,212,.4); }
+  .portal-num { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--gold-dark),var(--gold)); display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:#1a0a06; flex-shrink:0; }
+  .portal-name { font-family:'Cinzel',serif; font-size:12px; color:var(--text-light); letter-spacing:.5px; }
+  .portal-close { display:block; width:100%; margin-top:16px; padding:13px; background:rgba(255,255,255,.05); border:1px solid rgba(200,168,75,.2); border-radius:8px; font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; color:var(--text-dim); cursor:pointer; text-align:center; -webkit-tap-highlight-color:transparent; }
+  /* Estados dos PINs no portal: conquistado (verde), não conquistado (vermelho), bloqueado (cinza) */
+  .portal-region-item.locked { opacity:.55; cursor:not-allowed; }
+  .portal-num.conquered { background:linear-gradient(135deg,#1a5c1a,#30c030) !important; color:#e0ffe0 !important; border:1px solid #80ff80; }
+  .portal-num.unconquered { background:linear-gradient(135deg,#5c1a1a,#c03030) !important; color:#ffe0e0 !important; border:1px solid #ff8080; }
+  .portal-num.locked { background:linear-gradient(135deg,#3a3a3a,#6a6a6a) !important; color:#ccc !important; border:1px solid #888; }
+  .portal-status { margin-left:auto; font-size:13px; letter-spacing:.5px; font-family:'Cinzel',serif; }
+  .portal-status.locked { color:#ff7060; }
+  .portal-status.conquered { color:#80e0a0; }
+  .portal-status.unconquered { color:#ffb070; }
+
+  /* Modal de confirmação: Nova Partida */
+  #confirm-newgame-modal { position:fixed; inset:0; z-index:1000; background:rgba(6,3,16,.92); display:none; align-items:center; justify-content:center; padding:20px; }
+  #confirm-newgame-modal.open { display:flex; }
+  .confirm-ng-inner { width:100%; max-width:340px; background:linear-gradient(180deg,#2a0808 0%,#120306 100%); border:2px solid rgba(192,57,43,.5); border-radius:14px; padding:24px 20px; text-align:center; box-shadow:0 0 40px rgba(192,57,43,.3); }
+  .confirm-ng-icon { font-size:42px; margin-bottom:8px; filter:drop-shadow(0 0 12px rgba(192,57,43,.6)); }
+  .confirm-ng-title { font-family:'Cinzel Decorative',serif; font-size:17px; color:#ff9080; margin-bottom:8px; letter-spacing:1px; }
+  .confirm-ng-msg { font-family:'Cinzel',serif; font-size:11px; color:var(--text-dim); line-height:1.6; margin-bottom:18px; }
+  .confirm-ng-msg strong { color:#ff7060; }
+  .confirm-ng-btns { display:flex; flex-direction:column; gap:8px; }
+  .confirm-ng-btn { padding:12px; border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:13px; letter-spacing:2px; font-weight:700; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:filter .15s,transform .1s; }
+  .confirm-ng-btn:active { transform:scale(.97); filter:brightness(1.2); }
+  .confirm-ng-btn.yes { background:linear-gradient(135deg,#6a1010,#c03020); color:#fff0ee; }
+  .confirm-ng-btn.no { background:rgba(255,255,255,.06); border:1px solid rgba(200,168,75,.2); color:var(--text-light); }
+  .confirm-ng-btn.cancel { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); color:var(--text-dim); }
+
+  /* ===== STATUS PANEL no inventário ===== */
+  .inv-status-panel { background:linear-gradient(135deg,rgba(74,26,110,.3),rgba(30,13,62,.3)); border:1px solid rgba(200,168,75,.2); border-radius:10px; padding:12px 14px; margin:12px 16px 4px; }
+  .inv-status-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; }
+  .inv-stat { display:flex; align-items:center; gap:8px; }
+  .inv-stat-lbl { font-family:'Cinzel',serif; font-size:10px; color:var(--text-dim); letter-spacing:1px; width:42px; flex-shrink:0; }
+  .inv-stat-bar { flex:1; height:8px; background:rgba(255,255,255,.08); border-radius:4px; overflow:hidden; }
+  .inv-stat-fill { height:100%; border-radius:4px; transition:width .5s ease; }
+  .inv-stat-val { font-family:'Cinzel',serif; font-size:10px; color:var(--gold-light); width:78px; text-align:right; flex-shrink:0; font-weight:700; }
+  .inv-stat-row2 { display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid rgba(200,168,75,.12); flex-wrap:wrap; }
+  .inv-stat-chip { padding:4px 10px; background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.15); border-radius:14px; font-family:'Cinzel',serif; font-size:10px; color:var(--gold-light); letter-spacing:1px; }
+
+  /* ===== HEAL POPUP (feedback ao usar poção) ===== */
+  #heal-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(.5); z-index:1500; pointer-events:none; opacity:0; transition:opacity .3s,transform .5s cubic-bezier(.34,1.56,.64,1); }
+  #heal-popup.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .heal-popup-inner { background:linear-gradient(180deg,rgba(30,80,50,.95),rgba(10,30,16,.95)); border:2px solid rgba(64,192,128,.6); border-radius:16px; padding:18px 28px; text-align:center; box-shadow:0 0 40px rgba(64,192,128,.5); }
+  .heal-popup-icon { font-size:42px; line-height:1; margin-bottom:6px; }
+  .heal-popup-text { font-family:'Cinzel',serif; font-size:13px; color:#80e0a0; letter-spacing:1px; }
+  .heal-popup-val { font-family:'Cinzel Decorative',serif; font-size:22px; color:#c0ffc0; margin-top:4px; text-shadow:0 0 12px rgba(64,192,128,.8); }
+  .heal-popup-mp .heal-popup-inner { background:linear-gradient(180deg,rgba(30,50,120,.95),rgba(10,16,40,.95)); border-color:rgba(64,128,255,.6); box-shadow:0 0 40px rgba(64,128,255,.5); }
+  .heal-popup-mp .heal-popup-text { color:#80b0ff; }
+  .heal-popup-mp .heal-popup-val { color:#c0d0ff; text-shadow:0 0 12px rgba(64,128,255,.8); }
+
+  /* ===== SELL UI ===== */
+  .inv-sell-row { display:flex; gap:10px; margin:0 16px 10px; }
+  .inv-sell-toggle { flex:1; padding:10px; background:rgba(240,192,64,.08); border:1px solid rgba(240,192,64,.3); border-radius:8px; font-family:'Cinzel',serif; font-size:11px; color:#f0c040; letter-spacing:1px; cursor:pointer; text-align:center; -webkit-tap-highlight-color:transparent; transition:background .15s; }
+  .inv-sell-toggle.active { background:rgba(240,192,64,.25); border-color:rgba(240,192,64,.7); color:#fff; }
+  .inv-sell-toggle:active { transform:scale(.98); }
+  .item-sell-badge { position:absolute; top:3px; left:4px; font-size:8px; color:#f0c040; font-weight:700; font-family:'Cinzel',serif; }
+  .item-slot.sellable { border-color:rgba(240,192,64,.4); }
+
+  /* ===== NPC SHOP MODAL ===== */
+  #shop-modal { position:fixed; inset:0; z-index:450; background:rgba(6,3,16,.95); display:none; align-items:flex-end; justify-content:center; }
+  #shop-modal.open { display:flex; }
+  .shop-inner { width:100%; max-width:480px; max-height:92vh; overflow-y:auto; background:linear-gradient(180deg,#1a1030 0%,#0a0520 100%); border-top:2px solid rgba(240,192,64,.5); border-radius:20px 20px 0 0; padding:0 0 28px; }
+  .shop-hero { padding:22px 20px 16px; text-align:center; position:relative; }
+  .shop-handle { width:40px; height:4px; border-radius:2px; background:rgba(240,192,64,.4); margin:0 auto 16px; }
+  .shop-region-icon { font-size:40px; display:block; margin-bottom:8px; }
+  .shop-tag { font-family:'Cinzel',serif; font-size:10px; letter-spacing:3px; color:#f0c040; text-transform:uppercase; margin-bottom:4px; }
+  .shop-title { font-family:'Cinzel Decorative',serif; font-size:18px; color:#ffe080; margin-bottom:2px; }
+  .shop-sub { font-family:'Cinzel',serif; font-size:11px; color:var(--text-dim); letter-spacing:1px; }
+  .shop-close { position:absolute; top:20px; right:20px; width:30px; height:30px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; color:var(--text-dim); -webkit-tap-highlight-color:transparent; }
+  .shop-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(240,192,64,.4),transparent); margin:0 20px 16px; }
+  .shop-body { padding:0 20px; }
+  .shop-gold-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(240,192,64,.08); border:1px solid rgba(240,192,64,.2); border-radius:8px; margin-bottom:14px; }
+  .shop-gold-label { font-family:'Cinzel',serif; font-size:11px; color:var(--text-dim); letter-spacing:1px; }
+  .shop-gold-val { font-family:'Cinzel',serif; font-size:14px; color:#f0c040; font-weight:700; }
+  .shop-section-title { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; }
+  .shop-item { display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.15); border-radius:10px; margin-bottom:8px; }
+  .shop-item-icon { font-size:28px; flex-shrink:0; }
+  .shop-item-info { flex:1; }
+  .shop-item-name { font-family:'Cinzel',serif; font-size:12px; color:var(--text-light); letter-spacing:.5px; }
+  .shop-item-desc { font-size:10px; color:var(--text-dim); margin-top:2px; }
+  .shop-item-price { font-family:'Cinzel',serif; font-size:11px; color:#f0c040; margin-top:3px; font-weight:700; }
+  .shop-buy-btn { padding:8px 14px; background:linear-gradient(135deg,#8a6a1a,#c8a84b,#f0d080); border:none; border-radius:6px; font-family:'Cinzel',serif; font-size:11px; font-weight:700; color:#1a0a06; cursor:pointer; -webkit-tap-highlight-color:transparent; flex-shrink:0; transition:filter .15s,transform .1s; }
+  .shop-buy-btn:active { transform:scale(.95); filter:brightness(1.2); }
+  .shop-buy-btn:disabled { background:rgba(255,255,255,.06); color:var(--text-dim); cursor:not-allowed; }
+  .shop-empty { text-align:center; padding:24px 16px; color:var(--text-dim); font-family:'Cinzel',serif; font-size:11px; line-height:1.8; }
+
+  /* ===== INFO MODAL (Região / Boss / Dungeon / Evento) ===== */
+  #info-modal { position:fixed; inset:0; z-index:400; background:rgba(6,3,16,.94); display:none; align-items:flex-end; justify-content:center; padding:0; }
+  #info-modal.open { display:flex; }
+  .info-modal-inner { width:100%; max-width:480px; max-height:88vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:0 0 32px; }
+
+  /* Tema por tipo */
+  .info-modal-inner.type-region  { background:linear-gradient(180deg,#1a0a3e 0%,#0d0520 100%); border-top:2px solid rgba(123,47,212,.6); }
+  .info-modal-inner.type-boss    { background:linear-gradient(180deg,#2a0808 0%,#120306 100%); border-top:2px solid rgba(192,57,43,.6); }
+  .info-modal-inner.type-dungeon { background:linear-gradient(180deg,#080e20 0%,#060310 100%); border-top:2px solid rgba(64,128,255,.5); }
+  .info-modal-inner.type-event   { background:linear-gradient(180deg,#082010 0%,#060310 100%); border-top:2px solid rgba(64,192,128,.4); }
+
+  .info-modal-hero { position:relative; padding:28px 20px 20px; text-align:center; }
+  .info-modal-handle { width:40px; height:4px; border-radius:2px; margin:0 auto 20px; }
+  .type-region  .info-modal-handle { background:rgba(123,47,212,.5); }
+  .type-boss    .info-modal-handle { background:rgba(192,57,43,.5); }
+  .type-dungeon .info-modal-handle { background:rgba(64,128,255,.4); }
+  .type-event   .info-modal-handle { background:rgba(64,192,128,.4); }
+
+  .info-modal-icon { font-size:52px; display:block; margin-bottom:10px; filter:drop-shadow(0 0 16px currentColor); }
+  .info-modal-tag { font-family:'Cinzel',serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; margin-bottom:6px; }
+  .type-region  .info-modal-tag { color:#9070d0; }
+  .type-boss    .info-modal-tag { color:#c06050; }
+  .type-dungeon .info-modal-tag { color:#6090d0; }
+  .type-event   .info-modal-tag { color:#50b070; }
+
+  .info-modal-title { font-family:'Cinzel Decorative',serif; font-size:20px; line-height:1.2; margin-bottom:4px; }
+  .type-region  .info-modal-title { color:#d0b0ff; }
+  .type-boss    .info-modal-title { color:#ff9080; }
+  .type-dungeon .info-modal-title { color:#90c0ff; }
+  .type-event   .info-modal-title { color:#80e0a0; }
+
+  .info-modal-subtitle { font-family:'Cinzel',serif; font-size:12px; color:var(--text-dim); letter-spacing:1px; }
+  .info-modal-close-x { position:absolute; top:20px; right:20px; width:32px; height:32px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; color:var(--text-dim); -webkit-tap-highlight-color:transparent; }
+
+  .info-modal-divider { height:1px; margin:0 20px; }
+  .type-region  .info-modal-divider { background:linear-gradient(90deg,transparent,rgba(123,47,212,.4),transparent); }
+  .type-boss    .info-modal-divider { background:linear-gradient(90deg,transparent,rgba(192,57,43,.4),transparent); }
+  .type-dungeon .info-modal-divider { background:linear-gradient(90deg,transparent,rgba(64,128,255,.3),transparent); }
+  .type-event   .info-modal-divider { background:linear-gradient(90deg,transparent,rgba(64,192,128,.3),transparent); }
+
+  .info-modal-body { padding:20px 20px 0; }
+  .info-desc { font-size:13px; color:var(--text-light); line-height:1.7; margin-bottom:18px; }
+
+  /* Stats chips */
+  .info-stats { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .stat-chip { padding:6px 12px; border-radius:20px; font-family:'Cinzel',serif; font-size:10px; letter-spacing:1px; border:1px solid; }
+  .type-region  .stat-chip { background:rgba(74,26,110,.3); border-color:rgba(123,47,212,.3); color:#c0a0ff; }
+  .type-boss    .stat-chip { background:rgba(120,20,20,.3); border-color:rgba(192,57,43,.3); color:#ffb0a0; }
+  .type-dungeon .stat-chip { background:rgba(20,40,80,.3); border-color:rgba(64,128,255,.3); color:#a0c8ff; }
+  .type-event   .stat-chip { background:rgba(20,60,40,.3); border-color:rgba(64,192,128,.3); color:#90e0b0; }
+
+  /* Dungeon levels */
+  .dungeon-levels { margin-bottom:20px; }
+  .dungeon-levels-title { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; }
+  .level-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:rgba(255,255,255,.04); border:1px solid rgba(64,128,255,.15); border-radius:8px; margin-bottom:6px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .15s; }
+  .level-row:active { background:rgba(64,128,255,.12); }
+  .level-num { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#1a3060,#2050a0); border:1px solid rgba(64,128,255,.4); display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:11px; color:#90c0ff; flex-shrink:0; }
+  .level-info { flex:1; }
+  .level-name { font-family:'Cinzel',serif; font-size:11px; color:var(--text-light); letter-spacing:.5px; }
+  .level-detail { font-size:10px; color:var(--text-dim); margin-top:2px; }
+  .level-lock { font-size:14px; color:rgba(255,255,255,.2); }
+  .level-row.unlocked .level-lock { color:#80e0a0; }
+
+  /* Modal botões de ação */
+  .info-modal-actions { display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+  .modal-btn { width:100%; padding:15px; border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:13px; letter-spacing:2px; font-weight:700; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:filter .15s,transform .1s; position:relative; overflow:hidden; }
+  .modal-btn:active { transform:scale(.97); filter:brightness(1.2); }
+  .modal-btn.primary { background:linear-gradient(135deg,#8a6a1a,#c8a84b,#f0d080,#c8a84b,#8a6a1a); color:#1a0a06; }
+  .modal-btn.secondary { background:rgba(255,255,255,.06); border:1px solid rgba(200,168,75,.2); color:var(--text-dim); }
+  .modal-btn.boss-btn { background:linear-gradient(135deg,#6a1010,#c03020,#ff6050,#c03020,#6a1010); color:#fff0ee; }
+  .modal-btn.dungeon-btn { background:linear-gradient(135deg,#0a1a40,#2050a0,#4080e0,#2050a0,#0a1a40); color:#e0f0ff; }
+
+  /* Aviso "em breve" */
+  .coming-soon-box { text-align:center; padding:32px 20px; }
+  .coming-soon-icon { font-size:48px; display:block; margin-bottom:12px; }
+  .coming-soon-text { font-family:'Cinzel',serif; font-size:16px; color:var(--gold-light); letter-spacing:2px; margin-bottom:8px; }
+  .coming-soon-sub { font-size:12px; color:var(--text-dim); line-height:1.6; }
+
+  /* ===== EXPLORAÇÃO MODALS ===== */
+  /* Modal preparação (seleção de itens) */
+  #explore-prep-modal { position:fixed; inset:0; z-index:800; background:rgba(6,3,16,.95); display:none; align-items:flex-end; justify-content:center; }
+  #explore-prep-modal.open { display:flex; }
+  .ep-inner { width:100%; max-width:480px; max-height:92vh; overflow-y:auto; background:linear-gradient(180deg,#160a32 0%,#0a0520 100%); border-top:2px solid rgba(123,47,212,.6); border-radius:20px 20px 0 0; padding:0 0 28px; }
+  .ep-hero { padding:22px 20px 16px; text-align:center; position:relative; }
+  .ep-handle { width:40px;height:4px;border-radius:2px;background:rgba(123,47,212,.4);margin:0 auto 16px; }
+  .ep-region-icon { font-size:40px; display:block; margin-bottom:8px; }
+  .ep-tag { font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:#9070d0;text-transform:uppercase;margin-bottom:4px; }
+  .ep-title { font-family:'Cinzel Decorative',serif;font-size:18px;color:#d0b0ff;margin-bottom:2px; }
+  .ep-sub { font-family:'Cinzel',serif;font-size:11px;color:var(--text-dim);letter-spacing:1px; }
+  .ep-close { position:absolute;top:20px;right:20px;width:30px;height:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:var(--text-dim); -webkit-tap-highlight-color:transparent; }
+  .ep-divider { height:1px;background:linear-gradient(90deg,transparent,rgba(123,47,212,.4),transparent);margin:0 20px 16px; }
+  .ep-body { padding:0 20px; }
+  .ep-section-title { font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px; }
+  .ep-section-title span { color:#ff7060;font-size:9px; }
+  /* Slot de arma obrigatório */
+  .ep-weapon-row { display:flex;align-items:center;gap:12px;padding:12px;background:rgba(74,26,110,.2);border:2px dashed rgba(123,47,212,.4);border-radius:10px;margin-bottom:16px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,background .15s; }
+  .ep-weapon-row.selected { border-style:solid;border-color:rgba(123,47,212,.8);background:rgba(74,26,110,.35); }
+  .ep-weapon-row:active { background:rgba(74,26,110,.4); }
+  .ep-slot-icon { font-size:28px; flex-shrink:0; }
+  .ep-slot-info .name { font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);letter-spacing:.5px; }
+  .ep-slot-info .sub { font-size:11px;color:var(--text-dim);margin-top:2px; }
+  .ep-required-badge { margin-left:auto;padding:3px 8px;background:rgba(192,57,43,.3);border:1px solid rgba(192,57,43,.4);border-radius:10px;font-family:'Cinzel',serif;font-size:9px;color:#ff8070;flex-shrink:0; }
+  /* Grid de consumíveis */
+  .ep-consumable-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px; }
+  .ep-cons-slot { padding:10px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(64,128,255,.15);border-radius:8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;transition:border-color .15s,background .15s; }
+  .ep-cons-slot.selected { border-color:rgba(64,192,128,.5);background:rgba(30,80,50,.3); }
+  .ep-cons-slot:active { background:rgba(64,128,255,.1); }
+  .ep-cons-icon { font-size:22px; }
+  .ep-cons-name { font-family:'Cinzel',serif;font-size:8px;color:var(--text-dim);text-align:center;line-height:1.2; }
+  .ep-cons-qty { position:absolute;top:4px;right:6px;font-family:'Cinzel',serif;font-size:9px;color:var(--gold);font-weight:700; }
+  .ep-cons-add { position:absolute;bottom:4px;right:5px;font-size:10px;color:rgba(64,192,128,.6); }
+  .ep-cons-slot.selected .ep-cons-add { color:#80e0a0; }
+  /* Info box */
+  .ep-info-box { background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.15);border-radius:8px;padding:12px;margin-bottom:16px;font-size:11px;color:var(--text-dim);line-height:1.6; }
+  .ep-info-box strong { color:var(--gold-light); }
+  /* Botão confirmar */
+  .ep-confirm-btn { display:block;width:100%;padding:16px;background:linear-gradient(135deg,#4a1a6e,#7b2fd4,#a050ff,#7b2fd4,#4a1a6e);border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:14px;letter-spacing:3px;font-weight:700;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:filter .15s,transform .1s; }
+  .ep-confirm-btn:active { transform:scale(.97);filter:brightness(1.2); }
+  .ep-confirm-btn:disabled { background:rgba(255,255,255,.06);color:var(--text-dim);cursor:default; }
+
+  /* Modal progresso da exploração */
+  #explore-progress-modal { position:fixed; inset:0; z-index:900; background:rgba(6,3,16,.97); display:none; align-items:center; justify-content:center; flex-direction:column; padding:24px; }
+  #explore-progress-modal.open { display:flex; }
+  .expl-prog-icon { font-size:64px;margin-bottom:16px;animation:progFloat 1.5s ease-in-out infinite; }
+  @keyframes progFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .expl-prog-title { font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--gold-light);margin-bottom:4px;text-align:center; }
+  .expl-prog-region { font-family:'Cinzel',serif;font-size:12px;color:var(--text-dim);letter-spacing:2px;margin-bottom:24px;text-align:center; }
+  .expl-prog-bar-wrap { width:100%;max-width:320px;background:rgba(255,255,255,.08);border-radius:20px;height:12px;overflow:hidden;margin-bottom:10px; }
+  .expl-prog-bar { height:100%;border-radius:20px;background:linear-gradient(90deg,#4a1a6e,#7b2fd4,#c8a84b);width:0%;transition:width .3s ease; }
+  .expl-prog-pct { font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:2px;margin-bottom:8px; }
+  .expl-prog-status { font-size:12px;color:var(--text-dim);text-align:center;height:18px; }
+
+  /* Modal resultado */
+  #explore-result-modal { position:fixed; inset:0; z-index:900; background:rgba(6,3,16,.96); display:none; align-items:flex-end; justify-content:center; }
+  #explore-result-modal.open { display:flex; }
+  .er-inner { width:100%;max-width:480px;max-height:92vh;overflow-y:auto;background:linear-gradient(180deg,#0e1a0a 0%,#060a06 100%);border-top:2px solid rgba(64,192,128,.5);border-radius:20px 20px 0 0;padding:0 0 32px; }
+  .er-hero { padding:24px 20px 16px;text-align:center;position:relative; }
+  .er-handle { width:40px;height:4px;border-radius:2px;background:rgba(64,192,128,.4);margin:0 auto 16px; }
+  .er-victory-icon { font-size:52px;display:block;margin-bottom:8px; }
+  .er-tag { font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:#50c070;text-transform:uppercase;margin-bottom:4px; }
+  .er-title { font-family:'Cinzel Decorative',serif;font-size:20px;color:#80e0a0;margin-bottom:2px; }
+  .er-region { font-family:'Cinzel',serif;font-size:11px;color:var(--text-dim);letter-spacing:1px; }
+  .er-divider { height:1px;background:linear-gradient(90deg,transparent,rgba(64,192,128,.4),transparent);margin:16px 20px; }
+  .er-body { padding:0 20px; }
+  /* Drops */
+  .er-section-title { font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px; }
+  .er-drops-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px; }
+  .er-drop-item { background:rgba(64,192,128,.08);border:1px solid rgba(64,192,128,.2);border-radius:8px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px; }
+  .er-drop-icon { font-size:22px; }
+  .er-drop-name { font-family:'Cinzel',serif;font-size:8px;color:var(--text-light);text-align:center;line-height:1.2; }
+  .er-drop-qty { font-family:'Cinzel',serif;font-size:10px;color:#80e0a0;font-weight:700; }
+  /* Rewards row */
+  .er-rewards { display:flex;gap:10px;margin-bottom:16px; }
+  .er-reward-chip { flex:1;padding:12px;background:rgba(255,255,255,.04);border:1px solid;border-radius:10px;text-align:center; }
+  .er-reward-chip.xp { border-color:rgba(200,168,75,.3); }
+  .er-reward-chip.gold { border-color:rgba(240,192,64,.3); }
+  .er-reward-chip.xp .val { font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);font-weight:700; }
+  .er-reward-chip.gold .val { font-family:'Cinzel',serif;font-size:16px;color:#f0c040;font-weight:700; }
+  .er-reward-chip .lbl { font-family:'Cinzel',serif;font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-top:2px; }
+  /* Relatório de batalha (log de exploração/masmorra/boss) */
+  .er-log-list { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+  .er-log-item { background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.12); border-radius:8px; padding:8px 12px; font-size:11px; color:var(--text-light); line-height:1.5; }
+  .er-log-item.event { border-color:rgba(240,192,64,.3); color:#f0d080; background:rgba(240,192,64,.06); }
+
+  /* Relatório de batalha (log de exploração/masmorra/boss) */
+  .er-log-list { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+  .er-log-item { background:rgba(255,255,255,.04); border:1px solid rgba(200,168,75,.12); border-radius:8px; padding:8px 12px; font-size:11px; color:var(--text-light); line-height:1.5; }
+  .er-log-item.event { border-color:rgba(240,192,64,.3); color:#f0d080; background:rgba(240,192,64,.06); }
+
+  /* Status pós */
+  .er-status-box { background:rgba(255,255,255,.04);border:1px solid rgba(200,168,75,.12);border-radius:10px;padding:14px;margin-bottom:16px; }
+  .er-status-title { font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:10px; }
+  .er-stat-row { display:flex;align-items:center;margin-bottom:8px;gap:6px; }
+  .er-stat-lbl { font-family:'Cinzel',serif;font-size:11px;color:var(--text-dim);width:36px;flex-shrink:0; }
+  .er-stat-bar { flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden; }
+  .er-stat-fill { height:100%;border-radius:4px;transition:width .6s ease; }
+  .fill-hp { background:linear-gradient(90deg,#c03020,#ff6050); }
+  .fill-mp { background:linear-gradient(90deg,#2040c0,#4080ff); }
+  .fill-xp { background:linear-gradient(90deg,#8a6a1a,#f0d080); }
+  .er-stat-val { font-family:'Cinzel',serif;font-size:10px;color:var(--gold-light);width:70px;text-align:right;flex-shrink:0; }
+  /* Poções consumidas */
+  .er-consumed { background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#ff8070;font-family:'Cinzel',serif;letter-spacing:.5px; }
+  /* Botão fechar resultado */
+  .er-close-btn { display:block;width:100%;padding:15px;background:linear-gradient(135deg,#0e3020,#1a6040,#30c080,#1a6040,#0e3020);border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;font-weight:700;color:#e0fff0;cursor:pointer;-webkit-tap-highlight-color:transparent; }
+
+  /* ===== TOAST ===== */
+  #toast { position:fixed; top:70px; left:50%; transform:translateX(-50%); background:rgba(10,6,24,.95); border:1px solid var(--gold-dark); border-radius:6px; padding:10px 18px; font-family:'Cinzel',serif; font-size:12px; letter-spacing:1px; color:var(--gold-light); z-index:500; opacity:0; pointer-events:none; transition:opacity .3s; white-space:nowrap; }
+  #toast.show { opacity:1; }
+
+  /* ===== FIX: botões de ação sempre visíveis sem scroll (Explorar / NPC / Boss / Masmorra) ===== */
+  .info-modal-actions { position:sticky; bottom:0; margin:16px -20px -1px; padding:14px 20px 10px; background:linear-gradient(180deg, rgba(8,4,18,0) 0%, rgba(8,4,18,.9) 35%, rgba(8,4,18,.98) 100%); z-index:5; }
+
+  /* ===== ÍCONES EM IMAGEM (armas/armaduras estilo RPG) ===== */
+  .icon-img { object-fit:contain; vertical-align:middle; filter:drop-shadow(0 0 4px rgba(200,168,75,.5)); }
+
+  /* ===== INVENTÁRIO: comprar mais espaços ===== */
+  .item-slot.buy-slot { border-color:rgba(200,168,75,.4); border-style:dashed; background:rgba(200,168,75,.06); }
+  .item-slot.buy-slot .item-icon { font-size:22px; }
+  .item-slot.buy-slot .buy-slot-label { font-family:'Cinzel',serif; font-size:8px; color:var(--gold-light); text-align:center; line-height:1.2; padding:0 4px; }
+  .item-slot.buy-slot .buy-slot-cost { font-family:'Cinzel',serif; font-size:9px; color:var(--gold); font-weight:700; }
+  .item-slot.buy-slot.maxed { opacity:.5; border-style:solid; }
+
+  /* ===== MODAL: CONFIRMAR USO DE ITEM ===== */
+  #confirm-use-modal { position:fixed; inset:0; z-index:1000; background:rgba(6,3,16,.92); display:none; align-items:center; justify-content:center; padding:20px; }
+  #confirm-use-modal.open { display:flex; }
+  .confirm-use-inner { width:100%; max-width:340px; background:linear-gradient(180deg,#0a1a40 0%,#03081a 100%); border:2px solid rgba(64,128,255,.5); border-radius:14px; padding:24px 20px; text-align:center; box-shadow:0 0 40px rgba(64,128,255,.3); }
+  .confirm-use-icon { font-size:42px; margin-bottom:8px; filter:drop-shadow(0 0 12px rgba(64,128,255,.6)); }
+  .confirm-use-title { font-family:'Cinzel Decorative',serif; font-size:16px; color:#a0c8ff; margin-bottom:8px; letter-spacing:1px; }
+  .confirm-use-msg { font-family:'Cinzel',serif; font-size:11px; color:var(--text-dim); line-height:1.6; margin-bottom:18px; }
+  .confirm-use-msg strong { color:#80b0ff; }
+  .confirm-use-btns { display:flex; flex-direction:column; gap:8px; }
+  .confirm-use-btn { padding:12px; border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:13px; letter-spacing:2px; font-weight:700; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:filter .15s,transform .1s; }
+  .confirm-use-btn:active { transform:scale(.97); filter:brightness(1.2); }
+  .confirm-use-btn.yes { background:linear-gradient(135deg,#0a3a60,#2070c0); color:#eaf4ff; }
+  .confirm-use-btn.no { background:rgba(255,255,255,.06); border:1px solid rgba(200,168,75,.2); color:var(--text-light); }
+  .confirm-use-btn.cancel { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); color:var(--text-dim); }
+
+  /* ===== MENU: logo em imagem ===== */
+  .menu-logo-img { max-width:220px; width:60vw; height:auto; margin:0 auto 6px; display:block; filter:drop-shadow(0 0 30px rgba(200,168,75,.5)); animation:titleGlow 3s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<!-- ==================== MENU ==================== -->
+<div id="menu" class="screen active">
+  <div id="particles"></div>
+  <div class="mist"></div>
+  <div class="menu-logo-area">
+    <div class="logo-eyebrow">⚔ &nbsp; A Última Batalha Começa &nbsp; ⚔</div>
+    <img class="menu-logo-img" src="menu.png" alt="O Último Mundo" onerror="this.style.display='none';document.getElementById('logo-title-fallback').style.display='block';">
+    <h1 class="logo-title" id="logo-title-fallback" style="display:none">O Último<br>Mundo</h1>
+    <div class="logo-divider"></div>
+    <div class="logo-sub">Monstros. Regiões . Masmorras.</div>
+  </div>
+  <div class="menu-form">
+    <div class="input-label">Seu nome de explorador</div>
+    <input class="name-input" id="player-name-input" type="text" placeholder="Digite seu nome..." maxlength="20" autocomplete="off">
+    <button class="btn-start" id="btn-start">✦ &nbsp; Nova Jornada &nbsp; ✦</button>
+    <button class="btn-continue" id="btn-continue">▶ &nbsp; Continuar Partida &nbsp; ▶</button>
+    <div class="save-info" id="save-info">— Carregando dados salvos —</div>
+  </div>
+  <footer class="menu-footer">
+    <div class="footer-tagline"><span>15 regiões.</span> &nbsp;Segredos sem fim.<br>edsony1@gmail.com criado 06/26.</div>
+  </footer>
+</div>
+
+<!-- ==================== MAP ==================== -->
+<div id="map-screen" class="screen">
+  <div class="map-header">
+    <div class="map-player-info">
+      <div class="player-avatar">🎒</div>
+      <div>
+        <div class="player-name-small" id="header-player-name">Explorador</div>
+        <div class="player-level">Nível 1 · Região 1</div>
+      </div>
+    </div>
+    <div class="map-title-small">O Último Mundo</div>
+    <div class="map-header-right">
+      <div class="icon-btn" id="btn-menu-modal" title="Menu">☰</div>
+    </div>
+  </div>
+  <div id="map-viewport">
+    <div id="map-canvas">
+      <img id="map-bg" src="mapbg.png" alt="Mapa">
+      <div class="map-fog"></div>
+    </div>
+  </div>
+  <!-- FAB Row: Inventário | Home | Portal -->
+  <div id="fab-row">
+    <div class="fab" id="fab-inv">
+      <div class="fab-btn">🎒</div>
+      <div class="fab-label">Inventário</div>
+    </div>
+    <div class="fab" id="fab-home">
+      <div class="fab-btn">🏠</div>
+      <div class="fab-label">Início</div>
+    </div>
+    <div class="fab" id="fab-portal">
+      <div class="fab-btn">🌀</div>
+      <div class="fab-label">Portal</div>
+    </div>
+  </div>
+
+  <!-- Region Panel -->
+  <div id="region-panel">
+    <div class="panel-handle"></div>
+    <div class="panel-header">
+      <div>
+        <div class="panel-region-id" id="panel-region-id">Região 1</div>
+        <div class="panel-region-name" id="panel-region-name">Vale do Despertar</div>
+      </div>
+      <div class="panel-close" id="panel-close">✕</div>
+    </div>
+    <div class="panel-actions">
+      <div class="action-btn region" id="btn-open-region"><span class="icon">🗺</span><span class="label">Explorar<br>Região</span></div>
+      <div class="action-btn boss"   id="btn-open-boss">  <span class="icon">☠️</span><span class="label">Enfrentar<br>Boss</span></div>
+      <div class="action-btn dungeon" id="btn-open-dungeon"><span class="icon">🏛️</span><span class="label">Entrar<br>Masmorra</span></div>
+      <div class="action-btn event"  id="btn-open-event"> <span class="icon">⚔️</span><span class="label">Evento<br>Especial</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INVENTÁRIO ==================== -->
+<div id="inv-screen" class="screen">
+  <div class="inv-header">
+    <div class="inv-back" id="inv-back">←</div>
+    <div class="inv-header-title">🎒 Inventário</div>
+    <div style="width:34px"></div>
+  </div>
+  <div class="inv-status-panel" id="inv-status-panel"><!-- preenchido via JS --></div>
+  <div class="inv-sell-row" id="inv-sell-row" style="display:none">
+    <div class="inv-sell-toggle" id="inv-sell-toggle">💰 Modo Venda: OFF</div>
+  </div>
+  <div class="inv-tabs">
+    <div class="inv-tab active" data-tab="items">Itens</div>
+    <div class="inv-tab" data-tab="equip">Equipamentos</div>
+    <div class="inv-tab" data-tab="craft">Crafting</div>
+  </div>
+  <div class="inv-body" id="inv-body">
+    <!-- preenchido via JS -->
+  </div>
+</div>
+
+<!-- ==================== MENU MODAL ==================== -->
+<div id="menu-modal">
+  <div class="menu-modal-inner">
+    <div class="menu-modal-handle"></div>
+    <div class="menu-modal-title">⚙ Menu</div>
+
+    <!-- Status do Jogador -->
+    <div class="status-card">
+      <div class="status-card-title">Status do Explorador</div>
+      <div class="status-row">
+        <span class="status-label">❤ HP</span>
+        <div class="stat-bar"><div class="stat-bar-fill bar-hp" style="width:78%"></div></div>
+        <span class="status-value">780/1000</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">💧 MP</span>
+        <div class="stat-bar"><div class="stat-bar-fill bar-mp" style="width:55%"></div></div>
+        <span class="status-value">275/500</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">⭐ XP</span>
+        <div class="stat-bar"><div class="stat-bar-fill bar-xp" style="width:40%"></div></div>
+        <span class="status-value">400/1000</span>
+      </div>
+      <div class="status-row" style="margin-top:10px">
+        <span class="status-label">⚔ ATQ</span><span class="status-value">42</span>
+        <span class="status-label" style="margin-left:16px">🛡 DEF</span><span class="status-value">28</span>
+        <span class="status-label" style="margin-left:16px">💨 VEL</span><span class="status-value">15</span>
+      </div>
+    </div>
+
+    <div class="menu-modal-btns">
+      <div class="mm-btn music" id="btn-toggle-music">
+        <span class="mm-icon">🎵</span>
+        Música
+        <span class="music-status" id="music-status">ON</span>
+      </div>
+      <div class="mm-btn codex" id="btn-open-codex">
+        <span class="mm-icon">📖</span>
+        Codex de Itens
+      </div>
+      <div class="mm-btn quit" id="btn-quit-game">
+        <span class="mm-icon">🚪</span>
+        Sair do Jogo
+      </div>
+      <div class="mm-btn close-mm" id="btn-close-menu-modal">
+        <span class="mm-icon">✕</span>
+        Fechar
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Codex Modal (galeria de assets) -->
+<div id="codex-modal">
+  <div class="codex-inner">
+    <div class="codex-header">
+      <div class="codex-title">📖 Codex de Itens</div>
+      <div class="codex-close" id="codex-close">✕</div>
+    </div>
+    <div class="codex-body" id="codex-body">
+      <div class="codex-page">
+        <div class="codex-page-caption">— Catálogo Geral de Itens do Reino —</div>
+        <img src="codex-itens.png" alt="Catálogo de itens do jogo" loading="lazy">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Portal Modal -->
+<div id="portal-modal">
+  <div class="portal-modal-inner">
+    <div class="portal-modal-title">🌀 Portal Regional</div>
+    <div class="portal-modal-sub">Escolha seu destino</div>
+    <div class="portal-region-list" id="portal-region-list"></div>
+    <div class="portal-close" id="portal-modal-close">Cancelar</div>
+  </div>
+</div>
+
+<!-- Info Modal (Região / Boss / Dungeon / Evento) -->
+<div id="info-modal">
+  <div class="info-modal-inner" id="info-modal-inner">
+    <!-- preenchido via JS -->
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ===== MODAL: PREPARAÇÃO DA EXPLORAÇÃO ===== -->
+<div id="explore-prep-modal">
+  <div class="ep-inner" id="ep-inner"><!-- preenchido via JS --></div>
+</div>
+
+<!-- ===== MODAL: PROGRESSO DA EXPLORAÇÃO ===== -->
+<div id="explore-progress-modal">
+  <div class="expl-prog-icon" id="expl-prog-icon">🗺</div>
+  <div class="expl-prog-title">Explorando...</div>
+  <div class="expl-prog-region" id="expl-prog-region">Vale do Despertar</div>
+  <div class="expl-prog-bar-wrap">
+    <div class="expl-prog-bar" id="expl-prog-bar"></div>
+  </div>
+  <div class="expl-prog-pct" id="expl-prog-pct">0%</div>
+  <div class="expl-prog-status" id="expl-prog-status">Adentrando a região...</div>
+</div>
+
+<!-- ===== MODAL: RESULTADO DA EXPLORAÇÃO ===== -->
+<div id="explore-result-modal">
+  <div class="er-inner" id="er-inner"><!-- preenchido via JS --></div>
+</div>
+
+<!-- ===== MODAL: CONFIRMAÇÃO NOVA PARTIDA ===== -->
+<div id="confirm-newgame-modal">
+  <div class="confirm-ng-inner">
+    <div class="confirm-ng-icon">⚠</div>
+    <div class="confirm-ng-title">Iniciar Nova Partida?</div>
+    <div class="confirm-ng-msg">A partida anterior será <strong>permanentemente apagada</strong>. Esta ação não pode ser desfeita.</div>
+    <div class="confirm-ng-btns">
+      <button class="confirm-ng-btn yes" id="confirm-ng-yes">✓ Sim</button>
+      <button class="confirm-ng-btn no" id="confirm-ng-no">✕ Não</button>
+      <button class="confirm-ng-btn cancel" id="confirm-ng-cancel">↩ Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEAL POPUP (feedback ao consumir poção) ===== -->
+<div id="heal-popup">
+  <div class="heal-popup-inner">
+    <div class="heal-popup-icon" id="heal-popup-icon">💊</div>
+    <div class="heal-popup-text" id="heal-popup-text">Poção usada!</div>
+    <div class="heal-popup-val" id="heal-popup-val">+0 HP</div>
+  </div>
+</div>
+
+<!-- ===== MODAL: NPC SHOP (Loja de Poções) ===== -->
+<div id="shop-modal">
+  <div class="shop-inner" id="shop-inner"><!-- preenchido via JS --></div>
+</div>
+
+<!-- ===== MODAL: CONFIRMAR USO DE ITEM (poção de cura/mp) ===== -->
+<div id="confirm-use-modal">
+  <div class="confirm-use-inner">
+    <div class="confirm-use-icon" id="confirm-use-icon">🧪</div>
+    <div class="confirm-use-title" id="confirm-use-title">Usar item?</div>
+    <div class="confirm-use-msg" id="confirm-use-msg">Deseja usar este item agora?</div>
+    <div class="confirm-use-btns">
+      <button class="confirm-use-btn yes" id="confirm-use-yes">✓ Sim, usar</button>
+      <button class="confirm-use-btn no" id="confirm-use-no">✕ Não</button>
+      <button class="confirm-use-btn cancel" id="confirm-use-cancel">↩ Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== ÁUDIO (SFX + música ambiente, gerados via Web Audio — sem dependências externas) =====================
+let musicOn = true;
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+  }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTone(freq, startOffset, duration, type, peakGain){
+  const ctx = getAudioCtx();
+  if(!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  osc.connect(gain); gain.connect(ctx.destination);
+  const t0 = ctx.currentTime + (startOffset||0);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.linearRampToValueAtTime(peakGain||0.12, t0+0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+duration);
+  osc.start(t0);
+  osc.stop(t0+duration+0.05);
+}
+function sfxClick(){ if(!musicOn) return; playTone(720,0,0.06,'triangle',0.06); }
+function sfxNav(){ if(!musicOn) return; playTone(440,0,0.07,'sine',0.07); }
+function sfxPotion(){ if(!musicOn) return; playTone(520,0,0.12,'sine',0.1); playTone(780,0.08,0.2,'sine',0.09); }
+function sfxEquip(){ if(!musicOn) return; playTone(240,0,0.1,'square',0.07); playTone(190,0.06,0.16,'square',0.05); }
+function sfxBuy(){ if(!musicOn) return; playTone(660,0,0.07,'sine',0.09); playTone(880,0.06,0.14,'sine',0.09); }
+function sfxSell(){ if(!musicOn) return; playTone(500,0,0.08,'sine',0.08); }
+function sfxError(){ if(!musicOn) return; playTone(160,0,0.16,'sawtooth',0.07); }
+function sfxVictory(){ if(!musicOn) return; [523,659,784,1047].forEach((f,i)=>playTone(f,i*0.09,0.2,'sine',0.09)); }
+function sfxOpen(){ if(!musicOn) return; playTone(330,0,0.09,'sine',0.06); playTone(494,0.05,0.12,'sine',0.06); }
+
+let musicNodes = null;
+let musicScheduler = null;
+
+// ---- Trilha sonora RPG (Lá menor, fantasia épica/mística) ----
+// Progressão: Am (i) → F (VI) → C (III) → G (VII) → repete
+// Camadas: drone de baixo + pad de acorde (sine + detune) + arpejo harpa + lead flauta
+const MUSIC_RPG = {
+  chords: [
+    { name:'Am', root: 55.00,  triad:[220.00, 261.63, 329.63], lead:[440.00, 523.25, 659.25] }, // A2 · A3-C4-E4 · A4-C5-E5
+    { name:'F',  root: 43.65,  triad:[174.61, 220.00, 261.63], lead:[349.23, 440.00, 523.25] }, // F1 · F3-A3-C4 · F4-A4-C5
+    { name:'C',  root: 65.41,  triad:[261.63, 329.63, 392.00], lead:[523.25, 659.25, 783.99] }, // C2 · C4-E4-G4 · C5-E5-G5
+    { name:'G',  root: 49.00,  triad:[196.00, 246.94, 293.66], lead:[392.00, 493.88, 587.33] }  // G1 · G3-B3-D4 · G4-B4-D5
+  ],
+  chordDur: 4.0,          // segundos por acorde
+  arpStep: 0.28,          // intervalo entre notas do arpejo
+  arpPattern: [0,1,2,1,0,1,2,2,0,1,2,1,2,1,0,1], // índices no tríade (16 pasos por acorde)
+  leadPattern: [0,-1,1,-1,2,-1,1,-1, 0,-1,2,-1,1,-1,0,-1] // -1 = pausa; demais = índice no lead[]
+};
+
+function _scheduleChordRPG(ctx, chord, tStart, dest){
+  const tEnd = tStart + MUSIC_RPG.chordDur;
+  const out = [];
+
+  // 1) Drone de baixo (triangle, fade suave) — fundamenta o acorde
+  const bass = ctx.createOscillator();
+  bass.type = 'triangle';
+  bass.frequency.setValueAtTime(chord.root, tStart);
+  const bassG = ctx.createGain();
+  bassG.gain.setValueAtTime(0.0001, tStart);
+  bassG.gain.linearRampToValueAtTime(0.32, tStart + 0.6);
+  bassG.gain.setValueAtTime(0.32, tEnd - 0.8);
+  bassG.gain.linearRampToValueAtTime(0.0001, tEnd);
+  bass.connect(bassG); bassG.connect(dest);
+  bass.start(tStart); bass.stop(tEnd + 0.05);
+  out.push(bass);
+
+  // 1b) Sub-baixo (sine, uma oitava abaixo) — peso extra
+  const sub = ctx.createOscillator();
+  sub.type = 'sine';
+  sub.frequency.setValueAtTime(chord.root * 0.5, tStart);
+  const subG = ctx.createGain();
+  subG.gain.setValueAtTime(0.0001, tStart);
+  subG.gain.linearRampToValueAtTime(0.18, tStart + 0.8);
+  subG.gain.setValueAtTime(0.18, tEnd - 0.8);
+  subG.gain.linearRampToValueAtTime(0.0001, tEnd);
+  sub.connect(subG); subG.connect(dest);
+  sub.start(tStart); sub.stop(tEnd + 0.05);
+  out.push(sub);
+
+  // 2) Pad de acorde (3 sines levemente detuned, attack lento) — textura épica
+  chord.triad.forEach((f, i) => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    osc.detune.value = (i - 1) * 6; // -6, 0, +6 cents — batimento sutil
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, tStart);
+    g.gain.linearRampToValueAtTime(0.10, tStart + 1.0);
+    g.gain.setValueAtTime(0.10, tEnd - 1.0);
+    g.gain.linearRampToValueAtTime(0.0001, tEnd);
+    osc.connect(g); g.connect(dest);
+    osc.start(tStart); osc.stop(tEnd + 0.05);
+    out.push(osc);
+  });
+
+  // 3) Arpejo harpa (triangle, ataque rápido, decaimento exponencial) — bravura
+  const nArp = Math.floor(MUSIC_RPG.chordDur / MUSIC_RPG.arpStep);
+  for(let i = 0; i < nArp; i++){
+    const noteIdx = MUSIC_RPG.arpPattern[i % MUSIC_RPG.arpPattern.length];
+    const freq = chord.triad[noteIdx] * 2; // uma oitava acima
+    const t = tStart + i * MUSIC_RPG.arpStep;
+    const osc = ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.14, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+    osc.connect(g); g.connect(dest);
+    osc.start(t); osc.stop(t + 0.5);
+    out.push(osc);
+  }
+
+  // 4) Lead flauta (sine + leve vibrato, apenas nas posições marcadas) — melodia heroica
+  MUSIC_RPG.leadPattern.forEach((idx, i) => {
+    if(idx < 0) return; // pausa
+    const freq = chord.lead[idx];
+    const t = tStart + i * MUSIC_RPG.arpStep;
+    const dur = MUSIC_RPG.arpStep * 1.6;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    // vibrato suave
+    const vib = ctx.createOscillator(); vib.type = 'sine'; vib.frequency.value = 5.5;
+    const vibG = ctx.createGain(); vibG.gain.value = 3.5;
+    vib.connect(vibG); vibG.connect(osc.frequency);
+    vib.start(t); vib.stop(t + dur + 0.05);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.09, t + 0.04);
+    g.gain.setValueAtTime(0.09, t + dur - 0.12);
+    g.gain.linearRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(dest);
+    osc.start(t); osc.stop(t + dur + 0.05);
+    out.push(osc, vib);
+  });
+
+  return out;
+}
+
+function startBgMusic(){
+  const ctx = getAudioCtx();
+  if(!ctx || !musicOn || musicNodes) return;
+
+  // Master chain: gain → lowpass suave → destination (dá "presença" sem aspereza)
+  const master = ctx.createGain(); master.gain.value = 0.42;
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.frequency.value = 3600; lp.Q.value = 0.4;
+  master.connect(lp); lp.connect(ctx.destination);
+
+  // LFO de "respiração" no ganho master
+  const lfo = ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.09;
+  const lfoGain = ctx.createGain(); lfoGain.gain.value = 0.06;
+  lfo.connect(lfoGain); lfoGain.connect(master.gain);
+  lfo.start();
+
+  const nodes = { master, lp, lfo, oscs: [] };
+  let chordIdx = 0;
+  let nextTime = ctx.currentTime + 0.15;
+
+  // Pré-agenda 2 acordes para suavizar a entrada
+  nodes.oscs = nodes.oscs.concat(_scheduleChordRPG(ctx, MUSIC_RPG.chords[chordIdx++ % 4], nextTime, master));
+  nextTime += MUSIC_RPG.chordDur;
+  nodes.oscs = nodes.oscs.concat(_scheduleChordRPG(ctx, MUSIC_RPG.chords[chordIdx++ % 4], nextTime, master));
+  nextTime += MUSIC_RPG.chordDur;
+
+  // Scheduler contínuo — mantém ~2 acordes à frente
+  musicScheduler = setInterval(() => {
+    if(!musicNodes) return;
+    if(nextTime - ctx.currentTime < MUSIC_RPG.chordDur * 1.5){
+      nodes.oscs = nodes.oscs.concat(_scheduleChordRPG(ctx, MUSIC_RPG.chords[chordIdx++ % 4], nextTime, master));
+      nextTime += MUSIC_RPG.chordDur;
+    }
+    // Limpa referências a osciladores já encerrados (eles já pararam sozinhos no stopTime)
+    if(nodes.oscs.length > 200){
+      nodes.oscs.splice(0, 100);
+    }
+  }, 600);
+
+  musicNodes = nodes;
+}
+function stopBgMusic(){
+  if(musicScheduler){ clearInterval(musicScheduler); musicScheduler = null; }
+  if(!musicNodes) return;
+  try{
+    musicNodes.oscs.forEach(o => { try{ o.stop(); }catch(e){} });
+    musicNodes.lfo.stop();
+    musicNodes.master.disconnect();
+  }catch(e){}
+  musicNodes = null;
+}
+function toggleBgMusic(on){
+  if(on) startBgMusic(); else stopBgMusic();
+}
+
+// ===================== ÍCONES (emoji ou imagem RPG) =====================
+function isImgIcon(icon){
+  return typeof icon === 'string' && (icon.indexOf('http') === 0 || icon.indexOf('assets/') === 0);
+}
+function iconHTML(icon, sizePx){
+  sizePx = sizePx || 24;
+  if(isImgIcon(icon)){
+    return `<img src="${icon}" alt="" class="icon-img" style="width:${sizePx}px;height:${sizePx}px;">`;
+  }
+  return icon;
+}
+function iconText(icon){
+  if(isImgIcon(icon)) return '';
+  return icon;
+}
+
+// ===================== DATA =====================
+const REGIONS = [
+{ id:1,  name:"Vale do Despertar",    x:187,  y:50,  emoji:"🏞️",
+    desc:"Primeira região do jogo, com campos verdes, rios, pequenas florestas e ruínas antigas. O ponto de partida de toda jornada neste mundo.",
+    biome:"Campo & Ruínas", difficulty:"Iniciante", recommended:"Nível 1–5",
+    boss:{ name:"Guardião da Floresta", subtitle:"Ent Ancião", emoji:"🌳", desc:"Um ser ancestral de madeira e raízes que protege as florestas do Vale há milênios. Sua ira desperta quando estranhos perturbam a paz da natureza.", hp:"12.000", atk:"Físico / Veneno", reward:"Raiz Ancestral, Escudo da Floresta" },
+    dungeon:{ name:"Caverna das Raízes Antigas", emoji:"🕳", levels:[
+      { name:"Entrada das Sombras",   detail:"Criaturas nível 1–2 · Recomendado: Nível 1", unlocked:true },
+      { name:"Corredor das Raízes",   detail:"Criaturas nível 3–5 · Recomendado: Nível 3", unlocked:true },
+      { name:"Câmara do Cogumelo",    detail:"Criaturas nível 6–8 · Recomendado: Nível 5", unlocked:false },
+      { name:"Abismo das Trevas",     detail:"Criaturas nível 9–12 · Recomendado: Nível 8", unlocked:false },
+      { name:"Coração da Raiz Maldita",detail:"Boss da Masmorra · Recomendado: Nível 10", unlocked:false },
+    ]}},
+
+  { id:2,  name:"Floresta Eldora",  x:440,  y:20, emoji:"🌳",
+    desc:"Floresta gigantesca coberta por árvores centenárias e criaturas selvagens. A luz do sol mal penetra entre as copas, criando um mundo à parte.",
+    biome:"Floresta Densa", difficulty:"Fácil", recommended:"Nível 5–10",
+    boss:{ name:"Rainha Aranha Sylthara", subtitle:"Tecelã do Destino", emoji:"🕷", desc:"A maior e mais antiga aranha de Eldoria. Tece teias impregnadas de veneno mortal e possui habilidades de ilusão que enlouquecem guerreiros experientes.", hp:"28.000", atk:"Veneno / Ilusão", reward:"Seda de Sylthara, Veneno Élfico" },
+    dungeon:{ name:"Templo das Folhas Eternas", emoji:"🍃", levels:[
+      { name:"Jardim das Sombras",    detail:"Criaturas nível 5–7 · Recomendado: Nível 5", unlocked:true },
+      { name:"Galeria das Teias",     detail:"Criaturas nível 8–10 · Recomendado: Nível 7", unlocked:false },
+      { name:"Altar da Floresta",     detail:"Criaturas nível 11–13 · Recomendado: Nível 10", unlocked:false },
+      { name:"Câmara das Presas",     detail:"Criaturas nível 14–16 · Recomendado: Nível 13", unlocked:false },
+      { name:"Trono de Sylthara",     detail:"Boss da Masmorra · Recomendado: Nível 15", unlocked:false },
+    ]}},
+
+  { id:3,  name:"Montanhas de Ferro",   x:695,  y:17,  emoji:"⛰️",
+    desc:"Grandes montanhas ricas em minério de ferro, cavernas profundas e pontes antigas construídas por anões esquecidos pela história.",
+    biome:"Montanha & Caverna", difficulty:"Médio", recommended:"Nível 10–18",
+    boss:{ name:"Golem Colossal de Ferro", subtitle:"Criação dos Anões Antigos", emoji:"🤖", desc:"Forjado pelos anões ancestrais como guardião das minas, este golem de ferro maciço tem resistência quase absoluta a ataques físicos.", hp:"55.000", atk:"Físico / Impacto", reward:"Coração de Ferro, Runa Anã" },
+    dungeon:{ name:"Mina Perdida de Khor", emoji:"⛏", levels:[
+      { name:"Túnel de Entrada",      detail:"Criaturas nível 10–12 · Recomendado: Nível 10", unlocked:false },
+      { name:"Câmara do Minério",     detail:"Criaturas nível 13–15 · Recomendado: Nível 13", unlocked:false },
+      { name:"Forja Abandonada",      detail:"Criaturas nível 16–18 · Recomendado: Nível 16", unlocked:false },
+      { name:"Abismo Subterrâneo",    detail:"Criaturas nível 19–22 · Recomendado: Nível 19", unlocked:false },
+      { name:"Câmara de Khor",        detail:"Boss da Masmorra · Recomendado: Nível 22", unlocked:false },
+    ]}},
+
+  { id:4,  name:"Pântano Sombrio",      x:970,  y:20,  emoji:"☠️",
+    desc:"Região coberta por neblina espessa, venenos naturais e criaturas mutantes que evoluíram nas águas contaminadas por magia negra.",
+    biome:"Pântano Tóxico", difficulty:"Médio", recommended:"Nível 15–22",
+    boss:{ name:"Hidra Venenosa", subtitle:"Serpente de Sete Cabeças", emoji:"🐍", desc:"Uma criatura colossal de sete cabeças que regenera cada cabeça cortada. Seu veneno corrói armaduras e sua neblina envenena o ar ao redor.", hp:"72.000", atk:"Veneno / Corte", reward:"Escama da Hidra, Essência Venenosa" },
+    dungeon:{ name:"Cripta da Lama Negra", emoji:"💧", levels:[
+      { name:"Margem Pantanosa",      detail:"Criaturas nível 14–16 · Recomendado: Nível 15", unlocked:false },
+      { name:"Caverna Inundada",      detail:"Criaturas nível 17–19 · Recomendado: Nível 17", unlocked:false },
+      { name:"Câmara da Podridão",    detail:"Criaturas nível 20–22 · Recomendado: Nível 20", unlocked:false },
+      { name:"Corredor dos Mortos",   detail:"Criaturas nível 23–25 · Recomendado: Nível 23", unlocked:false },
+      { name:"Trono da Lama",         detail:"Boss da Masmorra · Recomendado: Nível 25", unlocked:false },
+    ]}},
+
+  { id:5,  name:"Deserto Escarlate",    x:1220,  y:40,  emoji:"🏜",
+    desc:"Dunas infinitas de areia vermelha, pirâmides esquecidas de uma civilização perdida e tempestades de areia que podem sepultar exércitos inteiros.",
+    biome:"Deserto Árido", difficulty:"Difícil", recommended:"Nível 20–28",
+    boss:{ name:"Faraó Imortal Azkar", subtitle:"Senhor do Deserto Perdido", emoji:"👑", desc:"Um faraó ressuscitado por magia profana, que governa seu exército de mortos-vivos com puño de areia. Pode invocar tempestades e curses ancestrais.", hp:"95.000", atk:"Maldição / Físico", reward:"Cetro de Azkar, Amuleto do Deserto" },
+    dungeon:{ name:"Pirâmide do Sol Perdido", emoji:"🔺", levels:[
+      { name:"Vestíbulo do Faraó",    detail:"Criaturas nível 20–22 · Recomendado: Nível 20", unlocked:false },
+      { name:"Câmara das Armadilhas", detail:"Criaturas nível 23–25 · Recomendado: Nível 23", unlocked:false },
+      { name:"Salão dos Guardas",     detail:"Criaturas nível 26–28 · Recomendado: Nível 26", unlocked:false },
+      { name:"Câmara do Tesouro",     detail:"Criaturas nível 29–31 · Recomendado: Nível 29", unlocked:false },
+      { name:"Santuário de Azkar",    detail:"Boss da Masmorra · Recomendado: Nível 32", unlocked:false },
+    ]}},
+
+  { id:6,  name:"Cordilheira Congelada",x:195,  y:255,  emoji:"❄",
+    desc:"Montanhas eternas cobertas por neve, lagos congelados e ventos extremos que congelam até a alma. Habitada por criaturas do frio ancestral.",
+    biome:"Ártico & Neve", difficulty:"Difícil", recommended:"Nível 25–35",
+    boss:{ name:"Dragão Branco Glacius", subtitle:"Senhor das Neves Eternas", emoji:"🐲", desc:"O maior dragão branco vivo, cujo sopro congela tudo instantaneamente. Glacius é uma força da natureza que faz até os reis tremeram de terror.", hp:"140.000", atk:"Gelo / Físico / Sopro", reward:"Escama de Glacius, Cristal de Gelo Eterno" },
+    dungeon:{ name:"Fortaleza do Gelo Eterno", emoji:"🏔", levels:[
+      { name:"Portão Congelado",      detail:"Criaturas nível 24–26 · Recomendado: Nível 25", unlocked:false },
+      { name:"Torres do Gelo",        detail:"Criaturas nível 27–30 · Recomendado: Nível 28", unlocked:false },
+      { name:"Corredor Glacial",      detail:"Criaturas nível 31–33 · Recomendado: Nível 31", unlocked:false },
+      { name:"Câmara do Permafrost",  detail:"Criaturas nível 34–36 · Recomendado: Nível 34", unlocked:false },
+      { name:"Covil de Glacius",      detail:"Boss da Masmorra · Recomendado: Nível 36", unlocked:false },
+    ]}},
+
+  { id:7,  name:"Floresta Carmesim",    x:475,  y:260,  emoji:"🍂",
+    desc:"Bosque mágico onde as árvores possuem folhas permanentemente vermelhas. A energia ancestral que permeia o ar pode enlouquecer os não iniciados.",
+    biome:"Floresta Mágica", difficulty:"Difícil", recommended:"Nível 30–40",
+    boss:{ name:"Espírito Ancião Carmesim", subtitle:"Guardião do Sangue Antigo", emoji:"🌺", desc:"Um espírito milenar que se manifestou em forma física. Controla a floresta inteira como extensão de seu próprio corpo e usa energia vital como arma.", hp:"175.000", atk:"Magia / Drenagem Vital", reward:"Essência Carmesim, Folha Ancestral" },
+    dungeon:{ name:"Santuário do Sangue Antigo", emoji:"🩸", levels:[
+      { name:"Véu da Floresta",       detail:"Criaturas nível 29–31 · Recomendado: Nível 30", unlocked:false },
+      { name:"Altar das Folhas",      detail:"Criaturas nível 32–34 · Recomendado: Nível 33", unlocked:false },
+      { name:"Câmara Carmesim",       detail:"Criaturas nível 35–37 · Recomendado: Nível 36", unlocked:false },
+      { name:"Poço do Sangue",        detail:"Criaturas nível 38–40 · Recomendado: Nível 39", unlocked:false },
+      { name:"Coração do Espírito",   detail:"Boss da Masmorra · Recomendado: Nível 40", unlocked:false },
+    ]}},
+
+  { id:8,  name:"Vulcões de Ignis",     x:766,  y:240,  emoji:"🌋",
+    desc:"Montanhas vulcânicas em erupção constante, rios de lava e cavernas flamejantes onde criaturas de fogo fazem seu lar eterno.",
+    biome:"Vulcânico & Lava", difficulty:"Muito Difícil", recommended:"Nível 38–48",
+    boss:{ name:"Senhor do Magma Ignaros", subtitle:"Nascido no Núcleo da Terra", emoji:"🔥", desc:"Uma entidade de magma vivo que emerge do vulcão principal. Seus ataques derretem armaduras e suas ondas de calor são letais a distância.", hp:"230.000", atk:"Fogo / Magma / Calor", reward:"Coração de Magma, Cristal de Ignis" },
+    dungeon:{ name:"Forja Infernal", emoji:"⚒", levels:[
+      { name:"Boca do Vulcão",        detail:"Criaturas nível 37–40 · Recomendado: Nível 38", unlocked:false },
+      { name:"Câmara de Lava",        detail:"Criaturas nível 41–43 · Recomendado: Nível 41", unlocked:false },
+      { name:"Forja Antiga",          detail:"Criaturas nível 44–46 · Recomendado: Nível 44", unlocked:false },
+      { name:"Núcleo Vulcânico",      detail:"Criaturas nível 47–49 · Recomendado: Nível 47", unlocked:false },
+      { name:"Coração do Ignaros",    detail:"Boss da Masmorra · Recomendado: Nível 48", unlocked:false },
+    ]}},
+
+{ id:9,  name:"Costa Tempestuosa",    x:1055,  y:265,  emoji:"⚡",
+    desc:"Ilhas dispersas em mares revoltos e tempestades permanentes. Os naufrágios das frotas de mil anos afundam nestas águas repletas de horrores marinhos.",
+    biome:"Oceânico & Ilhas", difficulty:"Muito Difícil", recommended:"Nível 42–52",
+    boss:{ name:"Kraken Abissal", subtitle:"Terror das Profundezas", emoji:"🐙", desc:"Um kraken colossal que habita o abismo entre as ilhas. Pode engolir navios inteiros e seus tentáculos alcançam quilômetros de distância.", hp:"290.000", atk:"Físico / Água / Tentáculos", reward:"Tentáculo de Kraken, Pérola do Abismo" },
+    dungeon:{ name:"Abismo dos Afogados", emoji:"🌊", levels:[
+      { name:"Costa Naufragada",      detail:"Criaturas nível 41–43 · Recomendado: Nível 42", unlocked:false },
+      { name:"Ruínas Submersas",      detail:"Criaturas nível 44–46 · Recomendado: Nível 45", unlocked:false },
+      { name:"Câmara do Naufrágio",   detail:"Criaturas nível 47–49 · Recomendado: Nível 47", unlocked:false },
+      { name:"Abismo Profundo",       detail:"Criaturas nível 50–52 · Recomendado: Nível 50", unlocked:false },
+      { name:"Covil do Kraken",       detail:"Boss da Masmorra · Recomendado: Nível 52", unlocked:false },
+    ]}},
+
+  { id:10, name:"Reino das Tempestades",x:1330,  y:255,  emoji:"🌩",
+    desc:"Campos elevados onde tempestades jamais cessam. A eletricidade no ar é tão intensa que metais são proibidos e trovões ecoam sem parar.",
+    biome:"Planícies Elétricas", difficulty:"Muito Difícil", recommended:"Nível 48–58",
+    boss:{ name:"Titã da Tempestade", subtitle:"Filho dos Raios", emoji:"⚡", desc:"Um titã elemental formado de tempestade viva. Cada passo desce raios do céu e seus punhos carregam a força de mil trovões.", hp:"360.000", atk:"Elétrico / Físico / Raio", reward:"Núcleo da Tempestade, Fragmento do Titã" },
+    dungeon:{ name:"Torre dos Raios Eternos", emoji:"🗼", levels:[
+      { name:"Base da Torre",         detail:"Criaturas nível 47–49 · Recomendado: Nível 48", unlocked:false },
+      { name:"Andar dos Raios",       detail:"Criaturas nível 50–52 · Recomendado: Nível 51", unlocked:false },
+      { name:"Câmara Elétrica",       detail:"Criaturas nível 53–55 · Recomendado: Nível 53", unlocked:false },
+      { name:"Olho da Tempestade",    detail:"Criaturas nível 56–58 · Recomendado: Nível 56", unlocked:false },
+      { name:"Topo da Torre",         detail:"Boss da Masmorra · Recomendado: Nível 58", unlocked:false },
+    ]}},
+
+    { id:11, name:"Terra das Sombras",    x:212,  y:490,  emoji:"🌑",
+    desc:"Uma região tomada pela corrupção sombria, repleta de mortos-vivos e magia negra. O sol nunca nasce aqui e a morte permeia cada canto.",
+    biome:"Necromântico", difficulty:"Extremo", recommended:"Nível 55–65",
+    boss:{ name:"Lorde Lich Malgor", subtitle:"Necromante Imortal", emoji:"💀", desc:"O necromante mais poderoso de todos os tempos, transformado em Lich para escapar da morte. Comanda legiões de mortos-vivos e pode reanimar qualquer ser derrotado.", hp:"450.000", atk:"Sombra / Necro / Maldição", reward:"Ficha de Alma de Malgor, Cetro Lich" },
+    dungeon:{ name:"Castelo da Escuridão", emoji:"🏚", levels:[
+      { name:"Portão dos Mortos",     detail:"Criaturas nível 54–56 · Recomendado: Nível 55", unlocked:false },
+      { name:"Salão dos Esqueletos",  detail:"Criaturas nível 57–60 · Recomendado: Nível 58", unlocked:false },
+      { name:"Torre Necromântica",    detail:"Criaturas nível 61–63 · Recomendado: Nível 61", unlocked:false },
+      { name:"Câmara da Alma Negra",  detail:"Criaturas nível 64–66 · Recomendado: Nível 64", unlocked:false },
+      { name:"Trono de Malgor",       detail:"Boss da Masmorra · Recomendado: Nível 65", unlocked:false },
+    ]}},
+
+  { id:12, name:"Reino Celestial",      x:545,  y:495,  emoji:"🌌",
+    desc:"Ilhas flutuantes suspensas acima das nuvens, habitadas por criaturas sagradas e seres celestiais que caíram em conflito entre si.",
+    biome:"Celestial & Sagrado", difficulty:"Extremo", recommended:"Nível 60–70",
+    boss:{ name:"Serafim Caído", subtitle:"Anjo da Destruição", emoji:"😇", desc:"Um serafim de seis asas que foi corrompido pela ambição. Agora usa sua luz divina como arma destrutiva e possui resistência total à magia sombria.", hp:"540.000", atk:"Luz / Sagrado / Asa", reward:"Pena do Serafim, Auréola Quebrada" },
+    dungeon:{ name:"Templo Celestial", emoji:"🕌", levels:[
+      { name:"Portão das Nuvens",     detail:"Criaturas nível 59–61 · Recomendado: Nível 60", unlocked:false },
+      { name:"Galeria dos Anjos",     detail:"Criaturas nível 62–64 · Recomendado: Nível 63", unlocked:false },
+      { name:"Altar Celestial",       detail:"Criaturas nível 65–67 · Recomendado: Nível 65", unlocked:false },
+      { name:"Câmara da Luz Caída",   detail:"Criaturas nível 68–70 · Recomendado: Nível 68", unlocked:false },
+      { name:"Trono do Serafim",      detail:"Boss da Masmorra · Recomendado: Nível 70", unlocked:false },
+    ]}},
+
+    { id:13, name:"Reino dos Dragões",    x:925,  y:475,  emoji:"🐲",
+    desc:"Montanhas gigantescas onde vivem dragões ancestrais de todas as espécies. Entrar neste território é uma sentença de morte para os despreparados.",
+    biome:"Dracônico", difficulty:"Extremo", recommended:"Nível 65–78",
+    boss:{ name:"Imperador Dragão Vharax", subtitle:"Soberano dos Dragões Ancestrais", emoji:"🐲", desc:"O mais antigo e poderoso dos dragões vivos. Vharax possui escamas impenetráveis, sopro de fogo negro e controle telepático sobre todos os dragões.", hp:"680.000", atk:"Fogo Negro / Físico / Psíquico", reward:"Escama Imperial de Vharax, Olho do Dragão" },
+    dungeon:{ name:"Covil dos Dragões Eternos", emoji:"🔥", levels:[
+      { name:"Vale dos Ovos",         detail:"Criaturas nível 64–67 · Recomendado: Nível 65", unlocked:false },
+      { name:"Ninho dos Jovens",      detail:"Criaturas nível 68–71 · Recomendado: Nível 68", unlocked:false },
+      { name:"Sala dos Anciões",      detail:"Criaturas nível 72–74 · Recomendado: Nível 72", unlocked:false },
+      { name:"Câmara Imperial",       detail:"Criaturas nível 75–77 · Recomendado: Nível 75", unlocked:false },
+      { name:"Trono de Vharax",       detail:"Boss da Masmorra · Recomendado: Nível 78", unlocked:false },
+    ]}},
+
+  { id:14, name:"Abismo do Caos",       x:1235,  y:470,  emoji:"🛘",
+    desc:"Uma dimensão quebrada onde a própria realidade está corrompida. As leis da física não se aplicam e o tempo oscila livremente neste plano maldito.",
+    biome:"Dimensional & Caótico", difficulty:"Lendário", recommended:"Nível 75–88",
+    boss:{ name:"Avatar do Caos", subtitle:"Encarnação da Entropia", emoji:"🌀", desc:"A manifestação física do Caos primordial. Não possui forma fixa e pode alterar as leis da realidade ao redor. Cada derrota o torna mais poderoso.", hp:"850.000", atk:"Caos / Dimensional / Anulação", reward:"Fragmento do Caos, Cristal Dimensional" },
+    dungeon:{ name:"Fortaleza do Caos", emoji:"🌀", levels:[
+      { name:"Entrada Dimensional",   detail:"Criaturas nível 74–77 · Recomendado: Nível 75", unlocked:false },
+      { name:"Corredor Quebrado",     detail:"Criaturas nível 78–81 · Recomendado: Nível 79", unlocked:false },
+      { name:"Câmara Invertida",      detail:"Criaturas nível 82–84 · Recomendado: Nível 82", unlocked:false },
+      { name:"Núcleo do Caos",        detail:"Criaturas nível 85–87 · Recomendado: Nível 85", unlocked:false },
+      { name:"Coração do Abismo",     detail:"Boss da Masmorra · Recomendado: Nível 88", unlocked:false },
+    ]}},
+
+  { id:15, name:"O Último Mundo",       x:760,  y:635,  emoji:"🌗",
+    desc:"A região final, formada pelas ruínas da antiga civilização que governava todo o continente. Aqui convergem todos os elementos, biomas e criaturas das 14 regiões anteriores. O destino do mundo é decidido aqui.",
+    biome:"Convergência de Todos os Biomas", difficulty:"⚠ FINAL ⚠", recommended:"Nível 90+",
+    boss:{ name:"O Último Rei — The Last King", subtitle:"Soberano do Fim dos Mundos", emoji:"👑", desc:"O ser mais poderoso da existência. O Último Rei absorveu o poder de todos os chefes derrotados e controla todos os elementos. Ele não pode ser morto — apenas selado. Esta é a batalha final.", hp:"∞  (fase 3)", atk:"Todos os Elementos / Tempo / Existência", reward:"Coroa do Último Mundo · Título: O Verdadeiro Rei" },
+    dungeon:{ name:"Trono do Fim dos Mundos", emoji:"🗡", levels:[
+      { name:"Ruínas da Civilização", detail:"Todos os tipos de criaturas · Nível 88+", unlocked:false },
+      { name:"Câmara dos Reis Caídos", detail:"Bosses ressuscitados · Nível 90+", unlocked:false },
+      { name:"Salão dos Elementos",   detail:"Guardiões elementais · Nível 92+", unlocked:false },
+      { name:"Antecâmara do Trono",   detail:"Campeões do Último Rei · Nível 95+", unlocked:false },
+      { name:"⚠ O Trono Final ⚠",    detail:"O Último Rei — Batalha Definitiva · Nível 99", unlocked:false },
+    ]}},
+];
+
+// ===================== PARTICLES =====================
+function initParticles() {
+  const c = document.getElementById('particles');
+  for (let i=0;i<30;i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = Math.random()*3+1;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;bottom:${-5+Math.random()*10}%;animation-duration:${4+Math.random()*8}s;animation-delay:${Math.random()*6}s;`;
+    c.appendChild(p);
+  }
+}
+initParticles();
+
+// ===================== SAVE / LOAD =====================
+const SAVE_KEY = 'oultimomundo_save';
+
+function saveGame() {
+  const data = {
+    player: { ...player, bossesDefeated:[...player.bossesDefeated] },
+    conqueredRegions: [...conqueredRegions],
+    timestamp: Date.now(),
+  };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e){ return null; }
+}
+
+function deleteSave() {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e){}
+}
+
+// Verifica save ao carregar a página
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = loadGame();
+  if (saved && saved.player) {
+    const btn = document.getElementById('btn-continue');
+    const info = document.getElementById('save-info');
+    btn.style.display = 'block';
+    info.style.display = 'block';
+    const d = new Date(saved.timestamp);
+    info.textContent = `${saved.player.name} · Nível ${saved.player.level} · 🪙${saved.player.gold} · ${d.toLocaleDateString('pt-BR')}`;
+  }
+});
+
+// ===================== MENU =====================
+let playerName = 'Explorador';
+let pendingPlayerName = '';
+
+document.getElementById('btn-start').addEventListener('click', () => {
+  const val = document.getElementById('player-name-input').value.trim();
+  if (!val) { showToast('Digite seu nome de explorador!'); document.getElementById('player-name-input').focus(); return; }
+  // Se já existe save, pergunta confirmação antes de apagar
+  const saved = loadGame();
+  if (saved && saved.player) {
+    pendingPlayerName = val;
+    document.getElementById('confirm-newgame-modal').classList.add('open');
+    return;
+  }
+  // Sem save anterior — inicia direto
+  startNewGame(val);
+});
+
+// Handlers do modal de confirmação (Sim / Não / Cancelar)
+document.getElementById('confirm-ng-yes').addEventListener('click', () => {
+  document.getElementById('confirm-newgame-modal').classList.remove('open');
+  startNewGame(pendingPlayerName);
+});
+document.getElementById('confirm-ng-no').addEventListener('click', () => {
+  document.getElementById('confirm-newgame-modal').classList.remove('open');
+  showToast('Nova partida cancelada — sua partida anterior foi mantida.');
+});
+document.getElementById('confirm-ng-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-newgame-modal').classList.remove('open');
+});
+
+function startNewGame(val){
+  deleteSave();
+  // Reset player para nova partida
+  Object.assign(player, { name:val, level:1, xp:0, xpMax:200, hp:100, hpMax:100, mp:50, mpMax:50, atk:8, def:4, spd:6, gold:50,
+    inventory:[
+      {id:'pocao_cura_p',icon:'🧪',name:'Poção de Cura Pequena',qty:5,rarity:'common',tab:'items',type:'potion',hpRestore:30},
+      {id:'pocao_mp_p',icon:'🧃',name:'Poção de MP Pequena',qty:3,rarity:'common',tab:'items',type:'potion',mpRestore:20},
+      {id:'espada_inicial',icon:'🗡️',name:'Espada Inicial',qty:1,rarity:'common',tab:'equip',type:'weapon',atk:5,equipped:true},
+    ],
+    equippedWeapon:'espada_inicial', equippedArmor:null,
+    bossesDefeated:new Set(), dungeonProgress:{}, dungeonUnlocked:{}, maxSlotsItems:16, maxSlotsEquip:16
+  });
+  conqueredRegions.clear();
+  startGame(val);
+}
+
+document.getElementById('btn-continue').addEventListener('click', () => {
+  const saved = loadGame();
+  if (!saved) { showToast('Nenhum save encontrado!'); return; }
+  Object.assign(player, saved.player);
+  player.bossesDefeated = new Set(saved.player.bossesDefeated||[]);
+  player.dungeonProgress = saved.player.dungeonProgress||{};
+  player.dungeonUnlocked = saved.player.dungeonUnlocked||{};
+  player.maxSlotsItems = saved.player.maxSlotsItems || 16;
+  player.maxSlotsEquip = saved.player.maxSlotsEquip || 16;
+  conqueredRegions = new Set(saved.conqueredRegions);
+  startGame(player.name, true);
+});
+
+document.getElementById('player-name-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('btn-start').click(); });
+
+function startGame(name, isContinue=false) {
+  playerName = name;
+  player.name = name;
+  document.getElementById('header-player-name').textContent = name;
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  document.getElementById('menu').classList.remove('active');
+  document.getElementById('map-screen').classList.add('active');
+  initMap(isContinue);
+  startBgMusic();
+  if (isContinue) showToast(`Bem-vindo de volta, ${name}!`);
+}
+
+// ===================== MAP =====================
+let mapScale=1, mapX=0, mapY=0, isDragging=false;
+let dragStartX, dragStartY, mapStartX, mapStartY, activeRegion=null;
+let conqueredRegions = new Set(); // ids das regiões exploradas pelo menos uma vez
+const MAP_W=1512, MAP_H=810;
+
+function initMap(isContinue=false) {
+  // Limpa marcadores existentes
+  document.querySelectorAll('.region-marker').forEach(el=>el.remove());
+  buildRegionMarkers();
+  buildPortalList();
+  fitMapToScreen();
+  document.getElementById('map-bg').src = 'mapbg.png';
+  initDrag();
+}
+
+function fitMapToScreen() {
+  const vw=window.innerWidth, vh=window.innerHeight-52;
+  mapScale = Math.min(Math.max(vw/MAP_W, vh/MAP_H)*1.2, 1.8);
+  centerOnRegion(REGIONS[0], false);
+}
+
+function centerOnRegion(r, anim=true) {
+  const vw=window.innerWidth, vh=window.innerHeight-52;
+  mapX = vw/2 - r.x*mapScale;
+  mapY = vh/2 - r.y*mapScale;
+  clampMap(); applyTransform();
+}
+
+function clampMap() {
+  const vw=window.innerWidth, vh=window.innerHeight-52;
+  mapX = Math.min(0, Math.max(vw-MAP_W*mapScale, mapX));
+  mapY = Math.min(0, Math.max(vh-MAP_H*mapScale, mapY));
+}
+
+function applyTransform() {
+  document.getElementById('map-canvas').style.transform = `translate(${mapX}px,${mapY}px) scale(${mapScale})`;
+}
+
+function pinLabel(r){
+  const conquered = conqueredRegions.has(r.id);
+  const locked = !isRegionUnlocked(r);
+  const prefix = conquered ? '✅ ' : (locked ? '🔒 ' : '');
+  return prefix + r.name;
+}
+
+function buildRegionMarkers() {
+  const canvas = document.getElementById('map-canvas');
+  REGIONS.forEach(r => {
+    const conquered = conqueredRegions.has(r.id);
+    const el = document.createElement('div');
+    el.className='region-marker'; el.id=`region-${r.id}`;
+    el.style.left=r.x+'px'; el.style.top=r.y+'px';
+    const pinClass = conquered ? 'conquered' : 'unconquered';
+    const numClass = conquered ? 'conquered' : 'unconquered';
+    el.innerHTML=`<div class="region-pin ${pinClass}"><span class="region-num ${numClass}">${r.id}</span></div><div class="region-label">${pinLabel(r)}</div>`;
+    el.addEventListener('click', e => { e.stopPropagation(); selectRegion(r); });
+    canvas.appendChild(el);
+  });
+}
+
+function refreshRegionPin(regionId) {
+  const el = document.getElementById(`region-${regionId}`);
+  if (!el) return;
+  const r = REGIONS.find(x=>x.id===regionId);
+  const conquered = conqueredRegions.has(regionId);
+  const pinClass = conquered ? 'conquered' : 'unconquered';
+  el.querySelector('.region-pin').className = `region-pin ${pinClass}`;
+  el.querySelector('.region-num').className = `region-num ${conquered?'conquered':'unconquered'}`;
+  el.querySelector('.region-label').textContent = pinLabel(r);
+}
+
+function selectRegion(r) {
+  document.querySelectorAll('.region-marker').forEach(m=>m.classList.remove('active'));
+  document.getElementById(`region-${r.id}`).classList.add('active');
+  activeRegion = r;
+  currentExploreRegion = r;
+  mapScale = Math.min(2.2, Math.max(1.8, mapScale));
+  centerOnRegion(r);
+  document.getElementById('panel-region-id').textContent = `Região ${r.id} · ${r.emoji}`;
+  document.getElementById('panel-region-name').textContent = r.name;
+  document.getElementById('region-panel').classList.add('open');
+}
+
+// ===================== DRAG =====================
+function initDrag() {
+  const vp = document.getElementById('map-viewport');
+  let touchStartX, touchStartY, touchMapX, touchMapY, lastTouchDist=null, touchMoved=false;
+
+  vp.addEventListener('touchstart', e => {
+    if (e.touches.length===1) {
+      touchStartX=e.touches[0].clientX; touchStartY=e.touches[0].clientY;
+      touchMapX=mapX; touchMapY=mapY; touchMoved=false; isDragging=true;
+    } else if (e.touches.length===2) { lastTouchDist=getTouchDist(e); }
+  }, {passive:true});
+
+  vp.addEventListener('touchmove', e => {
+    if (e.touches.length===1 && isDragging) {
+      const dx=e.touches[0].clientX-touchStartX, dy=e.touches[0].clientY-touchStartY;
+      if (Math.abs(dx)>5||Math.abs(dy)>5) touchMoved=true;
+      mapX=touchMapX+dx; mapY=touchMapY+dy; clampMap(); applyTransform();
+    } else if (e.touches.length===2) {
+      const dist=getTouchDist(e);
+      if (lastTouchDist) {
+        const r=dist/lastTouchDist, prev=mapScale;
+        mapScale=Math.max(.5,Math.min(3,mapScale*r));
+        const sc=mapScale/prev, cx=(e.touches[0].clientX+e.touches[1].clientX)/2, cy=(e.touches[0].clientY+e.touches[1].clientY)/2-52;
+        mapX=cx-(cx-mapX)*sc; mapY=cy-(cy-mapY)*sc; clampMap(); applyTransform();
+      }
+      lastTouchDist=dist;
+    }
+  }, {passive:true});
+
+  vp.addEventListener('touchend', e => {
+    isDragging=false; lastTouchDist=null;
+    if (!touchMoved) closePanel();
+  });
+
+  vp.addEventListener('mousedown', e => {
+    if (e.target.closest('.region-marker')) return;
+    isDragging=true; dragStartX=e.clientX; dragStartY=e.clientY; mapStartX=mapX; mapStartY=mapY;
+    vp.classList.add('dragging');
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    mapX=mapStartX+(e.clientX-dragStartX); mapY=mapStartY+(e.clientY-dragStartY); clampMap(); applyTransform();
+  });
+  window.addEventListener('mouseup', () => { isDragging=false; vp.classList.remove('dragging'); });
+  vp.addEventListener('wheel', e => {
+    e.preventDefault();
+    const d=e.deltaY>0?.9:1.1, prev=mapScale;
+    mapScale=Math.max(.5,Math.min(3,mapScale*d));
+    const r=mapScale/prev, cx=e.clientX, cy=e.clientY-52;
+    mapX=cx-(cx-mapX)*r; mapY=cy-(cy-mapY)*r; clampMap(); applyTransform();
+  }, {passive:false});
+}
+
+function getTouchDist(e) {
+  const dx=e.touches[0].clientX-e.touches[1].clientX, dy=e.touches[0].clientY-e.touches[1].clientY;
+  return Math.sqrt(dx*dx+dy*dy);
+}
+
+// ===================== PANEL =====================
+function closePanel() {
+  document.getElementById('region-panel').classList.remove('open');
+  document.querySelectorAll('.region-marker').forEach(m=>m.classList.remove('active'));
+  activeRegion=null;
+}
+document.getElementById('panel-close').addEventListener('click', closePanel);
+
+document.getElementById('btn-open-region').addEventListener('click', () => { if(activeRegion){ sfxOpen(); openInfoModal('region', activeRegion); } });
+document.getElementById('btn-open-boss').addEventListener('click',   () => { if(activeRegion){ sfxOpen(); openInfoModal('boss', activeRegion); } });
+document.getElementById('btn-open-dungeon').addEventListener('click',() => { if(activeRegion){ sfxOpen(); openInfoModal('dungeon', activeRegion); } });
+document.getElementById('btn-open-event').addEventListener('click',  () => { if(activeRegion){ sfxOpen(); openInfoModal('event', activeRegion); } });
+
+// ===================== INFO MODAL =====================
+function openInfoModal(type, r) {
+  const modal = document.getElementById('info-modal');
+  const inner = document.getElementById('info-modal-inner');
+  inner.className = `info-modal-inner type-${type}`;
+  inner.innerHTML = buildModalContent(type, r);
+  modal.classList.add('open');
+  // Fechar ao clicar no backdrop
+  modal.onclick = e => { if(e.target===modal) closeInfoModal(); };
+}
+
+function closeInfoModal() {
+  document.getElementById('info-modal').classList.remove('open');
+}
+
+function buildModalContent(type, r) {
+  if (type === 'region') return buildRegionModal(r);
+  if (type === 'boss')   return buildBossModal(r);
+  if (type === 'dungeon') return buildDungeonModal(r);
+  if (type === 'event')  return buildEventModal(r);
+  return '';
+}
+
+function buildRegionModal(r) {
+  const ed = REGION_EXPLORE_DATA[r.id];
+  const dropPreview = ed.drops.slice(0,4).map(d=>`<span class="stat-chip">${iconHTML(d.icon,16)} ${d.name}</span>`).join('');
+  const unlocked = isRegionUnlocked(r);
+  const hasEss = !!getItemInInventory(ed.essId);
+  const hasRes = !!getItemInInventory(ed.resId);
+  const hasChave = !!getItemInInventory(ed.chaveId) || player.dungeonUnlocked[r.id];
+  const dungDone = (player.dungeonProgress[r.id]||0) >= 5;
+  const hasArmaBoss = !!getItemInInventory(ed.armaBossId);
+  const bossDone = player.bossesDefeated.has(r.id);
+  const checklist = [
+    [hasEss,'Essência'], [hasRes,'Resistência'], [hasChave,'Chave / Masmorra Aberta'],
+    [dungDone,'Masmorra Completa'], [hasArmaBoss,'Arma Suprema'], [bossDone,'Boss Derrotado'],
+  ].map(([ok,label])=>`<span class="stat-chip" style="${ok?'color:#80e0a0;border-color:rgba(64,192,128,.4)':''}">${ok?'✅':'⬜'} ${label}</span>`).join('');
+  return `
+    <div class="info-modal-hero">
+      <div class="info-modal-handle"></div>
+      <span class="info-modal-icon">${r.emoji}</span>
+      <div class="info-modal-tag">Região ${r.id}</div>
+      <div class="info-modal-title">${r.name}</div>
+      <div class="info-modal-subtitle">${r.biome}</div>
+      <div class="info-modal-close-x" onclick="closeInfoModal()">✕</div>
+    </div>
+    <div class="info-modal-divider"></div>
+    <div class="info-modal-body">
+      ${!unlocked?`<div class="er-consumed" style="margin-bottom:14px">🔒 Região bloqueada — derrote o boss da região anterior para liberar.</div>`:''}
+      <p class="info-desc">${r.desc}</p>
+      <div class="info-stats">
+        <span class="stat-chip">⚔ ${r.difficulty}</span>
+        <span class="stat-chip">🎯 ${r.recommended}</span>
+        <span class="stat-chip">⏱ ~${ed.duration}s</span>
+      </div>
+      <div class="ep-section-title" style="margin-bottom:8px">🎒 Drops desta região</div>
+      <div class="info-stats" style="margin-bottom:14px">${dropPreview}${ed.drops.length>4?`<span class="stat-chip">+${ed.drops.length-4} mais...</span>`:''}</div>
+      <div class="ep-section-title" style="margin-bottom:8px">📋 Progresso do Ciclo</div>
+      <div class="info-stats" style="margin-bottom:18px">${checklist}</div>
+      <div class="info-modal-actions">
+        <button class="modal-btn primary" onclick="openExplorePrepModal(REGIONS[${r.id-1}])">
+          🗺 &nbsp; Explorar Região
+        </button>
+        <button class="modal-btn secondary" onclick="openShopModal(REGIONS[${r.id-1}])">
+          🛒 &nbsp; NPC — Loja da Região
+        </button>
+      </div>
+    </div>`;
+}
+
+function buildBossModal(r) {
+  const b = r.boss;
+  const dungDone = (player.dungeonProgress[r.id]||0) >= 5;
+  const bossDone = player.bossesDefeated.has(r.id);
+  const bossUnlocked = dungDone || bossDone;
+  let actionHTML;
+  if (bossUnlocked) {
+    actionHTML = `<button class="modal-btn boss-btn" onclick="openExplorePrepModal(REGIONS[${r.id-1}],'boss')">
+      ⚔ &nbsp; ${bossDone ? 'Enfrentar Boss Novamente' : 'Enfrentar Boss'}
+    </button>`;
+  } else {
+    actionHTML = `<div class="er-consumed" style="margin-bottom:14px;text-align:center">🔒 O Boss será liberado para batalha após concluir o <strong>5º andar da Masmorra</strong> desta região.</div>
+    <button class="modal-btn secondary" disabled style="opacity:.5;cursor:not-allowed">🔒 Boss Bloqueado</button>`;
+  }
+  return `
+    <div class="info-modal-hero">
+      <div class="info-modal-handle"></div>
+      <span class="info-modal-icon">${b.emoji}</span>
+      <div class="info-modal-tag">Boss · Região ${r.id}</div>
+      <div class="info-modal-title">${b.name}</div>
+      <div class="info-modal-subtitle">${b.subtitle}</div>
+      <div class="info-modal-close-x" onclick="closeInfoModal()">✕</div>
+    </div>
+    <div class="info-modal-divider"></div>
+    <div class="info-modal-body">
+      <p class="info-desc">${b.desc}</p>
+      <div class="info-stats">
+        <span class="stat-chip">❤ HP: ${b.hp}</span>
+        <span class="stat-chip">⚔ ${b.atk}</span>
+      </div>
+      <div class="info-stats">
+        <span class="stat-chip">🎯 ${r.recommended}</span>
+        <span class="stat-chip">🏆 ${b.reward.split(',')[0]}</span>
+        <span class="stat-chip" style="${bossUnlocked?'color:#80e0a0;border-color:rgba(64,192,128,.4)':'color:#ff7060;border-color:rgba(192,57,43,.4)'}">${bossUnlocked?'✅ Liberado':'🔒 Bloqueado'}</span>
+      </div>
+      <div style="background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.25);border-radius:8px;padding:12px;margin-bottom:18px;">
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:#c06050;margin-bottom:4px;">RECOMPENSAS</div>
+        <div style="font-size:12px;color:#ffb0a0;">${b.reward}</div>
+      </div>
+      <div class="info-modal-actions">
+        ${actionHTML}
+      </div>
+    </div>`;
+}
+
+function buildDungeonModal(r) {
+  const d = r.dungeon;
+  const ed = REGION_EXPLORE_DATA[r.id];
+  const prog = player.dungeonProgress[r.id]||0;
+  const regionUnlocked = isRegionUnlocked(r);
+  const hasKey = !!getItemInInventory(ed.chaveId) || player.dungeonUnlocked[r.id];
+  const levelsHTML = d.levels.map((lv, i) => {
+    const done = i < prog;
+    const isNext = i === prog;
+    const playable = regionUnlocked && isNext && (i===0 ? hasKey : true);
+    let status = done ? '✅' : (playable ? '▶' : '🔒');
+    let action;
+    if (playable) action = `openExplorePrepModal(REGIONS[${r.id-1}],'dungeon',${i})`;
+    else if (!regionUnlocked) action = `showToast('🔒 Região bloqueada — derrote o boss anterior')`;
+    else if (i===0 && !hasKey) action = `showToast('🔒 Você precisa craftar a Chave desta região no CraftBank!')`;
+    else action = `showToast('🔒 Complete o andar anterior primeiro')`;
+    return `
+    <div class="level-row ${done||playable?'unlocked':''}" onclick="${action}">
+      <div class="level-num">${i+1}</div>
+      <div class="level-info">
+        <div class="level-name">${lv.name}</div>
+        <div class="level-detail">${lv.detail}</div>
+      </div>
+      <div class="level-lock">${status}</div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="info-modal-hero">
+      <div class="info-modal-handle"></div>
+      <span class="info-modal-icon">${d.emoji}</span>
+      <div class="info-modal-tag">Masmorra · Região ${r.id}</div>
+      <div class="info-modal-title">${d.name}</div>
+      <div class="info-modal-subtitle">5 Andares · ${prog}/5 concluídos</div>
+      <div class="info-modal-close-x" onclick="closeInfoModal()">✕</div>
+    </div>
+    <div class="info-modal-divider"></div>
+    <div class="info-modal-body">
+      ${!hasKey?`<div class="er-consumed" style="margin-bottom:14px">🗝 Crafte a Chave da região no CraftBank (aba Crafting) para abrir o andar 1.</div>`:''}
+      <div class="dungeon-levels">
+        <div class="dungeon-levels-title">Selecione o Andar</div>
+        ${levelsHTML}
+      </div>
+    </div>`;
+}
+
+function buildEventModal(r) {
+  return `
+    <div class="info-modal-hero">
+      <div class="info-modal-handle"></div>
+      <span class="info-modal-icon">⚡</span>
+      <div class="info-modal-tag">Evento · Região ${r.id}</div>
+      <div class="info-modal-title">${r.name}</div>
+      <div class="info-modal-subtitle">Evento Especial</div>
+      <div class="info-modal-close-x" onclick="closeInfoModal()">✕</div>
+    </div>
+    <div class="info-modal-divider"></div>
+    <div class="info-modal-body">
+      <div class="coming-soon-box">
+        <span class="coming-soon-icon">🔮</span>
+        <div class="coming-soon-text">Em Breve</div>
+        <div class="coming-soon-sub">Os eventos especiais de ${r.name}<br>ainda estão sendo preparados.<br><br>Volte em breve para descobrir<br>o que o destino reserva!</div>
+      </div>
+    </div>`;
+}
+
+// ===================== FAB BUTTONS =====================
+// Portal
+document.getElementById('fab-portal').addEventListener('click', () => { sfxOpen(); document.getElementById('portal-modal').classList.add('open'); });
+
+// Home — volta ao zoom/posição inicial
+document.getElementById('fab-home').addEventListener('click', () => {
+  sfxNav();
+  closePanel();
+  fitMapToScreen();
+  showToast('Mapa resetado');
+});
+
+// Inventário
+document.getElementById('fab-inv').addEventListener('click', () => { sfxOpen(); openInventory(); });
+document.getElementById('inv-back').addEventListener('click', closeInventory);
+
+// ===================== PORTAL =====================
+function buildPortalList() {
+  const list = document.getElementById('portal-region-list');
+  list.innerHTML = '';
+  REGIONS.forEach(r => {
+    const item = document.createElement('div');
+    item.className='portal-region-item';
+    const conquered = conqueredRegions.has(r.id);
+    const unlocked = isRegionUnlocked(r);
+    const pinClass = !unlocked ? 'locked' : (conquered ? 'conquered' : 'unconquered');
+    const statusIcon = !unlocked ? '🔒' : (conquered ? '✅' : '📍');
+    const statusClass = !unlocked ? 'locked' : (conquered ? 'conquered' : 'unconquered');
+    const statusText = !unlocked ? 'Bloqueada' : (conquered ? 'Conquistada' : 'Não conquistada');
+    item.innerHTML = `<div class="portal-num ${pinClass}">${r.id}</div><div class="portal-name">${r.emoji} ${r.name}</div><div class="portal-status ${statusClass}">${statusIcon} ${statusText}</div>`;
+    if (unlocked) {
+      item.addEventListener('click', () => {
+        closePortalModal(); closePanel();
+        setTimeout(() => selectRegion(r), 300);
+        showToast(`Portal: ${r.name}`);
+      });
+    } else {
+      item.classList.add('locked');
+      item.addEventListener('click', () => showToast('🔒 Região bloqueada — derrote o boss da região anterior'));
+    }
+    list.appendChild(item);
+  });
+}
+
+document.getElementById('portal-modal-close').addEventListener('click', closePortalModal);
+document.getElementById('portal-modal').addEventListener('click', e => { if(e.target===document.getElementById('portal-modal')) closePortalModal(); });
+function closePortalModal() { document.getElementById('portal-modal').classList.remove('open'); }
+
+// ===================== ESTADO DO JOGADOR =====================
+const player = {
+  name: 'Explorador',
+  level: 1,
+  xp: 0, xpMax: 200,
+  hp: 100, hpMax: 100,
+  mp: 50,  mpMax: 50,
+  atk: 8, def: 4, spd: 6,
+  gold: 50,
+  inventory: [
+    { id:'pocao_cura_p', icon:'🧪', name:'Poção de Cura Pequena', qty:5, rarity:'common', tab:'items', type:'potion', hpRestore:30 },
+    { id:'pocao_mp_p',   icon:'🧃', name:'Poção de MP Pequena',   qty:3, rarity:'common', tab:'items', type:'potion', mpRestore:20 },
+    { id:'espada_inicial', icon:'🗡️', name:'Espada Inicial', qty:1, rarity:'common', tab:'equip', type:'weapon', atk:5, equipped:true },
+  ],
+  equippedWeapon: 'espada_inicial',
+  equippedArmor: null,
+  bossesDefeated: new Set(),
+  dungeonProgress: {},
+  dungeonUnlocked: {},
+  maxSlotsItems: 16,
+  maxSlotsEquip: 16,
+};
+
+// ===================== PADRONIZAÇÃO DAS 15 REGIÕES =====================
+// Todas as regiões seguem exatamente a mesma estrutura de progressão:
+// Exploração (Comum→Essência · Incomum→Resistência · Raro→Chave · peças de armadura · fragmento de arma)
+//   → Craft Essência → Craft Resistência → Craft Chave → Masmorra (5 andares → 5 fragmentos)
+//   → Craft Arma da Região → Craft Arma Suprema (Boss) → Boss → Próxima Região
+// ===================== ÍCONES RPG (game-icons.net, CC BY 3.0, cor dourada do tema) =====================
+const GI_BASE = 'https://game-icons.net/icons/c8a84b/transparent/1x1/';
+const ICON_HELMET = GI_BASE + 'lorc/crested-helmet.svg';
+const ICON_VEST   = GI_BASE + 'lorc/breastplate.svg';
+const ICON_PANTS  = GI_BASE + 'delapouite/armor-cuisses.svg';
+const ICON_BOOTS  = GI_BASE + 'lorc/boots.svg';
+const ICON_ARMOR_SET = GI_BASE + 'lorc/battle-gear.svg';
+function weaponIconFor(name){
+  if(/Tridente/i.test(name)) return GI_BASE+'delapouite/spearfishing.svg';
+  if(/Último Mundo/i.test(name)) return GI_BASE+'lorc/sword-in-stone.svg';
+  if(/Caos/i.test(name)) return GI_BASE+'lorc/fragmented-sword.svg';
+  if(/Celestial/i.test(name)) return GI_BASE+'delapouite/spear-feather.svg';
+  if(/Dracônic/i.test(name)) return GI_BASE+'lorc/barbed-spear.svg';
+  if(/Lança/i.test(name)) return GI_BASE+'lorc/spears.svg';
+  if(/Arco/i.test(name)) return GI_BASE+'delapouite/bow-arrow.svg';
+  if(/Machado/i.test(name)) return GI_BASE+'lorc/battle-axe.svg';
+  if(/Martelo/i.test(name)) return GI_BASE+'delapouite/warhammer.svg';
+  if(/Foice/i.test(name)) return GI_BASE+'lorc/reaper-scythe.svg';
+  if(/Cimitarra/i.test(name)) return GI_BASE+'delapouite/sun-spear.svg';
+  if(/Sombria/i.test(name)) return GI_BASE+'lorc/broadsword.svg';
+  if(/Élfica/i.test(name)) return GI_BASE+'lorc/rune-sword.svg';
+  if(/Despertar/i.test(name)) return GI_BASE+'lorc/shining-sword.svg';
+  return GI_BASE+'lorc/shining-sword.svg';
+}
+
+// Ícones de arte customizada por região (armas de boss / conjuntos de armadura)
+const ICONS_DIR = 'assets/icons/';
+const REGION_WEAPON_ICON = {
+  1: ICONS_DIR+'weapon_espada_despertar.png',
+  2: ICONS_DIR+'weapon_espada_elfica.png',
+  3: ICONS_DIR+'weapon_martelo_rochoso.png',
+  4: ICONS_DIR+'weapon_foice_sombria.png',
+  5: ICONS_DIR+'weapon_cimitarra_solar.png',
+  6: ICONS_DIR+'weapon_machado_glacial.png',
+  7: ICONS_DIR+'weapon_arco_carmesim.png',
+  8: ICONS_DIR+'weapon_martelo_infernal.png',
+  9: ICONS_DIR+'weapon_tridente_oceanico.png',
+  10: ICONS_DIR+'weapon_machado_raios.png',
+  11: ICONS_DIR+'weapon_espada_sombria.png',
+  12: ICONS_DIR+'weapon_lanca_celestial.png',
+  13: ICONS_DIR+'weapon_lanca_sagrada.png',
+  14: ICONS_DIR+'weapon_espada_caos.png',
+  15: ICONS_DIR+'weapon_arma_suprema_ultimomundo.png',
+};
+const REGION_ARMOR_ICON = {
+  1: ICONS_DIR+'armor_armadura_verde.png',
+  2: ICONS_DIR+'armor_armadura_elfica.png',
+  3: ICONS_DIR+'armor_armadura_rochosa.png',
+  4: ICONS_DIR+'armor_armadura_sombria_suprema.png',
+  5: ICONS_DIR+'armor_armadura_escarlate.png',
+  6: ICONS_DIR+'armor_armadura_glacial.png',
+  7: ICONS_DIR+'armor_armadura_carmesim.png',
+  8: ICONS_DIR+'armor_armadura_infernal.png',
+  9: ICONS_DIR+'armor_armadura_oceanica.png',
+  10: ICONS_DIR+'armor_armadura_tempestade.png',
+  11: ICONS_DIR+'armor_armadura_sombria.png',
+  12: ICONS_DIR+'armor_armadura_celestial.png',
+  13: ICONS_DIR+'armor_armadura_sagrada.png',
+  14: ICONS_DIR+'armor_armadura_caos.png',
+  15: ICONS_DIR+'armor_armadura_ultimomundo.png',
+};
+
+const REGION_THEMES = { 1:
+  {comum:['Madeira Jovem','🪵'], incomum:['Erva Curativa','🌿'], raro:['Galho Ancestral','🌳'], monster:['Javali Selvagem','🐗'], weapon:'Espada do Despertar', armorSet:'do Vale'},
+  2:{comum:['Madeira Élfica','🪵'], incomum:['Flor Lunar','🌙'], raro:['Cristal Élfico','💎'], monster:['Aranha Jovem','🕷'], weapon:'Lâmina Élfica', armorSet:'Élfica'},
+  3:{comum:['Ferro Bruto','🪨'], incomum:['Quartzo','💠'], raro:['Núcleo Anão','🔅'], monster:['Golem Menor','🗿'], weapon:'Martelo de Khor', armorSet:'Anã'},
+  4:{comum:['Lodo Corrompido','🦠'], incomum:['Flor Fantasma','👻'], raro:['Núcleo Tóxico','☣'], monster:['Sapo Venenoso','🐸'], weapon:'Foice Sombria', armorSet:'do Pântano'},
+  5:{comum:['Areia Escarlate','🏖'], incomum:['Pedra Solar','🌞'], raro:['Núcleo Escarlate','🔥'], monster:['Escorpião Gigante','🦂'], weapon:'Cimitarra Solar', armorSet:'do Deserto'},
+  6:{comum:['Gelo Compacto','🧊'], incomum:['Cristal de Gelo','❄'], raro:['Núcleo Glacial','🧿'], monster:['Urso Glacial','🐻'], weapon:'Machado Glacial', armorSet:'Glacial'},
+  7:{comum:['Madeira Carmesim','🪵'], incomum:['Flor Carmesim','??'], raro:['Essência da Floresta','🩸'], monster:['Lobo Sangrento','🐺'], weapon:'Arco Carmesim', armorSet:'Carmesim'},
+  8:{comum:['Rocha Magmática','🌋'], incomum:['Cristal de Fogo','🔥'], raro:['Núcleo Magmático','☄'], monster:['Salamandra de Fogo','🦎'], weapon:'Martelo Infernal', armorSet:'Infernal'},
+  9:{comum:['Coral Azul','🪸'], incomum:['Pérola Gigante','🦪'], raro:['Núcleo Oceânico','🌊'], monster:['Caranguejo Gigante','🦀'], weapon:'Tridente Abissal', armorSet:'Abissal'},
+  10:{comum:['Pedra Relâmpago','🪨'], incomum:['Cristal Elétrico','⚡🚨'], raro:['Núcleo Tempestuoso','🌩'], monster:['Elemental do Raio','⚡'], weapon:'Machado dos Raios', armorSet:'da Tempestade'},
+  11:{comum:['Pedra Sombria','⚫'], incomum:['Flor Negra','🖤'], raro:['Núcleo das Sombras','🌑'], monster:['Zumbi Ancestral','🧟'], weapon:'Espada Sombria', armorSet:'Sombria'},
+  12:{comum:['Cristal Celeste','☁'], incomum:['Pena Angelical','🕊'], raro:['Núcleo Celestial Puro','✨'], monster:['Guardião Alado','😇'], weapon:'Lança Celestial', armorSet:'Celestial'},
+  13:{comum:['Escama de Dragão','🐉'], incomum:['Garra de Dragão','🦴'], raro:['Núcleo Dracônico','🔴'], monster:['Filhote de Dragão','🐲'], weapon:'Lança Dracônica', armorSet:'Dracônica'},
+  14:{comum:['Rocha do Caos','🌀'], incomum:['Cristal do Caos','🟣'], raro:['Núcleo do Caos','⚛'], monster:['Aberração Caótica','👹'], weapon:'Espada do Caos', armorSet:'do Caos'},
+  15:{comum:['Fragmento Primordial','🌗'], incomum:['Cristal Primordial','💠'], raro:['Coração do Último Mundo','👑'], monster:['Espectro Real','💀'], weapon:'Arma do Último Mundo', armorSet:'Primordial'},
+};
+
+// ===================== POÇÕES DE CURA / MP (Lojas NPC) =====================
+// Definição de todas as poções vendíveis. hpRestore/mpRestore em pontos absolutos.
+// Preço de compra ≈ restore * 1.5 (arredondado). Poção de MP Pequena fixa em 200 MP.
+// ID no formato: pocao_<tier>_<lv>
+const POTION_TIERS = {
+  pequena: { label:'Poção de Cura Pequena', icon:ICONS_DIR+'potion_pocao_pequena.png', base:30,  step:15, maxLv:5 },
+  media:   { label:'Poção de Cura Média',   icon:ICONS_DIR+'potion_pocao_media.png',   base:120, step:30, maxLv:5 },
+  grande:  { label:'Poção de Cura Grande',  icon:ICONS_DIR+'potion_pocao_extra.png',   base:280, step:50, maxLv:5 },
+  extra:   { label:'Poção de Cura Extra',   icon:ICONS_DIR+'potion_pocao_extra.png',   base:550, step:60, maxLv:10 },
+  vital:   { label:'Poção de Cura Vital',   icon:ICONS_DIR+'potion_pocao_vital.png',   base:1200, step:100, maxLv:10 },
+};
+
+function potionRestore(tier, lv){
+  const t = POTION_TIERS[tier];
+  return t.base + (lv-1) * t.step;
+}
+function potionPrice(tier, lv){
+  // Preço de compra: ~ restore * 1.4, mínimo 5
+  return Math.max(5, Math.round(potionRestore(tier, lv) * 1.4));
+}
+function potionId(tier, lv){ return 'pocao_'+tier+'_'+lv; }
+function potionName(tier, lv){
+  return POTION_TIERS[tier].label + ' Lv.' + lv;
+}
+function buildPotionItem(tier, lv){
+  const t = POTION_TIERS[tier];
+  const restore = potionRestore(tier, lv);
+  return {
+    id: potionId(tier, lv),
+    icon: t.icon,
+    name: potionName(tier, lv),
+    qty: 1,
+    rarity: tier==='vital'?'legend':tier==='extra'?'epic':tier==='grande'?'rare':tier==='media'?'uncommon':'common',
+    tab: 'items', type: 'potion', hpRestore: restore,
+    buyPrice: potionPrice(tier, lv),
+  };
+}
+
+// Poção de MP Pequena (+200 MP) — disponível em todas as regiões
+const MP_POTION = {
+  id: 'pocao_mp_p', icon:ICONS_DIR+'potion_pocao_mp.png', name:'Poção de MP Pequena',
+  qty:1, rarity:'uncommon', tab:'items', type:'potion', mpRestore:200,
+  buyPrice: 280,
+};
+
+// Estoque de poções por região (IDs tier/lv), conforme especificação do usuário
+const REGION_SHOP_POTIONS = {
+  1:  [['pequena',1],['pequena',2],['pequena',3]],
+  2:  [['pequena',3],['pequena',4],['pequena',5]],
+  3:  [['pequena',5],['media',1]],
+  4:  [['media',2],['media',3]],
+  5:  [['media',4],['media',5]],
+  6:  [['grande',1],['grande',2]],
+  7:  [['grande',3],['grande',4]],
+  8:  [['grande',5],['extra',1]],
+  9:  [['extra',2],['extra',3]],
+  10: [['extra',4],['extra',5]],
+  11: [['extra',6],['extra',7]],
+  12: [['extra',8],['extra',9]],
+  13: [['extra',10],['vital',1]],
+  14: [['vital',2],['vital',5]],
+  15: [['vital',6],['vital',7],['vital',8],['vital',9],['vital',10]],
+};
+
+// ===================== VENDER ITENS (valores por raridade) =====================
+// Valor de venda ≈ 40% do "valor implícito" do item, escalado por raridade
+const SELL_VALUE_BY_RARITY = {
+  common: 3,
+  uncommon: 12,
+  rare: 35,
+  epic: 90,
+  legend: 250,
+};
+function computeSellValue(item){
+  if(!item) return 0;
+  // Poções vendem por valor fixo baixo (não podem ser compradas por ouro direto)
+  if(item.type === 'potion'){
+    // Poções de cura: 30% do preço de compra se definido, senão 2
+    if(item.buyPrice) return Math.max(2, Math.round(item.buyPrice * 0.3));
+    return 2;
+  }
+  // Equipamentos: ATQ/DEF multiplicam o valor base da raridade
+  const base = SELL_VALUE_BY_RARITY[item.rarity] || 3;
+  const statBonus = (item.atk||0) * 3 + (item.def||0) * 3;
+  return base + statBonus;
+}
+
+// Monstros base — aparecem em TODAS as regiões e masmorras, com nível escalado à região
+const BASE_MONSTERS = [ {name:'Goblin', emoji:'👺'}, {name:'Esqueleto', emoji:'💀'} ];
+
+function parseRange(str){
+  const nums=(str||'').match(/\d+/g);
+  if(!nums) return [1,5];
+  if(nums.length===1) return [Math.max(1,parseInt(nums[0])-2), parseInt(nums[0])];
+  return [parseInt(nums[0]), parseInt(nums[1])];
+}
+
+const REGION_EXPLORE_DATA = {};
+REGIONS.forEach(r=>{
+  const i=r.id, th=REGION_THEMES[i];
+  const [lo,hi]=parseRange(r.recommended);
+  const comumId=`mat_c_${i}`, incomumId=`mat_u_${i}`, raroId=`mat_r_${i}`;
+  const wtierId=`wtier_${i}`, fragId=`frag_${i}`;
+  const armorH=`armor_h_${i}`, armorV=`armor_v_${i}`, armorL=`armor_l_${i}`, armorB=`armor_b_${i}`;
+  const essId=`essencia_${i}`, resId=`resist_${i}`, chaveId=`chave_${i}`, armaRegId=`armaregiao_${i}`, armaduraId=`armadura_${i}`, armaBossId=`armaboss_${i}`;
+
+  const drops=[
+    { id:comumId,   icon:th.comum[1],   name:th.comum[0],   rarity:'common',   minQty:2, maxQty:5 },
+    { id:incomumId, icon:th.incomum[1], name:th.incomum[0], rarity:'uncommon', minQty:1, maxQty:3 },
+    { id:raroId,    icon:th.raro[1],    name:th.raro[0],    rarity:'rare',     minQty:1, maxQty:2 },
+    { id:wtierId,   icon:weaponIconFor(th.weapon),  name:`Fragmento de ${th.weapon} Nv${i}`, rarity:'epic', minQty:1, maxQty:1 },
+    { id:armorH,    icon:ICON_HELMET, name:`Capacete ${th.armorSet}`, rarity:'uncommon', minQty:1, maxQty:1 },
+    { id:armorV,    icon:ICON_VEST,   name:`Colete ${th.armorSet}`,   rarity:'uncommon', minQty:1, maxQty:1 },
+    { id:armorL,    icon:ICON_PANTS,  name:`Calças ${th.armorSet}`,   rarity:'uncommon', minQty:1, maxQty:1 },
+    { id:armorB,    icon:ICON_BOOTS,  name:`Botas ${th.armorSet}`,    rarity:'uncommon', minQty:1, maxQty:1 },
+  ];
+
+  const recipes=[
+    { id:essId, icon:'💧', name:`Essência ${th.armorSet}`, desc:`Evolui seu MP máximo · usa ${th.comum[0]}`, goldCost:i*5,
+      ingredients:[{id:comumId,name:`${th.comum[0]} x20`,qty:20}, ...(i>1?[{id:`essencia_${i-1}`,name:'Essência anterior x1',qty:1}]:[])],
+      result:{qty:1,rarity:'epic',tab:'items',type:'essencia', statBoost:{mpMax:15+i*3}} },
+    { id:resId, icon:'🛡', name:`Resistência ${th.armorSet}`, desc:`Evolui sua Defesa · usa ${th.incomum[0]}`, goldCost:i*7,
+      ingredients:[{id:incomumId,name:`${th.incomum[0]} x15`,qty:15}, ...(i>1?[{id:`resist_${i-1}`,name:'Resistência anterior x1',qty:1}]:[])],
+      result:{qty:1,rarity:'epic',tab:'items',type:'resistencia', statBoost:{def:4+Math.round(i*1.2)}} },
+    { id:chaveId, icon:'🗝', name:`Chave ${th.armorSet}`, desc:`Abre a masmorra da região · usa ${th.raro[0]}`, goldCost:i*10,
+      ingredients:[{id:raroId,name:`${th.raro[0]} x5`,qty:5}, ...(i>1?[{id:`chave_${i-1}`,name:'Chave anterior x1',qty:1}]:[])],
+      result:{qty:1,rarity:'rare',tab:'items',type:'key'} },
+    { id:armaRegId, icon:REGION_WEAPON_ICON[i]||weaponIconFor(th.weapon), name:th.weapon, desc:'Arma da região · reforça exploração e masmorra', goldCost:i*12,
+      ingredients:[{id:wtierId,name:`Fragmento Nv${i} x3`,qty:3}, i>1?{id:`armaregiao_${i-1}`,name:'Arma da região anterior x1',qty:1}:{id:'espada_inicial',name:'Espada Inicial x1',qty:1}],
+      result:{qty:1,rarity:'epic',tab:'equip',type:'weapon',atk:10+i*6} },
+    { id:armaduraId, icon:REGION_ARMOR_ICON[i]||ICON_ARMOR_SET, name:`Armadura ${th.armorSet}`, desc:'Conjunto completo · aumenta a Defesa', goldCost:i*10,
+      ingredients:[{id:armorH,name:'Capacete x1',qty:1},{id:armorV,name:'Colete x1',qty:1},{id:armorL,name:'Calças x1',qty:1},{id:armorB,name:'Botas x1',qty:1}, ...(i>1?[{id:`armadura_${i-1}`,name:'Armadura anterior x1',qty:1}]:[])],
+      result:{qty:1,rarity:'epic',tab:'equip',type:'armor',def:8+i*5} },
+    { id:armaBossId, icon:REGION_WEAPON_ICON[i]||weaponIconFor(th.weapon), name:`${th.weapon} Suprema`, desc:'Arma final da região · usa os 5 fragmentos da masmorra', goldCost:i*20,
+      ingredients:[{id:fragId,name:'Fragmento da Masmorra x5',qty:5},{id:armaRegId,name:`${th.weapon} x1`,qty:1}],
+      result:{qty:1,rarity:'legend',tab:'equip',type:'weapon',atk:30+i*14} },
+  ];
+
+  REGION_EXPLORE_DATA[i] = {
+    duration: 8+i*2, emoji:r.emoji,
+    statusMessages:[`Adentrando ${r.name}...`,'Explorando o território...','Encontrou sinais de perigo...','Coletando recursos...','Retornando ao acampamento...'],
+    drops, xpMin:30+i*35, xpMax:60+i*55, goldMin:10+i*18, goldMax:25+i*32,
+    recipes, levelRange:[lo,hi], monster:th.monster,
+    fragId, chaveId, armaRegId, armaBossId, armaduraId, essId, resId,
+  };
+});
+
+// ===================== MOTOR DE COMBATE (RPG) =====================
+function computeEffectiveAtk(){
+  const w = player.inventory.find(i=>i.id===player.equippedWeapon);
+  return player.atk + (w&&w.atk?w.atk:0);
+}
+function computeEffectiveDef(){
+  const a = player.equippedArmor && player.inventory.find(i=>i.id===player.equippedArmor);
+  return player.def + (a&&a.def?a.def:0);
+}
+
+function genFieldMonster(name, emoji, lvl, tierMult){
+  tierMult = tierMult||1;
+  const hp  = Math.max(6, Math.round((18 + lvl*9) * tierMult));
+  const atk = Math.max(2, Math.round((3 + lvl*1.6) * tierMult));
+  const def = Math.max(0, Math.round((1 + lvl*0.9) * tierMult));
+  return { name, emoji, lvl, hp, hpMax:hp, atk, def, xp:Math.round(4+lvl*2.2), gold:Math.round(2+lvl*1.3) };
+}
+
+function genBossMonster(r){
+  const rawHp = r.boss.hp || '0';
+  let hpNum;
+  if(/∞|infinit/i.test(rawHp)){
+    hpNum = 1500000; // Boss final: praticamente intransponível sem estar bem equipado
+  } else {
+    // Usa apenas o PRIMEIRO grupo de dígitos (ex: "850.000" → 850000), evitando ler números soltos do texto (ex: "fase 3")
+    const m = rawHp.match(/[\d.]+/);
+    hpNum = m ? parseInt(m[0].replace(/\D/g,'')) : NaN;
+  }
+  if(!isFinite(hpNum)||hpNum<=0) hpNum=50000;
+  hpNum = Math.min(hpNum, 1500000);
+  const atk = Math.round(hpNum/280)+12, def = Math.round(hpNum/480)+6;
+  return { name:r.boss.name, emoji:r.boss.emoji, lvl:'BOSS', hp:hpNum, hpMax:hpNum, atk, def, xp:Math.round(hpNum/8), gold:Math.round(hpNum/20) };
+}
+
+function pickMonsterType(ed){
+  const roll=Math.random();
+  if(roll<0.38) return BASE_MONSTERS[0];
+  if(roll<0.76) return BASE_MONSTERS[1];
+  return { name:ed.monster[0], emoji:ed.monster[1] };
+}
+
+function tryAutoHeal(ctx){
+  for(const c of ctx.consumables){
+    if(c.left<=0) continue;
+    const item = player.inventory.find(i=>i.id===c.id);
+    if(item && item.hpRestore){
+      c.left--; removeItemFromInventory(c.id,1);
+      ctx.simHp = Math.min(ctx.hpMax, ctx.simHp+item.hpRestore);
+      ctx.used.push({id:item.id, icon:item.icon, name:item.name, qty:1, effect:`+${item.hpRestore} HP`});
+      return `${item.icon} ${item.name} (+${item.hpRestore} HP)`;
+    }
+  }
+  return null;
+}
+function tryAutoMana(ctx){
+  for(const c of ctx.consumables){
+    if(c.left<=0) continue;
+    const item = player.inventory.find(i=>i.id===c.id);
+    if(item && item.mpRestore){
+      c.left--; removeItemFromInventory(c.id,1);
+      ctx.simMp = Math.min(ctx.mpMax, ctx.simMp+item.mpRestore);
+      ctx.used.push({id:item.id, icon:item.icon, name:item.name, qty:1, effect:`+${item.mpRestore} MP`});
+      return true;
+    }
+  }
+  return false;
+}
+
+// Simula uma batalha completa (round a round) contra 1 monstro, usando os status reais de RPG
+function fightMonster(monster, ctx){
+  let rounds=0, dmgDealt=0;
+  const hpStart=ctx.simHp;
+  const log=[];
+  while(monster.hp>0 && ctx.simHp>0 && rounds<40){
+    rounds++;
+    if(ctx.simMp<8 && Math.random()<0.4) tryAutoMana(ctx);
+    let dmg = Math.max(1, Math.round(ctx.atk - monster.def*0.6 + (Math.random()*6-2)));
+    if(ctx.simMp>=8 && Math.random()<0.3){ dmg=Math.round(dmg*1.6); ctx.simMp-=8; }
+    monster.hp -= dmg; dmgDealt += dmg;
+    if(monster.hp<=0) break;
+    const dmg2 = Math.max(1, Math.round(monster.atk - ctx.def*0.6 + (Math.random()*4-1)));
+    ctx.simHp -= dmg2;
+    if(ctx.simHp<=Math.round(ctx.hpMax*0.25) && ctx.simHp>0){ tryAutoHeal(ctx); }
+  }
+  const victory = monster.hp<=0;
+  const hpLost = Math.max(0, hpStart-ctx.simHp);
+  const lvlTxt = monster.lvl==='BOSS' ? '' : ` (Nv.${monster.lvl})`;
+  if(victory){
+    log.push(`${monster.emoji} Enfrentou ${monster.name}${lvlTxt} — Vitória! Causou ${dmgDealt} de dano, perdeu ${hpLost} HP.`);
+  } else if(ctx.simHp<=0){
+    ctx.simHp=1;
+    log.push(`${monster.emoji} ${monster.name}${lvlTxt} quase te derrotou! Você recuou com 1 HP restante.`);
+  } else {
+    log.push(`${monster.emoji} Combate contra ${monster.name}${lvlTxt} interrompido — ele resistiu ao ataque.`);
+  }
+  return { victory, hpLost, log, dmgDealt, xp: victory?monster.xp:0, gold: victory?monster.gold:0 };
+}
+
+function isRegionUnlocked(r){ return r.id===1 || player.bossesDefeated.has(r.id-1); }
+function refreshAllPins(){ REGIONS.forEach(r=>refreshRegionPin(r.id)); buildPortalList(); }
+
+function getItemInInventory(id){ return player.inventory.find(i=>i.id===id); }
+function itemsInTab(tab){
+  return player.inventory.filter(i => tab==='items'
+    ? (i.tab==='items' || (!i.tab && i.type!=='weapon' && i.type!=='armor'))
+    : (i.tab==='equip' || (!i.tab && (i.type==='weapon'||i.type==='armor'))));
+}
+function getMaxSlots(tab){ return tab==='equip' ? (player.maxSlotsEquip||16) : (player.maxSlotsItems||16); }
+const INV_SLOT_CAP_LIMIT = 40;
+function buySlotCost(tab){ const cur = getMaxSlots(tab); return Math.round(80 + (cur-16)*45); }
+function addItemToInventory(id,icon,name,qty,rarity,tab,extra={}){
+  const existing = getItemInInventory(id);
+  if(existing){ existing.qty+=qty; return true; }
+  // Coerência de tab: armas e armaduras sempre vão para 'equip'; demais para 'items'
+  const finalTab = tab || (extra.type==='weapon' || extra.type==='armor' ? 'equip' : 'items');
+  const cap = getMaxSlots(finalTab);
+  if(itemsInTab(finalTab).length >= cap){
+    showToast(`🎒 Inventário de ${finalTab==='equip'?'equipamentos':'itens'} cheio! Compre mais espaço.`);
+    return false;
+  }
+  player.inventory.push({id,icon,name,qty,rarity,tab:finalTab,...extra});
+  return true;
+}
+function removeItemFromInventory(id,qty){
+  const item=getItemInInventory(id);
+  if(!item||item.qty<qty) return false;
+  item.qty-=qty;
+  if(item.qty<=0) player.inventory=player.inventory.filter(i=>i.id!==id);
+  return true;
+}
+function buyInventorySlot(tab){
+  const cur = getMaxSlots(tab);
+  if(cur>=INV_SLOT_CAP_LIMIT){ showToast('Espaço máximo já atingido!'); return; }
+  const cost = buySlotCost(tab);
+  if(player.gold < cost){ showToast(`Ouro insuficiente! Precisa de 🪙${cost}`); sfxError(); return; }
+  player.gold -= cost;
+  if(tab==='equip') player.maxSlotsEquip = cur+1; else player.maxSlotsItems = cur+1;
+  saveGame();
+  sfxBuy();
+  showToast(`🎒 +1 espaço desbloqueado! (${cur+1} total)`);
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  renderInvStatusPanel();
+  renderInventory(currentTab);
+}
+
+// ===================== EXPLORAÇÃO / MASMORRA / BOSS =====================
+let exploreSelectedWeapon = null;
+let exploreSelectedArmor = null;
+let exploreSelectedConsumables = []; // [{id, qty}]
+let currentExploreRegion = null;
+let currentMode = 'explore'; // 'explore' | 'dungeon' | 'boss'
+let currentFloorIdx = null;
+let currentPrepDuration = null;
+
+function openExplorePrepModal(r, mode, floorIdx){
+  mode = mode || 'explore';
+  if(!isRegionUnlocked(r)){ showToast('🔒 Região bloqueada — derrote o boss da região anterior primeiro!'); closeInfoModal(); return; }
+  if(mode==='boss'){
+    const dungDone = (player.dungeonProgress[r.id]||0) >= 5;
+    const bossDone = player.bossesDefeated.has(r.id);
+    if(!dungDone && !bossDone){ showToast('🔒 Boss bloqueado — complete o 5º andar da masmorra primeiro!'); closeInfoModal(); return; }
+  }
+  if(mode==='dungeon'){
+    const ed = REGION_EXPLORE_DATA[r.id];
+    const prog = player.dungeonProgress[r.id]||0;
+    if(floorIdx > prog){ showToast('🔒 Complete o andar anterior primeiro!'); closeInfoModal(); return; }
+    if(!player.dungeonUnlocked[r.id]){
+      const keyItem = getItemInInventory(ed.chaveId);
+      if(!keyItem){ showToast('🔒 Você precisa craftar a Chave desta região primeiro!'); closeInfoModal(); return; }
+      removeItemFromInventory(ed.chaveId,1);
+      player.dungeonUnlocked[r.id]=true;
+      showToast('🗝 Chave utilizada — masmorra desbloqueada!');
+    }
+  }
+  currentExploreRegion = r; currentMode = mode; currentFloorIdx = (floorIdx===undefined?null:floorIdx);
+  // Slots começam VAZIOS — jogador deve clicar e escolher o que levar à batalha
+  exploreSelectedWeapon = null;
+  exploreSelectedArmor = null;
+  exploreSelectedConsumables = [];
+  renderExplorePrepModal(r);
+  document.getElementById('explore-prep-modal').classList.add('open');
+  closeInfoModal();
+}
+
+function renderExplorePrepModal(r){
+  const ed = REGION_EXPLORE_DATA[r.id];
+  const weapons = player.inventory.filter(i=>i.type==='weapon');
+  const armors = player.inventory.filter(i=>i.type==='armor');
+  const hpPotions = player.inventory.filter(i=>i.type==='potion' && i.hpRestore);
+  const mpPotions = player.inventory.filter(i=>i.type==='potion' && i.mpRestore);
+  const hasWeapon = !!exploreSelectedWeapon;
+
+  let heroIcon=r.emoji, tag='Preparar Exploração', title=r.name, sub=`${r.difficulty} · ${r.recommended}`, btnVerb='Iniciar Exploração', infoBoxHTML='';
+  currentPrepDuration = ed.duration;
+  if(currentMode==='dungeon'){
+    const lv = r.dungeon.levels[currentFloorIdx];
+    heroIcon = r.dungeon.emoji; tag = `Masmorra · Andar ${currentFloorIdx+1}/5`; title = lv.name; sub = lv.detail;
+    btnVerb = 'Entrar na Masmorra';
+    currentPrepDuration = ed.duration + 6;
+    infoBoxHTML = `<strong>Duração:</strong> ~${currentPrepDuration}s &nbsp;|&nbsp; <strong>Recompensa:</strong> 1 Fragmento da Arma Suprema${currentFloorIdx===4?' + Vitória sobre o guardião do andar':''}<br>Consumíveis selecionados são usados automaticamente para evitar sua morte em combate.`;
+  } else if(currentMode==='boss'){
+    heroIcon = r.boss.emoji; tag = 'Batalha de Boss'; title = r.boss.name; sub = r.boss.subtitle;
+    btnVerb = 'Enfrentar Boss';
+    currentPrepDuration = ed.duration + 12;
+    infoBoxHTML = `<strong>Duração:</strong> ~${currentPrepDuration}s &nbsp;|&nbsp; <strong>HP do Boss:</strong> ${r.boss.hp} &nbsp;|&nbsp; <strong>Ataque:</strong> ${r.boss.atk}<br><strong>Recompensa:</strong> ${r.boss.reward}`;
+  } else {
+    infoBoxHTML = `<strong>Duração:</strong> ~${ed.duration}s &nbsp;|&nbsp; <strong>XP:</strong> ${ed.xpMin}–${ed.xpMax} &nbsp;|&nbsp; <strong>Gold:</strong> ${ed.goldMin}–${ed.goldMax}<br>Consumíveis selecionados são usados automaticamente para evitar sua morte em combate.`;
+  }
+
+  // Slot de ARMA — começa vazio, jogador clica para escolher
+  const weaponHTML = weapons.length > 0 ? weapons.map(w=>`
+    <div class="ep-weapon-row ${exploreSelectedWeapon&&exploreSelectedWeapon.id===w.id?'selected':''}" onclick="selectExploreWeapon('${w.id}')">
+      <span class="ep-slot-icon">${iconHTML(w.icon,28)}</span>
+      <div class="ep-slot-info"><div class="name">${w.name}</div><div class="sub">ATQ +${w.atk||0}</div></div>
+      ${exploreSelectedWeapon&&exploreSelectedWeapon.id===w.id?'<span style="margin-left:auto;font-size:18px">✅</span>':'<span class="ep-required-badge">Selecionar</span>'}
+    </div>`).join('') :
+    `<div class="ep-weapon-row"><span class="ep-slot-icon">🚫</span><div class="ep-slot-info"><div class="name" style="color:#ff8070">Nenhuma arma!</div><div class="sub">Você precisa de uma arma para explorar</div></div></div>`;
+
+  // Slot de ARMADURA — começa vazio, jogador clica para escolher (opcional)
+  const armorHTML = armors.length > 0 ? armors.map(a=>`
+    <div class="ep-weapon-row ${exploreSelectedArmor&&exploreSelectedArmor.id===a.id?'selected':''}" onclick="selectExploreArmor('${a.id}')">
+      <span class="ep-slot-icon">${iconHTML(a.icon,28)}</span>
+      <div class="ep-slot-info"><div class="name">${a.name}</div><div class="sub">DEF +${a.def||0}</div></div>
+      ${exploreSelectedArmor&&exploreSelectedArmor.id===a.id?'<span style="margin-left:auto;font-size:18px">✅</span>':'<span class="ep-required-badge" style="background:rgba(64,128,255,.2);border-color:rgba(64,128,255,.4);color:#80b0ff">Opcional</span>'}
+    </div>`).join('') :
+    `<div class="ep-weapon-row"><span class="ep-slot-icon">🚫</span><div class="ep-slot-info"><div class="name" style="color:var(--text-dim)">Nenhuma armadura disponível</div><div class="sub">Crafte uma armadura para ter bônus de DEF</div></div></div>`;
+
+  // Slots de Poções de HP — começam vazios, clique para adicionar
+  const hpPotionSlots = hpPotions.length > 0 ? hpPotions.map(p=>{
+    const sel = exploreSelectedConsumables.find(s=>s.id===p.id);
+    const selQty = sel?sel.qty:0;
+    return `<div class="ep-cons-slot ${selQty>0?'selected':''}" onclick="toggleExplorePotion('${p.id}')">
+      <span class="ep-cons-icon">${iconHTML(p.icon,22)}</span>
+      <span class="ep-cons-name">${p.name}</span>
+      <span class="ep-cons-qty">${p.qty}</span>
+      <span class="ep-cons-add">${selQty>0?'✅ '+selQty:'+'}</span>
+    </div>`;
+  }).join('') : `<div style="color:var(--text-dim);font-family:'Cinzel',serif;font-size:11px;text-align:center;padding:12px">Nenhuma poção de HP disponível</div>`;
+
+  // Slots de Poções de MP — começam vazios, clique para adicionar
+  const mpPotionSlots = mpPotions.length > 0 ? mpPotions.map(p=>{
+    const sel = exploreSelectedConsumables.find(s=>s.id===p.id);
+    const selQty = sel?sel.qty:0;
+    return `<div class="ep-cons-slot ${selQty>0?'selected':''}" onclick="toggleExplorePotion('${p.id}')">
+      <span class="ep-cons-icon">${iconHTML(p.icon,22)}</span>
+      <span class="ep-cons-name">${p.name}</span>
+      <span class="ep-cons-qty">${p.qty}</span>
+      <span class="ep-cons-add">${selQty>0?'✅ '+selQty:'+'}</span>
+    </div>`;
+  }).join('') : `<div style="color:var(--text-dim);font-family:'Cinzel',serif;font-size:11px;text-align:center;padding:12px">Nenhuma poção de MP disponível</div>`;
+
+  document.getElementById('ep-inner').innerHTML = `
+    <div class="ep-hero">
+      <div class="ep-handle"></div>
+      <span class="ep-region-icon">${heroIcon}</span>
+      <div class="ep-tag">${tag}</div>
+      <div class="ep-title">${title}</div>
+      <div class="ep-sub">${sub}</div>
+      <div class="ep-close" onclick="document.getElementById('explore-prep-modal').classList.remove('open')">✕</div>
+    </div>
+    <div class="ep-divider"></div>
+    <div class="ep-body">
+      <div class="ep-section-title">⚔ Arma <span>(obrigatório — slot vazio até escolher)</span></div>
+      ${weaponHTML}
+      <div class="ep-section-title" style="margin-top:8px">🛡 Armadura <span style="color:var(--text-dim)">(opcional — clique para escolher)</span></div>
+      ${armorHTML}
+      <div class="ep-section-title" style="margin-top:8px">🧪 Poções de HP <span style="color:var(--text-dim)">(usadas em combate se HP baixo)</span></div>
+      <div class="ep-consumable-grid">${hpPotionSlots}</div>
+      <div class="ep-section-title" style="margin-top:8px">💧 Poções de MP <span style="color:var(--text-dim)">(usadas em combate se MP baixo)</span></div>
+      <div class="ep-consumable-grid">${mpPotionSlots}</div>
+      <div class="ep-info-box">${infoBoxHTML}</div>
+      <button class="ep-confirm-btn" ${hasWeapon?'':'disabled'} onclick="startExploration()">
+        ${hasWeapon ? `${currentMode==='boss'?'⚔':currentMode==='dungeon'?'🏛':'🗺'} ${btnVerb} — ${title}` : '⚔ Escolha uma arma primeiro'}
+      </button>
+    </div>`;
+}
+
+function selectExploreWeapon(id){
+  // Toggle: clicar na arma já selecionada desseleciona (slot volta a ficar vazio)
+  if(exploreSelectedWeapon && exploreSelectedWeapon.id === id){
+    exploreSelectedWeapon = null;
+  } else {
+    exploreSelectedWeapon = player.inventory.find(i=>i.id===id);
+  }
+  renderExplorePrepModal(currentExploreRegion);
+}
+
+function selectExploreArmor(id){
+  // Toggle: clicar na armadura já selecionada desseleciona (slot volta a ficar vazio)
+  if(exploreSelectedArmor && exploreSelectedArmor.id === id){
+    exploreSelectedArmor = null;
+  } else {
+    exploreSelectedArmor = player.inventory.find(i=>i.id===id);
+  }
+  renderExplorePrepModal(currentExploreRegion);
+}
+
+function toggleExplorePotion(id){
+  const item = player.inventory.find(i=>i.id===id);
+  if(!item) return;
+  const existing = exploreSelectedConsumables.find(s=>s.id===id);
+  const available = item.qty;
+  if(!existing){
+    exploreSelectedConsumables.push({id, qty:1});
+  } else if(existing.qty < Math.min(available, 3)){
+    existing.qty++;
+  } else {
+    exploreSelectedConsumables = exploreSelectedConsumables.filter(s=>s.id!==id);
+  }
+  renderExplorePrepModal(currentExploreRegion);
+}
+
+function startExploration(){
+  if(!exploreSelectedWeapon) return;
+  document.getElementById('explore-prep-modal').classList.remove('open');
+  const r = currentExploreRegion;
+  const ed = REGION_EXPLORE_DATA[r.id];
+
+  // Pequeno bônus de drop por vir preparado com consumíveis (não são consumidos de imediato — só se usados em combate)
+  const dropBonus = 1 + exploreSelectedConsumables.reduce((a,s)=>a+s.qty*0.05,0);
+
+  document.getElementById('explore-progress-modal').classList.add('open');
+  let progIcon=r.emoji, progTitle=r.name;
+  if(currentMode==='dungeon'){ progIcon=r.dungeon.emoji; progTitle=r.dungeon.levels[currentFloorIdx].name; }
+  if(currentMode==='boss'){ progIcon=r.boss.emoji; progTitle=r.boss.name; }
+  document.getElementById('expl-prog-icon').textContent = progIcon;
+  document.getElementById('expl-prog-region').textContent = progTitle;
+
+  const duration = (currentPrepDuration||ed.duration) * 1000;
+  const startTime = Date.now();
+  const statusList = currentMode==='boss' ? ['Entrando em combate...','Trocando golpes...','A batalha se intensifica...','Buscando uma abertura...','Golpe final...']
+    : currentMode==='dungeon' ? ['Descendo à masmorra...','Enfrentando guardiões...','Avançando pelos corredores...','Coletando fragmentos...','Retornando...']
+    : ed.statusMessages;
+  let lastStatusIdx = -1;
+
+  const interval = setInterval(()=>{
+    const elapsed = Date.now()-startTime;
+    const pct = Math.min(100, Math.round((elapsed/duration)*100));
+    document.getElementById('expl-prog-bar').style.width = pct+'%';
+    document.getElementById('expl-prog-pct').textContent = pct+'%';
+    const statusIdx = Math.min(Math.floor(pct/20), statusList.length-1);
+    if(statusIdx!==lastStatusIdx){ document.getElementById('expl-prog-status').textContent=statusList[statusIdx]; lastStatusIdx=statusIdx; }
+    if(elapsed>=duration){
+      clearInterval(interval);
+      finishRun(r, ed, dropBonus);
+    }
+  }, 100);
+}
+
+function finishRun(r, ed, dropBonus){
+  document.getElementById('explore-progress-modal').classList.remove('open');
+
+  // Usa a arma e armadura SELECIONADAS no prep modal (slot vazio → bônus zero)
+  const selW = exploreSelectedWeapon;
+  const selA = exploreSelectedArmor;
+  const atk = player.atk + (selW && selW.atk ? selW.atk : 0);
+  const def = player.def + (selA && selA.def ? selA.def : 0);
+  const ctx = { simHp: player.hp, hpMax: player.hpMax, simMp: player.mp, mpMax: player.mpMax, atk, def,
+    consumables: exploreSelectedConsumables.map(s=>({id:s.id, left:s.qty})), used:[] };
+
+  // Monta a lista de combates desta ação
+  let encounterList = [];
+  if(currentMode==='boss'){
+    encounterList = [ genBossMonster(r) ];
+  } else if(currentMode==='dungeon'){
+    const lv = r.dungeon.levels[currentFloorIdx];
+    const isFinalFloor = currentFloorIdx===4;
+    const [lo,hi] = parseRange(lv.detail);
+    if(isFinalFloor){
+      encounterList = [ genFieldMonster(lv.name.replace(/⚠/g,'').trim(), r.dungeon.emoji, hi||ed.levelRange[1], 2.6) ];
+    } else {
+      const n = 2+Math.floor(Math.random()*2);
+      for(let k=0;k<n;k++){ const lvl=lo+Math.floor(Math.random()*(Math.max(1,hi-lo+1))); const pick=pickMonsterType(ed); encounterList.push(genFieldMonster(pick.name, pick.emoji, lvl, 1.3)); }
+    }
+  } else {
+    const [lo,hi]=ed.levelRange;
+    const n = 2+Math.floor(Math.random()*3);
+    for(let k=0;k<n;k++){ const lvl=lo+Math.floor(Math.random()*(hi-lo+1)); const pick=pickMonsterType(ed); encounterList.push(genFieldMonster(pick.name, pick.emoji, lvl, 1)); }
+  }
+
+  const battleLog=[]; let monstersDefeated=0, xpGained=0, goldGained=0, fled=false;
+  for(const mon of encounterList){
+    if(fled) break;
+    const res = fightMonster(mon, ctx);
+    battleLog.push(...res.log);
+    if(res.victory){ monstersDefeated++; xpGained+=res.xp; goldGained+=res.gold; }
+    if(ctx.simHp<=1 && !res.victory){ fled=true; }
+  }
+
+  // Eventos de exploração (baú / mina) — apenas em modo Exploração, se não fugiu
+  const extraEvents=[];
+  if(currentMode==='explore' && !fled){
+    if(Math.random()<0.35){ const g=Math.round(ed.goldMin*0.6+Math.random()*ed.goldMin); goldGained+=g; extraEvents.push(`🎁 Encontrou um baú escondido! +${g} 🪙`); }
+    if(Math.random()<0.3){ const comum=ed.drops[0]; const q=1+Math.floor(Math.random()*3); addItemToInventory(comum.id,comum.icon,comum.name,q,comum.rarity,'items'); extraEvents.push(`⛏ Encontrou uma veia de minério! +${q} ${comum.icon} ${comum.name}`); }
+  }
+
+  // Drops de materiais/armadura/fragmento de arma (Exploração)
+  // Se o jogador morreu (fled), ainda recebe 50% dos itens que teria ganho — para ter chances de evoluir
+  const deathPenaltyMult = fled ? 0.5 : 1.0;
+  const drops=[];
+  if(currentMode==='explore'){
+    const dropChance = { common:0.9, uncommon:0.55, rare:0.3, epic:0.12, legend:0.04 };
+    ed.drops.forEach(d=>{
+      const chance = (dropChance[d.rarity]||0.5) * Math.min(1.5, dropBonus) * (fled?0.5:1);
+      if (Math.random() > chance) return;
+      const rawQty = Math.floor(Math.random()*(d.maxQty-d.minQty+1))+d.minQty;
+      let qty = Math.max(1, Math.round(rawQty * (dropBonus > 1 ? 1+(dropBonus-1)*0.5 : 1)));
+      // Penalidade de morte: perde 50% dos itens desta batalha
+      qty = Math.max(0, Math.round(qty * deathPenaltyMult));
+      if(qty<=0) return;
+      drops.push({...d, qty});
+      addItemToInventory(d.id, d.icon, d.name, qty, d.rarity, 'items');
+    });
+    xpGained += Math.round((Math.floor(Math.random()*(ed.xpMax-ed.xpMin+1))+ed.xpMin)*dropBonus*deathPenaltyMult);
+    goldGained += Math.round((Math.floor(Math.random()*(ed.goldMax-ed.goldMin+1))+ed.goldMin)*dropBonus*deathPenaltyMult);
+  }
+
+  // Fragmento de masmorra (só recebe se NÃO tiver fugido/morrido)
+  let dungeonComplete=false;
+  if(currentMode==='dungeon' && !fled && monstersDefeated>0){
+    addItemToInventory(ed.fragId, '🔩', `Fragmento da Masmorra (${r.name})`, 1, 'epic', 'items');
+    drops.push({icon:'🔩', name:`Fragmento — Andar ${currentFloorIdx+1}`, qty:1});
+    player.dungeonProgress[r.id] = Math.max(player.dungeonProgress[r.id]||0, currentFloorIdx+1);
+    dungeonComplete = player.dungeonProgress[r.id]>=5;
+  }
+
+  // Vitória de Boss
+  let bossVictory=false;
+  if(currentMode==='boss'){
+    bossVictory = monstersDefeated>0;
+    if(bossVictory){
+      player.bossesDefeated.add(r.id);
+      conqueredRegions.add(r.id);
+      refreshAllPins();
+      (r.boss.reward||'').split(',').forEach(pn=>{
+        const nm=pn.trim(); if(!nm) return;
+        const id='bossreward_'+r.id+'_'+nm.replace(/\s+/g,'_');
+        addItemToInventory(id, '🏆', nm, 1, 'legend', 'items');
+        drops.push({icon:'🏆', name:nm, qty:1});
+      });
+      goldGained += 100*r.id; xpGained += 200*r.id;
+    }
+  }
+
+  player.gold += goldGained;
+  player.xp += xpGained;
+  let leveledUp = false;
+  while(player.xp >= player.xpMax){ player.xp-=player.xpMax; player.level++; player.xpMax=Math.round(player.xpMax*1.4); player.hpMax=Math.round(player.hpMax*1.15); player.mpMax=Math.round(player.mpMax*1.15); player.atk+=3; player.def+=2; leveledUp=true; }
+
+  // Se morreu (fled), retorna com HP e MP CHEIOS — penalidade de 50% já aplicada aos itens acima
+  if(fled){
+    player.hp = player.hpMax;
+    player.mp = player.mpMax;
+  } else {
+    player.hp = Math.min(player.hpMax, Math.max(1, Math.round(ctx.simHp)));
+    player.mp = Math.min(player.mpMax, Math.max(0, Math.round(ctx.simMp)));
+  }
+  saveGame();
+
+  renderRunResult(r, ed, { battleLog, extraEvents, drops, consumedPotions: aggregateUsed(ctx.used),
+    xpGained, goldGained, leveledUp, monstersDefeated, fled, bossVictory, dungeonComplete });
+}
+
+function aggregateUsed(list){
+  const map={};
+  list.forEach(u=>{ if(!map[u.id]) map[u.id]={...u}; else map[u.id].qty+=u.qty; });
+  return Object.values(map);
+}
+
+function renderRunResult(r, ed, d){
+  const dropsHTML = d.drops.length > 0
+    ? d.drops.map(x=>`<div class="er-drop-item"><span class="er-drop-icon">${iconHTML(x.icon,22)}</span><span class="er-drop-name">${x.name}</span><span class="er-drop-qty">+${x.qty}</span></div>`).join('')
+    : '';
+  const logHTML = [...d.battleLog.map(l=>`<div class="er-log-item">${l}</div>`), ...d.extraEvents.map(l=>`<div class="er-log-item event">${l}</div>`)].join('')
+    || `<div class="er-log-item">Ação tranquila, sem encontros registrados.</div>`;
+  const consumedHTML = d.consumedPotions.length>0 ? `<div class="er-consumed">🧪 Consumíveis usados: ${d.consumedPotions.map(c=>`${iconHTML(c.icon,16)} ${c.name} (${c.effect})`).join(', ')}</div>` : '';
+  const hpPct=Math.round((player.hp/player.hpMax)*100), mpPct=Math.round((player.mp/player.mpMax)*100), xpPct=Math.round((player.xp/player.xpMax)*100);
+  const levelUpBanner = d.leveledUp ? `<div style="background:rgba(200,168,75,.15);border:1px solid rgba(200,168,75,.4);border-radius:8px;padding:12px;margin-bottom:12px;text-align:center;font-family:'Cinzel',serif;font-size:14px;color:var(--gold-light);">⭐ LEVEL UP! Nível ${player.level}</div>` : '';
+
+  let headIcon='🎉', headTag='Exploração Concluída', headTitle=r.name, headSub=r.biome, statusBanner='';
+  if(currentMode==='dungeon'){
+    const lv=r.dungeon.levels[currentFloorIdx];
+    headIcon = d.fled?'💀':'🏛'; headTag = d.fled?'Derrotado na Masmorra':'Andar Concluído';
+    headTitle = lv.name; headSub = `Masmorra de ${r.name} — Andar ${currentFloorIdx+1}/5`;
+    if(!d.fled && d.dungeonComplete) statusBanner = `<div class="er-consumed" style="background:rgba(200,168,75,.12);border-color:rgba(200,168,75,.3);color:var(--gold-light)">🏆 Masmorra completa! Todos os fragmentos coletados — crafte a Arma Suprema no CraftBank!</div>`;
+    else if(d.fled) statusBanner = `<div class="er-consumed">💀 Você foi derrotado na masmorra! Retornou com HP/MP cheios, mas perdeu 50% dos itens da batalha.</div>`;
+  } else if(currentMode==='boss'){
+    headIcon = d.bossVictory?'👑':'💀'; headTag = d.bossVictory?'Boss Derrotado!':'Derrotado pelo Boss';
+    headTitle = r.boss.name; headSub = r.boss.subtitle;
+    statusBanner = d.bossVictory
+      ? `<div class="er-consumed" style="background:rgba(48,192,128,.1);border-color:rgba(48,192,128,.3);color:#80e0a0">✅ Região conquistada — PIN atualizado e a próxima região foi desbloqueada!</div>`
+      : `<div class="er-consumed">💀 Você foi derrotado pelo boss! Retornou com HP/MP cheios, mas perdeu 50% dos itens. Melhore arma, armadura e crafts, depois tente novamente.</div>`;
+  } else {
+    headIcon = d.fled?'💀':'🎉'; headTag = d.fled?'Derrotado em Exploração':'Exploração Concluída';
+    if(d.fled) statusBanner = `<div class="er-consumed">💀 Você foi derrotado em exploração! Retornou com HP/MP cheios, mas perdeu 50% dos itens da batalha.</div>`;
+  }
+
+  document.getElementById('er-inner').innerHTML = `
+    <div class="er-hero">
+      <div class="er-handle"></div>
+      <span class="er-victory-icon">${headIcon}</span>
+      <div class="er-tag">${headTag}</div>
+      <div class="er-title">${headTitle}</div>
+      <div class="er-region">${headSub}</div>
+    </div>
+    <div class="er-divider"></div>
+    <div class="er-body">
+      ${levelUpBanner}${statusBanner}
+      <div class="er-rewards">
+        <div class="er-reward-chip xp"><div class="val">+${d.xpGained}</div><div class="lbl">XP</div></div>
+        <div class="er-reward-chip gold"><div class="val">+${d.goldGained}🪙</div><div class="lbl">Gold</div></div>
+      </div>
+      <div class="er-section-title">📜 Relatório (${d.monstersDefeated} monstro(s) derrotado(s))</div>
+      <div class="er-log-list">${logHTML}</div>
+      ${d.drops.length>0?`<div class="er-section-title">🎒 Itens Coletados</div><div class="er-drops-grid">${dropsHTML}</div>`:''}
+      ${consumedHTML}
+      <div class="er-status-box">
+        <div class="er-status-title">Status Após a Ação</div>
+        <div class="er-stat-row"><span class="er-stat-lbl">❤ HP</span><div class="er-stat-bar"><div class="er-stat-fill fill-hp" style="width:${hpPct}%"></div></div><span class="er-stat-val">${player.hp}/${player.hpMax}</span></div>
+        <div class="er-stat-row"><span class="er-stat-lbl">💧 MP</span><div class="er-stat-bar"><div class="er-stat-fill fill-mp" style="width:${mpPct}%"></div></div><span class="er-stat-val">${player.mp}/${player.mpMax}</span></div>
+        <div class="er-stat-row"><span class="er-stat-lbl">⭐ XP</span><div class="er-stat-bar"><div class="er-stat-fill fill-xp" style="width:${xpPct}%"></div></div><span class="er-stat-val">${player.xp}/${player.xpMax}</span></div>
+        <div style="margin-top:8px;font-family:'Cinzel',serif;font-size:10px;color:var(--text-dim)">Lv.${player.level} · ⚔${computeEffectiveAtk()} · 🛡${computeEffectiveDef()} · 🪙${player.gold}</div>
+      </div>
+      <button class="er-close-btn" onclick="closeExploreResult()">✓ Continuar</button>
+    </div>`;
+  document.getElementById('explore-result-modal').classList.add('open');
+
+  document.getElementById('header-player-name').textContent = player.name;
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  updateMenuModalStatus();
+}
+
+function closeExploreResult(){
+  document.getElementById('explore-result-modal').classList.remove('open');
+}
+
+function updateMenuModalStatus(){
+  const hpPct=Math.round((player.hp/player.hpMax)*100);
+  const mpPct=Math.round((player.mp/player.mpMax)*100);
+  const xpPct=Math.round((player.xp/player.xpMax)*100);
+  const hpBar=document.querySelector('.bar-hp');
+  const mpBar=document.querySelector('.bar-mp');
+  const xpBar=document.querySelector('.bar-xp');
+  if(hpBar){ hpBar.style.width=hpPct+'%'; hpBar.parentElement.nextElementSibling.textContent=`${player.hp}/${player.hpMax}`; }
+  if(mpBar){ mpBar.style.width=mpPct+'%'; mpBar.parentElement.nextElementSibling.textContent=`${player.mp}/${player.mpMax}`; }
+  if(xpBar){ xpBar.style.width=xpPct+'%'; xpBar.parentElement.nextElementSibling.textContent=`${player.xp}/${player.xpMax}`; }
+}
+
+// ===================== INVENTÁRIO =====================
+let currentTab = 'items';
+let sellMode = false;
+
+function renderInvStatusPanel(){
+  const panel = document.getElementById('inv-status-panel');
+  if(!panel) return;
+  const hpPct = Math.round((player.hp/player.hpMax)*100);
+  const mpPct = Math.round((player.mp/player.mpMax)*100);
+  const xpPct = Math.round((player.xp/player.xpMax)*100);
+  panel.innerHTML = `
+    <div class="inv-status-grid">
+      <div class="inv-stat">
+        <span class="inv-stat-lbl">❤ HP</span>
+        <div class="inv-stat-bar"><div class="inv-stat-fill" style="width:${hpPct}%;background:linear-gradient(90deg,#c03020,#ff6050)"></div></div>
+        <span class="inv-stat-val">${player.hp}/${player.hpMax}</span>
+      </div>
+      <div class="inv-stat">
+        <span class="inv-stat-lbl">💧 MP</span>
+        <div class="inv-stat-bar"><div class="inv-stat-fill" style="width:${mpPct}%;background:linear-gradient(90deg,#2040c0,#4080ff)"></div></div>
+        <span class="inv-stat-val">${player.mp}/${player.mpMax}</span>
+      </div>
+      <div class="inv-stat">
+        <span class="inv-stat-lbl">⭐ XP</span>
+        <div class="inv-stat-bar"><div class="inv-stat-fill" style="width:${xpPct}%;background:linear-gradient(90deg,#8a6a1a,#f0d080)"></div></div>
+        <span class="inv-stat-val">${player.xp}/${player.xpMax}</span>
+      </div>
+      <div class="inv-stat">
+        <span class="inv-stat-lbl">Lv</span>
+        <div class="inv-stat-bar"><div class="inv-stat-fill" style="width:100%;background:linear-gradient(90deg,#4a1a6e,#7b2fd4)"></div></div>
+        <span class="inv-stat-val">Nível ${player.level}</span>
+      </div>
+    </div>
+    <div class="inv-stat-row2">
+      <span class="inv-stat-chip">⚔ ATQ ${computeEffectiveAtk()}</span>
+      <span class="inv-stat-chip">🛡 DEF ${computeEffectiveDef()}</span>
+      <span class="inv-stat-chip">🪙 ${player.gold}</span>
+      <span class="inv-stat-chip">${player.name}</span>
+    </div>`;
+}
+
+function openInventory() {
+  player.name = playerName;
+  document.getElementById('inv-screen').classList.add('active');
+  sellMode = false;
+  updateSellToggleUI();
+  renderInvStatusPanel();
+  renderInventory(currentTab);
+}
+function closeInventory() {
+  document.getElementById('inv-screen').classList.remove('active');
+  saveGame();
+}
+
+function updateSellToggleUI(){
+  const row = document.getElementById('inv-sell-row');
+  const toggle = document.getElementById('inv-sell-toggle');
+  if(!row || !toggle) return;
+  // Mostra o toggle apenas nas abas items/equip (não na craft)
+  if(currentTab === 'craft'){
+    row.style.display = 'none';
+  } else {
+    row.style.display = 'flex';
+  }
+  toggle.textContent = `💰 Modo Venda: ${sellMode?'ON':'OFF'}`;
+  if(sellMode) toggle.classList.add('active'); else toggle.classList.remove('active');
+}
+
+document.getElementById('inv-sell-toggle').addEventListener('click', () => {
+  sellMode = !sellMode;
+  updateSellToggleUI();
+  renderInventory(currentTab);
+  showToast(sellMode ? '💰 Modo venda ATIVADO — clique num item para vender' : 'Modo venda desativado');
+});
+
+document.querySelectorAll('.inv-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.inv-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
+    if (currentTab !== 'craft') selectedCraftRecipe = null;
+    sellMode = false;
+    updateSellToggleUI();
+    renderInventory(currentTab);
+  });
+});
+
+function renderInventory(tab) {
+  const body = document.getElementById('inv-body');
+  if (tab === 'craft') { body.innerHTML = buildCraftTab(); return; }
+  // Sempre re-renderiza o painel de status (caso tenha mudado)
+  renderInvStatusPanel();
+  updateSellToggleUI();
+  // Filtro coerente: itens na aba 'items', equipamentos (weapon/armor) na aba 'equip'
+  // Fallback por tipo caso algum item esteja sem tab definida
+  const filtered = player.inventory.filter(i => {
+    if (tab === 'items') {
+      return i.tab === 'items' || (!i.tab && i.type !== 'weapon' && i.type !== 'armor');
+    } else { // equip
+      return i.tab === 'equip' || (!i.tab && (i.type === 'weapon' || i.type === 'armor'));
+    }
+  });
+  const cap = getMaxSlots(tab);
+  const totalSlots = Math.max(filtered.length, cap);
+  let slots='';
+  for(let i=0;i<totalSlots;i++){
+    const item=filtered[i];
+    if(item){
+      const isEquipped = item.id===player.equippedWeapon || item.id===player.equippedArmor;
+      const equippedBadge = isEquipped ? '<span style="position:absolute;top:3px;left:4px;font-size:8px;color:#80e0a0">EQ</span>' : '';
+      const canEquip = tab==='equip' && (item.type==='weapon'||item.type==='armor');
+      const canConsume = tab==='items' && (item.type==='potion' || (!!item.hpRestore && !item.type) || (!!item.mpRestore && !item.type));
+      const sellValue = computeSellValue(item);
+      // No modo venda, TODOS os itens são vendíveis (exceto equipados — exigem confirmação extra)
+      let clickAction;
+      let badgeHTML = '';
+      if (sellMode) {
+        // Itens equipados: não podem ser vendidos diretamente
+        if (isEquipped) {
+          clickAction = `showToast('⚠ ${item.name.replace(/'/g,'')} está equipado — desequipe antes de vender')`;
+          badgeHTML = '<span class="item-sell-badge" style="color:#ff7060">EQ</span>';
+        } else {
+          clickAction = `sellItem('${item.id}')`;
+          badgeHTML = `<span class="item-sell-badge">+${sellValue}🪙</span>`;
+        }
+      } else if (canEquip) {
+        clickAction = `equipItem('${item.id}')`;
+      } else if (canConsume) {
+        clickAction = `confirmConsumeItem('${item.id}')`;
+        badgeHTML = '<span style="position:absolute;top:3px;left:4px;font-size:8px;color:#80c0ff">USE</span>';
+      } else {
+        clickAction = `showToast('${item.name.replace(/'/g,'')}${item.atk?' (ATQ+'+item.atk+')':''}${item.def?' (DEF+'+item.def+')':''}${item.hpRestore?' (HP+'+item.hpRestore+')':''}${item.mpRestore?' (MP+'+item.mpRestore+')':''}')`;
+      }
+      const sellClass = sellMode ? ' sellable' : '';
+      slots+=`<div class="item-slot filled${sellClass}" onclick="${clickAction}">
+        ${equippedBadge}${badgeHTML}
+        <span class="item-icon">${iconHTML(item.icon,28)}</span>
+        <span class="item-name">${item.name}</span>
+        ${item.qty>1?`<span class="item-qty">${item.qty}</span>`:''}
+        <div class="item-rarity rarity-${item.rarity}"></div>
+      </div>`;
+    } else {
+      slots+=`<div class="item-slot"><span class="empty-slot-icon">＋</span></div>`;
+    }
+  }
+  const buyCost = buySlotCost(tab);
+  const maxedOut = cap >= INV_SLOT_CAP_LIMIT;
+  slots += `<div class="item-slot buy-slot${maxedOut?' maxed':''}" onclick="${maxedOut?`showToast('Espaço máximo já atingido!')`:`buyInventorySlot('${tab}')`}">
+    <span class="item-icon">🔓</span>
+    <span class="buy-slot-label">${maxedOut?'Espaço<br>Máximo':'Ampliar<br>Espaço'}</span>
+    ${maxedOut?'':`<span class="buy-slot-cost">🪙${buyCost}</span>`}
+  </div>`;
+  body.innerHTML=`<div class="item-grid">${slots}</div>`;
+}
+
+function sellItem(id){
+  const item = player.inventory.find(i=>i.id===id);
+  if(!item) return;
+  const isEquipped = item.id===player.equippedWeapon || item.id===player.equippedArmor;
+  if(isEquipped){ showToast('⚠ Desequipe o item antes de vender!'); return; }
+  const sellValue = computeSellValue(item);
+  if(sellValue<=0){ showToast('Este item não pode ser vendido.'); return; }
+  removeItemFromInventory(id, 1);
+  player.gold += sellValue;
+  saveGame();
+  sfxSell();
+  showToast(`💰 ${iconText(item.icon)} ${item.name} vendido por +${sellValue}🪙`);
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  renderInvStatusPanel();
+  renderInventory(currentTab);
+}
+
+let healPopupTimer = null;
+function showHealPopup(text, valueText, isMP){
+  const popup = document.getElementById('heal-popup');
+  const txtEl = document.getElementById('heal-popup-text');
+  const valEl = document.getElementById('heal-popup-val');
+  const iconEl = document.getElementById('heal-popup-icon');
+  txtEl.textContent = text;
+  valEl.textContent = valueText;
+  iconEl.textContent = isMP ? '💧' : '❤';
+  if(isMP) popup.classList.add('heal-popup-mp'); else popup.classList.remove('heal-popup-mp');
+  popup.classList.add('show');
+  clearTimeout(healPopupTimer);
+  healPopupTimer = setTimeout(()=>popup.classList.remove('show'), 1100);
+}
+
+let pendingConsumeId = null;
+function confirmConsumeItem(id){
+  const item = player.inventory.find(i=>i.id===id);
+  if(!item) return;
+  if(!item.hpRestore && !item.mpRestore){ showToast('Este item não pode ser consumido.'); return; }
+  pendingConsumeId = id;
+  const isMP = !!item.mpRestore && !item.hpRestore;
+  document.getElementById('confirm-use-icon').textContent = isMP ? '💧' : (item.icon && !isImgIcon(item.icon) ? item.icon : '🧪');
+  document.getElementById('confirm-use-title').textContent = `Usar ${item.name}?`;
+  const restoreTxt = [item.hpRestore?`+${item.hpRestore} HP`:'', item.mpRestore?`+${item.mpRestore} MP`:''].filter(Boolean).join(' e ');
+  document.getElementById('confirm-use-msg').innerHTML = `Isso vai restaurar <strong>${restoreTxt}</strong>. Deseja usar agora?`;
+  document.getElementById('confirm-use-modal').classList.add('open');
+  sfxClick();
+}
+document.getElementById('confirm-use-yes').addEventListener('click', () => {
+  document.getElementById('confirm-use-modal').classList.remove('open');
+  if(pendingConsumeId) consumeItem(pendingConsumeId);
+  pendingConsumeId = null;
+});
+document.getElementById('confirm-use-no').addEventListener('click', () => {
+  document.getElementById('confirm-use-modal').classList.remove('open');
+  showToast('Uso cancelado.');
+  pendingConsumeId = null;
+});
+document.getElementById('confirm-use-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-use-modal').classList.remove('open');
+  pendingConsumeId = null;
+});
+
+function consumeItem(id){
+  const item = player.inventory.find(i=>i.id===id);
+  if(!item) return;
+  if(!item.hpRestore && !item.mpRestore){ showToast('Este item não pode ser consumido.'); return; }
+  // Se HP e MP já estão cheios, avisa e não consome
+  const hpFull = player.hp >= player.hpMax;
+  const mpFull = player.mp >= player.mpMax;
+  if(item.hpRestore && item.mpRestore && hpFull && mpFull){ showToast('HP e MP já estão cheios!'); return; }
+  if(item.hpRestore && !item.mpRestore && hpFull){ showToast('HP já está cheio!'); return; }
+  if(item.mpRestore && !item.hpRestore && mpFull){ showToast('MP já está cheio!'); return; }
+  let hpGained = 0, mpGained = 0;
+  if(item.hpRestore){
+    const before = player.hp;
+    player.hp = Math.min(player.hpMax, player.hp + item.hpRestore);
+    hpGained = player.hp - before;
+  }
+  if(item.mpRestore){
+    const before = player.mp;
+    player.mp = Math.min(player.mpMax, player.mp + item.mpRestore);
+    mpGained = player.mp - before;
+  }
+  removeItemFromInventory(id, 1);
+  saveGame();
+  sfxPotion();
+  // Feedback visual: popup grande + toast
+  if(hpGained>0 && mpGained>0){
+    showHealPopup(`${item.name} usada!`, `+${hpGained} HP  +${mpGained} MP`, false);
+  } else if(hpGained>0){
+    showHealPopup(`${item.name} usada!`, `+${hpGained} HP`, false);
+  } else if(mpGained>0){
+    showHealPopup(`${item.name} usada!`, `+${mpGained} MP`, true);
+  }
+  showToast(`💊 ${item.name} consumido!${hpGained>0?` +${hpGained} HP`:''}${mpGained>0?` +${mpGained} MP`:''}`);
+  updateMenuModalStatus();
+  renderInvStatusPanel();
+  renderInventory(currentTab);
+}
+
+function equipItem(id){
+  const item = player.inventory.find(i=>i.id===id);
+  if(!item) return;
+  sfxEquip();
+  if(item.type==='weapon'){ player.equippedWeapon=id; showToast(`⚔ ${item.name} equipada! ATQ total: ${computeEffectiveAtk()}`); }
+  else if(item.type==='armor'){ player.equippedArmor=id; showToast(`🛡 ${item.name} equipada! DEF total: ${computeEffectiveDef()}`); }
+  else return;
+  saveGame();
+  renderInventory(currentTab);
+}
+
+let selectedCraftRecipe = null;
+
+function buildCraftTab(){
+  const r = currentExploreRegion || REGIONS[0];
+  const ed = REGION_EXPLORE_DATA[r.id];
+  if (!ed.recipes || ed.recipes.length===0)
+    return `<div class="cb-none">🗺 Explore a região<br><strong>${r.name}</strong><br>para descobrir receitas de crafting!</div>`;
+
+  // Grid de receitas disponíveis
+  const gridCards = ed.recipes.map((rec,i) => {
+    const canCraft = rec.ingredients.every(ing=>{ const it=getItemInInventory(ing.id); return it&&it.qty>=ing.qty; });
+    const hasGold = player.gold >= (rec.goldCost||0);
+    const ready = canCraft && hasGold;
+    return `<div class="cb-item-card ${selectedCraftRecipe&&selectedCraftRecipe.id===rec.id?'cb-selected':''}" onclick="selectCraftRecipe('${rec.id}')">
+      <span class="cb-item-icon">${iconHTML(rec.icon,26)}</span>
+      <span class="cb-item-name">${rec.name}</span>
+      ${rec.goldCost ? `<span class="cb-item-cost">🪙${rec.goldCost}</span>` : ''}
+      <span class="cb-item-badge">${ready?'✅':canCraft?'💰':'🔒'}</span>
+    </div>`;
+  }).join('');
+
+  // Painel de receita selecionada
+  let recipePanel = '';
+  if (selectedCraftRecipe) {
+    const rec = selectedCraftRecipe;
+    const canCraft = rec.ingredients.every(ing=>{ const it=getItemInInventory(ing.id); return it&&it.qty>=ing.qty; });
+    const hasGold = player.gold >= (rec.goldCost||0);
+    const ready = canCraft && hasGold;
+    const ingsHTML = rec.ingredients.map(ing=>{
+      const it=getItemInInventory(ing.id); const have=it?it.qty:0; const ok=have>=ing.qty;
+      // procura ícone no inventário ou no drops de todas as regiões
+      let icon='📦';
+      const allDrops = Object.values(REGION_EXPLORE_DATA).flatMap(e=>e.drops||[]);
+      const found = allDrops.find(d=>d.id===ing.id);
+      if(found) icon=found.icon;
+      if(it) icon=it.icon;
+      return `<div class="cb-ing-row ${ok?'has':'miss'}">
+        <span class="cb-ing-icon">${iconHTML(icon,20)}</span>
+        <div class="cb-ing-info">
+          <div class="cb-ing-name">${ing.name.replace(/ x\d+/,'')}</div>
+          <div class="cb-ing-qty ${ok?'has':'miss'}">${have}/${ing.qty} ${ok?'✅':'❌'}</div>
+        </div>
+      </div>`;
+    }).join('');
+    const goldRow = rec.goldCost ? `<div class="cb-cost-row"><span class="cb-cost-label">🪙 Custo em Ouro</span><span class="cb-cost-val">${rec.goldCost} / ${player.gold} disponível ${player.gold>=rec.goldCost?'✅':'❌'}</span></div>` : '';
+    recipePanel = `
+      <div class="cb-recipe-panel">
+        <div class="cb-recipe-header">
+          <span class="cb-recipe-icon">${iconHTML(rec.icon,34)}</span>
+          <div><div class="cb-recipe-name">${rec.name}</div><div class="cb-recipe-desc">${rec.desc}</div></div>
+        </div>
+        <div class="cb-ing-list">${ingsHTML}</div>
+        ${goldRow}
+        <button class="cb-craft-btn ${ready?'ready':'locked'}" onclick="doCraft('${rec.id}')" ${ready?'':'disabled'}>
+          ${ready ? `⚒ Craftar ${rec.name}` : !canCraft ? '🔒 Ingredientes insuficientes' : '💰 Ouro insuficiente'}
+        </button>
+      </div>`;
+  } else {
+    recipePanel = `<div class="cb-none" style="padding:14px">👆 Selecione uma receita acima para ver os ingredientes necessários</div>`;
+  }
+
+  return `
+    <div class="craft-section-title">⚒ CraftBank — ${r.name}</div>
+    <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--text-dim);margin-bottom:10px;letter-spacing:.5px">🪙 Seu ouro: <strong style="color:#f0c040">${player.gold}</strong></div>
+    <div class="cb-grid">${gridCards}</div>
+    ${recipePanel}`;
+}
+
+function selectCraftRecipe(recipeId) {
+  const r = currentExploreRegion || REGIONS[0];
+  const ed = REGION_EXPLORE_DATA[r.id];
+  selectedCraftRecipe = ed.recipes.find(x=>x.id===recipeId) || null;
+  renderInventory('craft');
+}
+
+function doCraft(recipeId){
+  const r = currentExploreRegion || REGIONS[0];
+  const ed = REGION_EXPLORE_DATA[r.id];
+  const rec = ed.recipes.find(x=>x.id===recipeId);
+  if (!rec) return;
+  const canCraft = rec.ingredients.every(ing=>{ const it=getItemInInventory(ing.id); return it&&it.qty>=ing.qty; });
+  if (!canCraft) { showToast('Ingredientes insuficientes!'); return; }
+  const cost = rec.goldCost||0;
+  if (player.gold < cost) { showToast(`Ouro insuficiente! Precisa de 🪙${cost}`); return; }
+  rec.ingredients.forEach(ing=>removeItemFromInventory(ing.id, ing.qty));
+  player.gold -= cost;
+  addItemToInventory(rec.id, rec.icon, rec.name, rec.result.qty, rec.result.rarity, rec.result.tab, {type:rec.result.type, hpRestore:rec.result.hpRestore, mpRestore:rec.result.mpRestore, atk:rec.result.atk, def:rec.result.def});
+  let boostMsg = '';
+  if(rec.result.statBoost){
+    Object.entries(rec.result.statBoost).forEach(([k,v])=>{
+      player[k] = (player[k]||0) + v;
+      if(k==='mpMax') player.mp = Math.min(player.mpMax, player.mp+v);
+    });
+    boostMsg = ' — evolução permanente aplicada!';
+  }
+  showToast(`✅ ${rec.name} x${rec.result.qty} craftado!${boostMsg}`);
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  saveGame();
+  renderInventory('craft');
+}
+
+// ===================== NPC SHOP (Loja de Poções) =====================
+let currentShopRegion = null;
+function openShopModal(r){
+  if(!isRegionUnlocked(r)){ showToast('🔒 Região bloqueada — derrote o boss da região anterior'); return; }
+  currentShopRegion = r;
+  closeInfoModal();
+  renderShopModal();
+  document.getElementById('shop-modal').classList.add('open');
+}
+function closeShopModal(){
+  document.getElementById('shop-modal').classList.remove('open');
+  currentShopRegion = null;
+}
+document.getElementById('shop-modal').addEventListener('click', e => {
+  if(e.target===document.getElementById('shop-modal')) closeShopModal();
+});
+
+function renderShopModal(){
+  const r = currentShopRegion;
+  if(!r){ return; }
+  const potionList = REGION_SHOP_POTIONS[r.id] || [];
+  const itemsHTML = potionList.map(([tier, lv]) => {
+    const p = buildPotionItem(tier, lv);
+    const canBuy = player.gold >= p.buyPrice;
+    return `<div class="shop-item">
+      <span class="shop-item-icon">${iconHTML(p.icon,26)}</span>
+      <div class="shop-item-info">
+        <div class="shop-item-name">${p.name}</div>
+        <div class="shop-item-desc">Restaura +${p.hpRestore} HP</div>
+        <div class="shop-item-price">🪙 ${p.buyPrice}</div>
+      </div>
+      <button class="shop-buy-btn" ${canBuy?'':'disabled'} onclick="buyShopPotion('${tier}',${lv})">${canBuy?'Comprar':'Ouro insuf.'}</button>
+    </div>`;
+  }).join('');
+  // MP potion (sempre disponível)
+  const canBuyMP = player.gold >= MP_POTION.buyPrice;
+  const mpHTML = `<div class="shop-item">
+    <span class="shop-item-icon">${iconHTML(MP_POTION.icon,26)}</span>
+    <div class="shop-item-info">
+      <div class="shop-item-name">${MP_POTION.name}</div>
+      <div class="shop-item-desc">Restaura +${MP_POTION.mpRestore} MP</div>
+      <div class="shop-item-price">🪙 ${MP_POTION.buyPrice}</div>
+    </div>
+    <button class="shop-buy-btn" ${canBuyMP?'':'disabled'} onclick="buyShopMP()">${canBuyMP?'Comprar':'Ouro insuf.'}</button>
+  </div>`;
+
+  document.getElementById('shop-inner').innerHTML = `
+    <div class="shop-hero">
+      <div class="shop-handle"></div>
+      <span class="shop-region-icon">${r.emoji}</span>
+      <div class="shop-tag">Mercador · Região ${r.id}</div>
+      <div class="shop-title">Loja de ${r.name}</div>
+      <div class="shop-sub">Poções e consumíveis</div>
+      <div class="shop-close" onclick="closeShopModal()">✕</div>
+    </div>
+    <div class="shop-divider"></div>
+    <div class="shop-body">
+      <div class="shop-gold-row">
+        <span class="shop-gold-label">🪙 Seu ouro</span>
+        <span class="shop-gold-val">${player.gold}</span>
+      </div>
+      <div class="shop-section-title">🧪 Poções de Cura</div>
+      ${itemsHTML || '<div class="shop-empty">Nenhuma poção disponível nesta região.</div>'}
+      <div class="shop-section-title" style="margin-top:14px">💧 Poções de MP</div>
+      ${mpHTML}
+      <div style="margin-top:14px;padding:10px 12px;background:rgba(200,168,75,.06);border:1px solid rgba(200,168,75,.15);border-radius:8px;font-size:10px;color:var(--text-dim);line-height:1.6;text-align:center">
+        💡 Cada região oferece poções mais fortes à medida que você progride. As poções compradas aparecem na aba <strong>Itens</strong> do Inventário.
+      </div>
+    </div>`;
+}
+
+function buyShopPotion(tier, lv){
+  const p = buildPotionItem(tier, lv);
+  if(player.gold < p.buyPrice){ showToast('Ouro insuficiente!'); return; }
+  player.gold -= p.buyPrice;
+  // remove buyPrice do item antes de adicionar (não persistir no inventário)
+  const itemToAdd = { id:p.id, icon:p.icon, name:p.name, qty:1, rarity:p.rarity, tab:'items', type:'potion', hpRestore:p.hpRestore };
+  addItemToInventory(itemToAdd.id, itemToAdd.icon, itemToAdd.name, 1, itemToAdd.rarity, 'items', { type:'potion', hpRestore:itemToAdd.hpRestore });
+  saveGame();
+  showToast(`✅ ${iconText(p.icon)} ${p.name} comprada por 🪙${p.buyPrice}`);
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  renderShopModal();
+}
+
+function buyShopMP(){
+  if(player.gold < MP_POTION.buyPrice){ showToast('Ouro insuficiente!'); return; }
+  player.gold -= MP_POTION.buyPrice;
+  addItemToInventory(MP_POTION.id, MP_POTION.icon, MP_POTION.name, 1, MP_POTION.rarity, 'items', { type:'potion', mpRestore:MP_POTION.mpRestore });
+  saveGame();
+  showToast(`✅ ${iconText(MP_POTION.icon)} ${MP_POTION.name} comprada por 🪙${MP_POTION.buyPrice}`);
+  document.querySelector('.player-level').textContent = `Nível ${player.level} · 🪙${player.gold}`;
+  renderShopModal();
+}
+
+// ===================== MENU MODAL =====================
+document.getElementById('btn-menu-modal').addEventListener('click', () => { document.getElementById('menu-modal').classList.add('open'); sfxOpen(); });
+document.getElementById('btn-close-menu-modal').addEventListener('click', () => { document.getElementById('menu-modal').classList.remove('open'); sfxClick(); });
+document.getElementById('menu-modal').addEventListener('click', e => { if(e.target===document.getElementById('menu-modal')) document.getElementById('menu-modal').classList.remove('open'); });
+
+// ===================== CODEX MODAL =====================
+document.getElementById('btn-open-codex').addEventListener('click', () => {
+  document.getElementById('codex-modal').classList.add('open');
+  sfxOpen();
+});
+document.getElementById('codex-close').addEventListener('click', () => {
+  document.getElementById('codex-modal').classList.remove('open');
+  sfxClick();
+});
+document.getElementById('codex-modal').addEventListener('click', e => {
+  if(e.target === document.getElementById('codex-modal')) document.getElementById('codex-modal').classList.remove('open');
+});
+
+document.getElementById('btn-toggle-music').addEventListener('click', () => {
+  musicOn = !musicOn;
+  document.getElementById('music-status').textContent = musicOn ? 'ON' : 'OFF';
+  toggleBgMusic(musicOn);
+  showToast(`Música ${musicOn ? 'ativada' : 'desativada'}`);
+});
+
+document.getElementById('btn-quit-game').addEventListener('click', () => {
+  if (confirm('Sair do jogo? O progresso não salvo será perdido.')) {
+    stopBgMusic();
+    document.getElementById('menu-modal').classList.remove('open');
+    document.getElementById('map-screen').classList.remove('active');
+    document.getElementById('inv-screen').classList.remove('active');
+    document.getElementById('menu').classList.add('active');
+    showToast('Até logo, Explorador!');
+  }
+});
+
+// ===================== TOAST =====================
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
