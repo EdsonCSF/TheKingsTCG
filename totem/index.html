@@ -1,1 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Totem Ascension — Ascensão Elemental</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<!-- MENU SCREEN -->
+<div id="screen-menu" class="screen active">
+  <div id="menu-box">
+    <header class="menu-brand"><img id="menu-logo-title" src="img/logo-totem.webp" alt="Totem Ascension"><div id="menu-subtitle">ELEMENTOS EM EQUILÍBRIO</div></header>
+    <div class="menu-stage">
+      <div class="menu-actions">
+        <button class="menu-btn menu-btn-start" id="menu-play" onclick="newRunPrompt()"><i>▶</i><span>JOGAR<small>Nova jornada</small></span></button>
+        <button class="menu-btn" id="continue-run" onclick="resumeRun()"><i>↗</i><span>CONTINUAR<small id="continue-name">Nenhuma partida salva</small></span></button>
+        <button class="menu-btn" onclick="openRanking()"><i>♛</i><span>RANKING</span></button>
+      </div>
+    </div>
+    <footer class="menu-footer"><span>ELEMENTOS CONSTROEM O SEU DESTINO</span></footer>
+    <div id="menu-version">v9.0• Ascensão Elemental</div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="screen-game" class="screen">
+  <div id="hud-top">
+    <div id="hud-title">🗿 GAME</div>
+    <button id="exit-btn" onclick="exitToMenu()" title="Sair para o menu">🏠</button>
+    <button id="sound-btn" onclick="toggleSound()" title="Som">🔊</button>
+    <div class="hud-pills">
+      <div class="pill" id="pill-coins"><em id="hud-coins">0</em>💰</div>
+      <div class="pill" id="pill-height"><em id="hud-height">0</em>📏</div>
+      <div class="pill pill-res" title="Madeira"><em id="hud-wood">0</em>🪵</div>
+      <div class="pill pill-res" title="Pedra"><em id="hud-stone">0</em>🪨</div>
+      <div class="pill pill-res" title="Ouro"><em id="hud-gold">0</em>🪙</div>
+      <div class="pill pill-res" title="Cristal"><em id="hud-crystal">0</em>💎</div>
+      <div class="pill pill-essence" title="Essência Divina"><em id="hud-essence">0</em>✨</div>
+    </div>
+  </div>
+  <div id="journey"><span id="level-label"></span><span id="xp-label"></span><progress id="xp-progress"></progress><span id="event-status"></span></div>
+  <div id="power-row">
+    <div id="power-track"><div id="power-fill" style="width:0%"></div></div>
+    <div id="power-label"><span id="power-pct">0</span>%</div>
+  </div>
+  <div id="stab-row">
+    <div id="stab-track"><div id="stab-fill" style="width:100%;background:linear-gradient(90deg,#3de87a,#2ab860);"></div></div>
+    <div id="stab-label"><span id="stab-num">100</span>/<span id="stab-max">100</span></div>
+  </div>
+  <div id="arena"><div id="event-weather" aria-hidden="true"></div><aside id="event-side" hidden aria-live="polite"></aside><aside id="combo-side" aria-label="Sequência"></aside>
+    <div id="height-badge">
+      <div id="hb-num">0</div>
+      <div id="hb-tier">🌲 Floresta</div>
+    </div>
+    <div id="evt-toast">🌀</div>
+    <div id="boss-strip">
+      <div id="boss-name">👹 Boss</div>
+      <div id="boss-hp-track"><div id="boss-hp-fill" style="width:100%"></div></div>
+    </div>
+    <div id="totem-wrap">
+      <div id="totem-glow"></div>
+      <div id="totem-tilt">
+        <div id="totem-stack"></div><div id="empty-tower">Cada peça é um novo destino</div>
+        <div id="totem-base"></div>
+      </div>
+    </div>
+  </div>
+  <div id="bottom-zone">
+    <div id="phase-label">Mecânica: Dados 🎲</div>
+    <div id="streak-display"></div>
+    <div id="combo-display"></div>
+    <div class="btn-wrap">
+      <button id="action-btn" class="btn-dice" onclick="handleAction()">🎲 Jogar Dados</button>
+      <div id="auto-ring"></div>
+    </div>
+  </div>
+  <button id="nav-toggle" onclick="toggleGameNav()" aria-expanded="false" aria-controls="nav-dock">☰</button>
+  <div id="nav-dock" class="collapsed">
+    <button class="nav-close" onclick="toggleGameNav(false)" aria-label="Fechar navegação">×</button>
+    <button class="nav-btn active" onclick="goScreen('game')" id="nb-game">
+      <span class="ni">🗿</span>Jogo</button>
+    <button class="nav-btn" onclick="goScreen('upgrades')" id="nb-upgrades">
+      <span class="ni">⚒️</span>Loja</button>
+    <button class="nav-btn" onclick="goScreen('inventory')" id="nb-inventory">
+      <span class="ni">📦</span>Invent.</button>
+    <button class="nav-btn" onclick="goScreen('codex')" id="nb-codex">
+      <span class="ni">📖</span>Codex</button>
+    <button class="nav-btn" onclick="goScreen('achievements')" id="nb-achievements">
+      <span class="ni">🏆</span>Troféus</button>
+    <button class="nav-btn" onclick="goScreen('stats')" id="nb-stats">
+      <span class="ni">📊</span>Stats</button>
+    <button class="nav-btn" onclick="goScreen('log')" id="nb-log">
+      <span class="ni">📜</span>Log</button>
+  </div>
+</div>
+
+<!-- UPGRADES / SHOP SCREEN -->
+<section id="boss-overlay" hidden role="dialog" aria-modal="true" aria-label="Batalha do guardião">
+  <div id="boss-backdrop" aria-hidden="true"></div><div class="boss-depth boss-depth-far" aria-hidden="true"></div><div class="boss-depth boss-depth-near" aria-hidden="true"></div><div class="boss-embers" aria-hidden="true"></div>
+  <header class="boss-header"><div><span class="eyebrow">GUARDIÃO DA ASCENSÃO</span><h2 id="battle-name"></h2></div><button class="round-control" onclick="pauseBattle()" aria-label="Pausar batalha">Ⅱ</button></header>
+  <div class="battle-life"><div><span id="battle-hp"></span><span id="battle-floor"></span></div><progress id="battle-progress" value="1" max="1"></progress></div>
+  <div class="battle-field"><div id="boss-portrait" role="img" aria-label="Retrato do guardião"></div><div id="boss-tower" aria-label="Torre de blocos do guardião"></div><div id="battle-feedback" aria-live="polite"></div></div>
+  <footer class="battle-controls"><div id="battle-rewards"></div><div id="battle-mechanic"></div><button id="battle-action" onclick="attackBoss()">ATACAR</button><button id="battle-return" hidden onclick="finishBossVictory()">CONTINUAR ASCENSÃO</button></footer>
+</section>
+
+<div id="screen-upgrades" class="screen">
+  <div class="sec-header">
+    <button class="sec-back" onclick="closeSection()">×</button>
+    <span class="sec-title">⚒️ Loja</span>
+    <span class="sec-coins">💰<span id="upg-coins">0</span></span>
+  </div>
+  <div class="shop-tabs">
+    <button class="shop-tab active" id="shop-tab-perm" onclick="renderShopTab('perm')">⚡ Permanentes</button>
+    <button class="shop-tab" id="shop-tab-build" onclick="renderShopTab('build')">🏗️ Construção</button>
+    <button class="shop-tab" id="shop-tab-relic" onclick="renderShopTab('relic')">🏺 Relíquias</button>
+  </div>
+  <div class="sec-body" id="upg-body"></div>
+</div>
+
+<!-- INVENTORY SCREEN -->
+<div id="screen-inventory" class="screen">
+  <div class="sec-header">
+    <button class="sec-back" onclick="closeSection()">×</button>
+    <span class="sec-title">📦 Inventário</span>
+    <span class="sec-coins" id="inv-essence-display">✨<span id="inv-essence">0</span></span>
+  </div>
+  <div class="sec-body" id="inv-body"></div>
+</div>
+
+<!-- CODEX SCREEN -->
+<div id="screen-codex" class="screen">
+  <div class="sec-header">
+    <button class="sec-back" onclick="closeSection()">×</button>
+    <span class="sec-title">📖 Codex</span>
+    <span class="sec-coins" id="codex-counter">0/12</span>
+  </div>
+  <div class="sec-body" id="codex-body"></div>
+</div>
+
+<!-- ACHIEVEMENTS SCREEN -->
+<div id="screen-achievements" class="screen">
+  <div class="sec-header">
+    <button class="sec-back" onclick="closeSection()">×</button>
+    <span class="sec-title">🏆 Conquistas</span>
+    <span class="sec-coins" id="ach-counter">0/0</span>
+  </div>
+  <div class="sec-body" id="ach-body"></div>
+</div>
+
+<!-- STATS SCREEN -->
+<div id="screen-stats" class="screen">
+  <div class="sec-header">
+    <button class="sec-back" onclick="closeSection()">×</button>
+    <span class="sec-title">📊 Estatísticas</span>
+  </div>
+  <div class="sec-body" id="stats-body">
+    <div class="sec-section">⚡ Sessão</div>
+    <div class="stat-grid">
+      <div class="stat-card"><span class="sc-icon">📏</span><span class="sc-label">Altura</span><span class="sc-val" id="sc-h">0</span></div>
+      <div class="stat-card"><span class="sc-icon">🏆</span><span class="sc-label">Recorde</span><span class="sc-val" id="sc-best">0</span></div>
+      <div class="stat-card"><span class="sc-icon">💰</span><span class="sc-label">Moedas</span><span class="sc-val" id="sc-coins">0</span></div>
+      <div class="stat-card"><span class="sc-icon">⭐</span><span class="sc-label">Prestígios</span><span class="sc-val" id="sc-pres">0</span></div>
+      <div class="stat-card"><span class="sc-icon">✨</span><span class="sc-label">Essência Divina</span><span class="sc-val" id="sc-essence">0</span></div>
+      <div class="stat-card"><span class="sc-icon">📈</span><span class="sc-label">Dificuldade</span><span class="sc-val" id="sc-diff">0%</span></div>
+      <div class="stat-card"><span class="sc-icon">⚔️</span><span class="sc-label">Bosses</span><span class="sc-val" id="sc-boss">0</span></div>
+      <div class="stat-card"><span class="sc-icon">✅</span><span class="sc-label">Acertos</span><span class="sc-val" id="sc-hits">0</span></div>
+      <div class="stat-card"><span class="sc-icon">❌</span><span class="sc-label">Erros</span><span class="sc-val" id="sc-miss">0</span></div>
+      <div class="stat-card"><span class="sc-icon">🔥</span><span class="sc-label">Seq. Atual</span><span class="sc-val" id="sc-streak">0</span></div>
+      <div class="stat-card"><span class="sc-icon">⚡</span><span class="sc-label">Melhor Seq.</span><span class="sc-val" id="sc-bstreak">0</span></div>
+    </div>
+
+    <div class="sec-section">💰 Recursos — Economia</div>
+    <div style="font-size:.68em;color:var(--muted);padding:2px 2px 6px;">Usados para comprar melhorias e desbloquear habilidades.</div>
+    <div class="res-big-grid">
+      <div class="res-big"><span class="rb-icon">🪵</span><span class="rb-name">Madeira</span><span class="rb-val" id="rb-w">0</span></div>
+      <div class="res-big"><span class="rb-icon">🪨</span><span class="rb-name">Pedra</span><span class="rb-val" id="rb-s">0</span></div>
+      <div class="res-big"><span class="rb-icon">🪙</span><span class="rb-name">Ouro</span><span class="rb-val" id="rb-g">0</span></div>
+      <div class="res-big"><span class="rb-icon">💎</span><span class="rb-name">Cristal</span><span class="rb-val" id="rb-c">0</span></div>
+    </div>
+
+    <div class="sec-section">🗿 Evolução do Totem</div>
+    <div id="tier-current-card" style="background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:12px 14px;margin-bottom:6px;">
+      <div style="font-size:.65em;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Tier Atual</div>
+      <div id="tier-current-label" style="font-size:1.3em;font-weight:900;color:var(--gold);">🌲 Floresta</div>
+      <div style="margin-top:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:.68em;color:var(--muted);margin-bottom:4px;">
+          <span>Progresso</span><span id="tier-pct-label">0%</span>
+        </div>
+        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">
+          <div id="tier-pct-bar" style="height:100%;background:var(--gold);border-radius:3px;transition:width .5s;width:0%"></div>
+        </div>
+        <div id="tier-next-label" style="font-size:.68em;color:var(--muted);margin-top:5px;">Próximo: 🪵 Madeira (h.20)</div>
+      </div>
+    </div>
+    <div class="tier-box" id="tier-box"></div>
+    <div id="prestige-info" style="background:rgba(170,68,255,.08);border:1px solid var(--purple);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:.72em;color:#c8a0ff;text-align:center;line-height:1.5;">Carregando...</div>
+    <button id="buy-stab-btn" onclick="buyStabilityWithEssence()" style="background:linear-gradient(135deg,#5a0080,#9010c0);border:1px solid var(--purple);border-radius:10px;padding:10px 16px;color:#fff;cursor:pointer;font-size:.85em;font-weight:700;transition:all .15s;font-family:inherit;width:100%;margin-top:6px;">✨ Comprar Estabilidade (1 Essência = +10% ⚖️)</button>
+    <button id="prestige-btn" onclick="doPrestige()">🌟 Prestígio — Renascer com Essência Divina</button>
+  </div>
+</div>
+
+<!-- LOG SCREEN -->
+<div id="screen-log" class="screen">
+  <div class="sec-header">
+    <button class="sec-back" onclick="closeSection()">×</button>
+    <span class="sec-title">📜 Registro</span>
+    <button class="sec-back" style="margin-left:auto" onclick="clearLog()">🗑️</button>
+  </div>
+  <div class="sec-body" id="log-body"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal-box"></div>
+</div>
+
+<!-- OVERLAYS -->
+<div id="notif"></div>
+<canvas id="particles"></canvas>
+<div id="milestone-pop"><h2 id="ms-title"></h2><p id="ms-sub"></p></div>
+<div id="critical-overlay">
+  <div id="critical-box">
+    <h2 id="crit-title">⚠ SALVE O TOTEM!</h2>
+    <p id="crit-sub">Estabilidade crítica! Escolha um desafio:</p>
+    <div id="crit-options">
+      <button class="crit-opt" onclick="startCriticalRecovery('timing')">⏱️ Timing<br><small>Acerte a zona verde</small></button>
+      <button class="crit-opt" onclick="startCriticalRecovery('seq')">🔮 Sequência<br><small>Repita os símbolos</small></button>
+      <button class="crit-opt" onclick="startCriticalRecovery('balance')">⚖️ Equilíbrio<br><small>Toque o lado correto</small></button>
+    </div>
+    <p id="crit-counter" style="font-size:.8em;color:var(--muted);margin-top:8px;">Totens salvos: <strong id="crit-saved">0</strong></p>
+  </div>
+</div>
+
+<div id="go-overlay">
+  <div id="go-box">
+    <h2>🗿 Totem Caiu!</h2>
+    <p>A estabilidade chegou a zero</p>
+    <div id="go-score"></div>
+    <p id="go-extra"></p>
+    <div id="go-revive-options" style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">
+      <button id="go-revive-essence" onclick="reviveWithEssence()" style="background:linear-gradient(135deg,#5a0080,#9010c0);border:1px solid var(--purple);color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:700;font-family:inherit;">✨ Reviver com Essência (<span id="revive-essence-cost">1</span>)</button>
+      <button id="go-buy-stab" onclick="buyStabilityWithEssence();closeGameOver();" style="background:linear-gradient(135deg,#3a6020,#5a9030);border:1px solid var(--green);color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:700;font-family:inherit;">✨ Comprar +10% ⚖️ (1 Essência)</button>
+      <button id="go-revive-gold" onclick="reviveWithGold()" style="background:linear-gradient(135deg,#7a5800,#c09020);border:1px solid var(--gold);color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:700;font-family:inherit;">💰 Reviver com Ouro (<span id="revive-gold-cost">10k</span>)</button>
+      <button id="go-restart" onclick="restartGame()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;cursor:pointer;font-family:inherit;">🔄 Reiniciar Jogo</button>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
